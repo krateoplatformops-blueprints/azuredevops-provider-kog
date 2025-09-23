@@ -22,3 +22,12 @@ version: CHART_VERSION
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: APP_VERSION
+
+home: https://krateo.io
+icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
+keywords:
+  - generator
+sources:
+  - https://github.com/krateoplatformops-blueprints/azuredevops-provider-kog
+annotations:
+  krateoSupportedVersion: ">= 2.5.1"
