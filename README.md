@@ -1,8 +1,8 @@
-# Krateo Azure DevOps Provider KOG
+# Azure DevOps Provider KOG Blueprint
 
 ***KOG***: (*Krateo Operator Generator*)
 
-This is a [Helm Chart](https://helm.sh/docs/topics/charts/) that deploys the Krateo Azure DevOps Provider KOG leveraging the [Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider).
+This is a Blueprint that deploys the Azure DevOps Provider KOG leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider).
 This provider allows you to manage [Azure DevOps resources](https://azure.microsoft.com/en-us/products/devops) such as `gitrepositories`, `pipelines`, and `pipelinepermissions` using the Krateo platform.
 
 ## Summary
@@ -100,19 +100,23 @@ graph TD
 
 [Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) (0.6.0+) should be installed in your cluster. 
 Follow the related Helm Chart [README](https://github.com/krateoplatformops/oasgen-provider-chart) for installation instructions.
+Note that a standard installation of Krateo contains the OASGen Provider.
 
 ## How to install
 
 To install the chart, use the following commands:
 
 ```sh
-helm repo add krateo https://charts.krateo.io
-helm repo update krateo
-helm install azuredevops-provider-kog krateo/azuredevops-provider-kog
+helm install azuredevops-provider-kog azuredevops-provider-kog \
+  --repo https://marketplace.krateo.io \
+  --namespace <release-namespace> \
+  --create-namespace \
+  --version 1.0.0 \
+  --wait
 ```
 
 > [!NOTE]
-> Due to the nature of the providers leveraging the [Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider), this chart will install a set of RestDefinitions that will in turn trigger the deployment of a number of controllers in the cluster. These controllers need to be up and running before you can create or manage resources using the Custom Resources (CRs) defined by this provider. This may take a few minutes after the chart is installed.
+> Due to the nature of the providers leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider), this chart will install a set of RestDefinitions that will in turn trigger the deployment of a number of controllers in the cluster. These controllers need to be up and running before you can create or manage resources using the Custom Resources (CRs) defined by this provider. This may take a few minutes after the chart is installed.
 
 You can check the status of the RestDefinitions with the following commands:
 

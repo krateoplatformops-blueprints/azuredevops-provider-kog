@@ -1,0 +1,39 @@
+{{- if .Values.restdefinitions.pipeline.enabled }}
+kind: RestDefinition
+apiVersion: ogen.krateo.io/v1alpha1
+metadata:
+  name: {{ .Release.Name }}-pipeline
+spec:
+  oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-pipeline/pipeline.yaml
+  resourceGroup: azuredevops.ogen.krateo.io
+  resource: 
+    kind: Pipeline
+    identifiers:
+    - name # Within the same project, the name of a Pipeline must be unique, so we can use it as an identifier.
+    additionalStatusFields:
+    - id
+    - url
+    - revision
+    verbsDescription:
+    - action: create
+      method: POST
+      path: /{organization}/{project}/_apis/pipelines
+    - action: findby
+      method: GET
+      path: /{organization}/{project}/_apis/pipelines
+    - action: get
+      method: GET
+      path: /api/{organization}/{project}/pipelines/{id} # plugin endpoint
+    - action: update
+      method: PUT
+      path: /api/{organization}/{project}/pipelines/{id} # plugin endpoint
+    - action: delete
+      method: DELETE
+      path: /api/{organization}/{project}/pipelines/{id} # plugin endpoint
+    configurationFields:
+    - fromOpenAPI:
+        name: api-version
+        in: query
+      fromRestDefinition:
+        actions: ["*"] # star means all actions set in the verbsDescription above
+{{ end }}

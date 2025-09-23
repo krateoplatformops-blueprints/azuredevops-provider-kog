@@ -1,0 +1,25 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: PipelinePermission
+metadata:
+  name: test-pipelinepermission-kog-queue
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  configurationRef:                     # Reference to a PipelinePermissionConfiguration CR that contains the authentication information.
+    name: my-pipelinepermission-config
+    namespace: default 
+  
+  organization: "krateo-kog"
+  project: "project-1-classic"
+  resourceType: "queue" 
+  resourceId: "417"
+
+  allPipelines:
+    authorized: false
+  pipelines:
+    - id: 81
+      authorized: true
+    - id: 82
+      authorized: true
+

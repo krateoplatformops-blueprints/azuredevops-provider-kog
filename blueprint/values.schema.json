@@ -1,0 +1,438 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "affinity": {
+      "additionalProperties": true,
+      "description": "Affinity rules for pod assignment",
+      "title": "affinity",
+      "type": "object"
+    },
+    "autoscaling": {
+      "additionalProperties": false,
+      "description": "Horizontal Pod Autoscaler configuration",
+      "properties": {
+        "enabled": {
+          "default": false,
+          "description": "Enable autoscaling",
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "maxReplicas": {
+          "default": 100,
+          "description": "Maximum number of replicas",
+          "minimum": 1,
+          "title": "maxReplicas",
+          "type": "integer"
+        },
+        "minReplicas": {
+          "default": 1,
+          "description": "Minimum number of replicas",
+          "minimum": 1,
+          "title": "minReplicas",
+          "type": "integer"
+        },
+        "targetCPUUtilizationPercentage": {
+          "default": 80,
+          "description": "Target CPU utilization percentage",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "targetCPUUtilizationPercentage",
+          "type": "integer"
+        }
+      },
+      "title": "autoscaling",
+      "type": "object"
+    },
+    "env": {
+      "description": "Environment variables for Azure DevOps API configuration",
+      "items": {
+        "type": "object"
+      },
+      "title": "env",
+      "type": "array"
+    },
+    "fullnameOverride": {
+      "default": "",
+      "description": "Override the fullname of the chart",
+      "title": "fullnameOverride",
+      "type": "string"
+    },
+    "image": {
+      "additionalProperties": false,
+      "description": "Container image configuration of the plugin",
+      "properties": {
+        "pullPolicy": {
+          "default": "IfNotPresent",
+          "description": "Image pull policy",
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ],
+          "title": "pullPolicy",
+          "type": "string"
+        },
+        "repository": {
+          "default": "ghcr.io/krateoplatformops/azuredevops-rest-dynamic-controller-plugin",
+          "description": "Container image repository for the plugin",
+          "title": "repository",
+          "type": "string"
+        },
+        "tag": {
+          "default": "",
+          "description": "Image tag (overrides the chart appVersion if set)",
+          "title": "tag",
+          "type": "string"
+        }
+      },
+      "title": "image",
+      "type": "object"
+    },
+    "imagePullSecrets": {
+      "description": "Image pull secrets for private registries",
+      "items": {
+        "type": "string"
+      },
+      "title": "imagePullSecrets",
+      "type": "array"
+    },
+    "ingress": {
+      "additionalProperties": false,
+      "description": "Ingress configuration",
+      "properties": {
+        "annotations": {
+          "additionalProperties": true,
+          "description": "Ingress annotations",
+          "title": "annotations",
+          "type": "object"
+        },
+        "className": {
+          "default": "",
+          "description": "Ingress class name",
+          "title": "className",
+          "type": "string"
+        },
+        "enabled": {
+          "default": false,
+          "description": "Enable ingress",
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "hosts": {
+          "description": "Ingress hosts configuration",
+          "items": {
+            "type": "object"
+          },
+          "title": "hosts",
+          "type": "array"
+        },
+        "tls": {
+          "description": "TLS configuration",
+          "items": {
+            "type": "object"
+          },
+          "title": "tls",
+          "type": "array"
+        }
+      },
+      "title": "ingress",
+      "type": "object"
+    },
+    "livenessProbe": {
+      "additionalProperties": false,
+      "description": "Liveness probe configuration",
+      "properties": {
+        "httpGet": {
+          "additionalProperties": false,
+          "description": "HTTP GET probe configuration",
+          "properties": {
+            "path": {
+              "default": "/healthz",
+              "description": "HTTP path for health check",
+              "title": "path",
+              "type": "string"
+            },
+            "port": {
+              "default": 8080,
+              "description": "Port for health check",
+              "title": "port",
+              "type": "integer"
+            }
+          },
+          "title": "httpGet",
+          "type": "object"
+        },
+        "initialDelaySeconds": {
+          "default": 30,
+          "description": "Initial delay before probing starts",
+          "minimum": 0,
+          "title": "initialDelaySeconds",
+          "type": "integer"
+        },
+        "periodSeconds": {
+          "default": 10,
+          "description": "Period between probes",
+          "minimum": 1,
+          "title": "periodSeconds",
+          "type": "integer"
+        },
+        "timeoutSeconds": {
+          "default": 5,
+          "description": "Timeout for the probe",
+          "minimum": 1,
+          "title": "timeoutSeconds",
+          "type": "integer"
+        }
+      },
+      "title": "livenessProbe",
+      "type": "object"
+    },
+    "nameOverride": {
+      "default": "",
+      "description": "Override the name of the chart",
+      "title": "nameOverride",
+      "type": "string"
+    },
+    "nodeSelector": {
+      "additionalProperties": true,
+      "description": "Node selector for pod assignment",
+      "title": "nodeSelector",
+      "type": "object"
+    },
+    "plugin": {
+      "additionalProperties": false,
+      "description": "Plugin-specific configuration",
+      "properties": {
+        "suffix": {
+          "default": "plugin",
+          "description": "Suffix added to the deployment name and service name of the plugin",
+          "title": "suffix",
+          "type": "string"
+        }
+      },
+      "title": "plugin",
+      "type": "object"
+    },
+    "podAnnotations": {
+      "additionalProperties": true,
+      "description": "Annotations to add to the pod",
+      "title": "podAnnotations",
+      "type": "object"
+    },
+    "podLabels": {
+      "additionalProperties": true,
+      "description": "Labels to add to the pod",
+      "title": "podLabels",
+      "type": "object"
+    },
+    "podSecurityContext": {
+      "additionalProperties": true,
+      "description": "Pod security context configuration",
+      "title": "podSecurityContext",
+      "type": "object"
+    },
+    "readinessProbe": {
+      "additionalProperties": false,
+      "description": "Readiness probe configuration",
+      "properties": {
+        "httpGet": {
+          "additionalProperties": false,
+          "description": "HTTP GET probe configuration",
+          "properties": {
+            "path": {
+              "default": "/readyz",
+              "description": "HTTP path for readiness check",
+              "title": "path",
+              "type": "string"
+            },
+            "port": {
+              "default": 8080,
+              "description": "Port for readiness check",
+              "title": "port",
+              "type": "integer"
+            }
+          },
+          "title": "httpGet",
+          "type": "object"
+        },
+        "initialDelaySeconds": {
+          "default": 5,
+          "description": "Initial delay before probing starts",
+          "minimum": 0,
+          "title": "initialDelaySeconds",
+          "type": "integer"
+        },
+        "periodSeconds": {
+          "default": 5,
+          "description": "Period between probes",
+          "minimum": 1,
+          "title": "periodSeconds",
+          "type": "integer"
+        },
+        "timeoutSeconds": {
+          "default": 5,
+          "description": "Timeout for the probe",
+          "minimum": 1,
+          "title": "timeoutSeconds",
+          "type": "integer"
+        }
+      },
+      "title": "readinessProbe",
+      "type": "object"
+    },
+    "replicaCount": {
+      "default": 1,
+      "description": "Number of replicas for the plugin deployment",
+      "title": "replicaCount",
+      "type": "integer"
+    },
+    "resources": {
+      "additionalProperties": true,
+      "description": "Resource limits and requests",
+      "title": "resources",
+      "type": "object"
+    },
+    "restdefinitions": {
+      "additionalProperties": false,
+      "description": "RestDefinitions configuration for various Azure DevOps resources",
+      "properties": {
+        "gitrepository": {
+          "additionalProperties": false,
+          "description": "Git repository RestDefinition configuration",
+          "properties": {
+            "enabled": {
+              "default": true,
+              "description": "Enable git repository RestDefinition",
+              "title": "enabled",
+              "type": "boolean"
+            }
+          },
+          "title": "gitrepository",
+          "type": "object"
+        },
+        "pipeline": {
+          "additionalProperties": false,
+          "description": "Pipeline RestDefinition configuration",
+          "properties": {
+            "enabled": {
+              "default": true,
+              "description": "Enable pipeline RestDefinition",
+              "title": "enabled",
+              "type": "boolean"
+            }
+          },
+          "title": "pipeline",
+          "type": "object"
+        },
+        "pipelinepermission": {
+          "additionalProperties": false,
+          "description": "Pipeline permission RestDefinition configuration",
+          "properties": {
+            "enabled": {
+              "default": true,
+              "description": "Enable pipeline permission RestDefinition",
+              "title": "enabled",
+              "type": "boolean"
+            }
+          },
+          "title": "pipelinepermission",
+          "type": "object"
+        }
+      },
+      "title": "restdefinitions",
+      "type": "object"
+    },
+    "securityContext": {
+      "additionalProperties": true,
+      "description": "Security context configuration for the container",
+      "title": "securityContext",
+      "type": "object"
+    },
+    "service": {
+      "additionalProperties": false,
+      "description": "Service configuration",
+      "properties": {
+        "port": {
+          "default": 8080,
+          "description": "Service port",
+          "maximum": 65535,
+          "minimum": 1,
+          "title": "port",
+          "type": "integer"
+        },
+        "type": {
+          "default": "ClusterIP",
+          "description": "Kubernetes service type",
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer",
+            "ExternalName"
+          ],
+          "title": "type",
+          "type": "string"
+        }
+      },
+      "title": "service",
+      "type": "object"
+    },
+    "serviceAccount": {
+      "additionalProperties": false,
+      "description": "Service account configuration",
+      "properties": {
+        "annotations": {
+          "additionalProperties": true,
+          "description": "Annotations to add to the service account",
+          "title": "annotations",
+          "type": "object"
+        },
+        "automount": {
+          "default": true,
+          "description": "Automatically mount a ServiceAccount's API credentials",
+          "title": "automount",
+          "type": "boolean"
+        },
+        "create": {
+          "default": false,
+          "description": "Specifies whether a service account should be created",
+          "title": "create",
+          "type": "boolean"
+        },
+        "name": {
+          "default": "",
+          "description": "The name of the service account to use (generated if not set and create is true)",
+          "title": "name",
+          "type": "string"
+        }
+      },
+      "title": "serviceAccount",
+      "type": "object"
+    },
+    "tolerations": {
+      "description": "Tolerations for pod assignment",
+      "items": {
+        "type": "object"
+      },
+      "title": "tolerations",
+      "type": "array"
+    },
+    "volumeMounts": {
+      "description": "Additional volume mounts for the deployment",
+      "items": {
+        "type": "object"
+      },
+      "title": "volumeMounts",
+      "type": "array"
+    },
+    "volumes": {
+      "description": "Additional volumes for the deployment",
+      "items": {
+        "type": "object"
+      },
+      "title": "volumes",
+      "type": "array"
+    }
+  },
+  "type": "object"
+}
