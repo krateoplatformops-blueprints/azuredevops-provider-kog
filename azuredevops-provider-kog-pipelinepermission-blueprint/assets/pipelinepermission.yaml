@@ -23,7 +23,7 @@ paths:
   /api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{resourceId}:
     get:
       servers:
-        - url: {{ include "webServiceUrl" . }}
+        - url: {{ include "pipelinepermission.webServiceUrl" . }}
           description: URl of the Azure DevOps RDC plugin
       summary: Get the pipeline permission of a resource
       description: Get
