@@ -2,14 +2,17 @@
 
 ***KOG***: (*Krateo Operator Generator*)
 
-This is a Blueprint that deploys the Azure DevOps Provider KOG leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider).
+This is a Krateo Blueprint that deploys the Azure DevOps Provider KOG leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider).
 This provider allows you to manage [Azure DevOps resources](https://azure.microsoft.com/en-us/products/devops) such as `gitrepositories`, `pipelines`, and `pipelinepermissions` using the Krateo platform.
 
 ## Summary
 
 - [Architecture](#architecture)
 - [Requirements](#requirements)
+- [Project structure](#project-structure)
 - [How to install](#how-to-install)
+  - [Full provider installation](#full-provider-installation)
+  - [Single resource installation](#single-resource-installation)
 - [Use in parallel with Krateo Azure DevOps Provider (classic)](#use-in-parallel-with-krateo-azure-devops-provider-classic)
   - [One-way retro-compatibility](#one-way-retro-compatibility)
   - [Helm Lookup functions example](#helm-lookup-functions-example)
@@ -102,9 +105,19 @@ graph TD
 Follow the related Helm Chart [README](https://github.com/krateoplatformops/oasgen-provider-chart) for installation instructions.
 Note that a standard installation of Krateo contains the OASGen Provider.
 
+## Project structure
+
+This project is composed by the following folders:
+- **azuredevops-provider-kog-*-blueprint**: Helm charts that deploys single resources supported by this provider. These charts are useful if you want to deploy only one of the supported resources.
+- **azuredevops-provider-kog-blueprint**: a Helm chart that can deploy all resources supported by this provider. It is useful if you want to manage multiple of the supported resources.
+- **plugins**: a folder that is a monorepo containing multiple Go plugins. The plugins are used to resolve some inconsistencies of the Azure DevOps REST API. If needed, they are deployed as part of the Helm chart of the specific resource.
+
 ## How to install
 
-To install the chart, use the following commands:
+### Full provider installation
+
+To install the **azuredevops-provider-kog-blueprint** Helm chart (full provider), use the following command:
+
 
 ```sh
 helm install azuredevops-provider-kog azuredevops-provider-kog \
@@ -126,18 +139,31 @@ kubectl get restdefinitions.ogen.krateo.io --all-namespaces | awk 'NR==1 || /azu
 
 You should see output similar to this:
 ```sh
-NAMESPACE       NAME                                      READY   AGE
-krateo-system   azuredevops-provider-gitrepository        True    108s
-krateo-system   azuredevops-provider-pipeline             True    108s
-krateo-system   azuredevops-provider-pipelinepermission   True    108s
+NAMESPACE       NAME                                          READY   AGE
+krateo-system   azuredevops-provider-kog-gitrepository        True    108s
+krateo-system   azuredevops-provider-kog-pipeline             True    108s
+krateo-system   azuredevops-provider-kog-pipelinepermission   True    108s
 ```
 
 You can also wait for a specific RestDefinition to be ready with a command like this:
 ```sh
-kubectl wait restdefinitions.ogen.krateo.io azuredevops-provider-gitrepository --for condition=Ready=True --namespace krateo-system --timeout=300s
+kubectl wait restdefinitions.ogen.krateo.io azuredevops-provider-kog-gitrepository --for condition=Ready=True --namespace krateo-system --timeout=300s
 ```
 
 Note that the names of the RestDefinitions and the namespace where the RestDefinitions are installed may vary based on your configuration.
+
+### Single resource installation
+
+To manage a single resource, you can install the specific Helm chart for that resource. For example, to install the `azuredevops-provider-kog-gitrepository` resource, you can use the following command:
+
+```sh
+helm install azuredevops-provider-kog-gitrepository azuredevops-provider-kog-gitrepository \
+  --repo https://marketplace.krateo.io \
+  --namespace <release-namespace> \
+  --create-namespace \
+  --version 1.0.0 \
+  --wait
+```
 
 ## Use "in parallel" with Krateo Azure DevOps Provider (classic)
 
@@ -161,12 +187,12 @@ Note that the following resources:
 - `Pipeline`
 - `PipelinePermission` 
 
-are supported by both the Krateo Azure DevOps Provider (classic) and the Krateo Azure DevOps Provider KOG and a migration guide is available in the [Migration guide](./docs/migration_guide.md) section of the `/docs` folder of this chart.
+are supported by both the Krateo Azure DevOps Provider (classic) and the Krateo Azure DevOps Provider KOG and a migration guide is available in the [Migration guide](./azuredevops-provider-kog-blueprint/docs/migration_guide.md) section of the `/docs` folder of the main chart.
 The migration guide explains how to migrate from the Krateo Azure DevOps Provider (classic) resources to the Krateo Azure DevOps Provider KOG resources (for what concerns `GitRepository`, `Pipeline`, and `PipelinePermission`).
 
 ### One-way retro-compatibility
 
-The Krateo Azure DevOps Provider KOG (this chart) resources can reference resources created by the Krateo Azure DevOps Provider (classic) but not vice-versa.
+The Krateo Azure DevOps Provider KOG (this blueprint) resources can reference resources created by the Krateo Azure DevOps Provider (classic) but not vice-versa.
 
 For instance, a `PipelinePermission` resource created by this chart can reference an `Environment` resource created by the Krateo Azure DevOps Provider (classic) but a `PipelinePermission` resource created by the Krateo Azure DevOps Provider (classic) cannot reference a `Pipeline` resource created by this chart.
 
@@ -579,9 +605,9 @@ They also define the operations that can be performed on those resources. Once t
 - [Azure DevOps REST API](https://learn.microsoft.com/en-us/rest/api/azure/devops/)
 - [Azure DevOps REST API specification](https://github.com/MicrosoftDocs/vsts-rest-api-specs)
 
-A document which describe the changes made to the OpenAPI Specification (OAS) of the resources managed by the Krateo Azure DevOps Provider KOG is available in the [OAS changes](./docs/oas_changes_reference.md) section of the `/docs` folder of this chart.
+A document which describe the changes made to the OpenAPI Specification (OAS) of the resources managed by the Krateo Azure DevOps Provider KOG is available in the [OAS changes](./azuredevops-provider-kog-blueprint/docs/oas_changes_reference.md) section of the `/docs` folder of the main chart.
 
 ## Troubleshooting
 
-For troubleshooting, you can refer to the [Troubleshooting guide](./docs/troubleshooting_guide.md) in the `/docs` folder of this chart. 
+For troubleshooting, you can refer to the [Troubleshooting guide](./azuredevops-provider-kog-blueprint/docs/troubleshooting_guide.md) in the `/docs` folder of the main chart.
 It contains common issues and solutions related to this chart.

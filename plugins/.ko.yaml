@@ -1,0 +1,30 @@
+# .ko.yaml in plugins/
+# This file defines the container image builds for all plugins in the workspace.
+# It's used by the 'ko' tool to build and publish the images.
+
+defaultBaseImage: golang:1.24-alpine
+
+builds:
+- id: gitrepository-plugin
+  dir: ./cmd/gitrepository-plugin
+  main: .
+  ldflags:
+  - -s -w
+  env:
+  - CGO_ENABLED=0
+
+- id: pipeline-plugin
+  dir: ./cmd/pipeline-plugin
+  main: .
+  ldflags:
+  - -s -w
+  env:
+  - CGO_ENABLED=0
+
+- id: pipelinepermission-plugin
+  dir: ./cmd/pipelinepermission-plugin
+  main: .
+  ldflags:
+  - -s -w
+  env:
+  - CGO_ENABLED=0

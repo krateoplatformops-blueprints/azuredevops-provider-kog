@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "gitrepository-plugin-chart.fullname" . }}
+  labels:
+    {{- include "gitrepository-plugin-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "gitrepository-plugin-chart.selectorLabels" . | nindent 4 }}

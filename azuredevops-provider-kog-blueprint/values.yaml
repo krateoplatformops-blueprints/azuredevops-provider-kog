@@ -1,0 +1,35 @@
+# @schema
+# type: object
+# description: Configuration for the GitRepository Blueprint dependency.
+# @schema
+azuredevops-provider-kog-gitrepository-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the GitRepository Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+
+# @schema
+# type: object
+# description: Configuration for the Pipeline Blueprint dependency.
+# @schema
+azuredevops-provider-kog-pipeline-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the Pipeline Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+
+# @schema
+# type: object
+# description: Configuration for the PipelinePermission Blueprint dependency.
+# @schema
+azuredevops-provider-kog-pipelinepermission-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the PipelinePermission Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true

@@ -1,0 +1,149 @@
+name: resource-blueprint-tag
+
+on:
+  push:
+    tags:
+      # This workflow triggers on tags prefixed with a blueprint name, e.g.,
+      # collaborator-blueprint/1.0.3
+      # repo-blueprint/2.8.1
+      - '*-blueprint/[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  release-chart:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write # To publish to gh-pages
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # We need to fetch all history for chart-releaser-action to work correctly
+          fetch-depth: 0
+      
+      - name: Ensure yq is installed
+        run: |
+          if ! command -v yq >/dev/null; then
+            YQ_BIN=/usr/local/bin/yq
+            sudo curl -sSL "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64" -o "${YQ_BIN}"
+            sudo chmod +x "${YQ_BIN}"
+          fi
+
+      - name: Authenticate with GitHub App
+        id: authenticate
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: Parse Git Tag
+        id: parse
+        run: |
+          TAG="${{ github.ref_name }}"
+          
+          # e.g., from "collaborator-blueprint/1.2.3", get "collaborator"
+          CHART_NAME_PREFIX=$(echo "${TAG%%/*}" | sed 's/-blueprint$//')
+
+          # e.g., "azuredevops-provider-kog-collaborator-blueprint"
+          CHART_DIR="azuredevops-provider-kog-${CHART_NAME_PREFIX}-blueprint"
+
+          VERSION="${TAG##*/}"
+
+          echo "Chart Directory: ${CHART_DIR}"
+          echo "New Version: ${VERSION}"
+
+          if [ ! -d "${CHART_DIR}" ]; then
+            echo "Error: Chart directory '${CHART_DIR}' not found."
+            exit 1
+          fi
+
+          echo "chart_dir=${CHART_DIR}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "chart_name_prefix=${CHART_NAME_PREFIX}" >> $GITHUB_OUTPUT
+
+      - name: Check for AppVersion in Chart
+        id: check_appversion
+        run: |
+          CHART_DIR="${{ steps.parse.outputs.chart_dir }}"
+          if [ "$(yq e 'has("appVersion")' "${CHART_DIR}/Chart.yaml")" = "true" ]; then
+            echo "Chart contains appVersion key. Therefore, the resource should have a related plugin."
+            echo "has_appversion=true" >> $GITHUB_OUTPUT
+          else
+            echo "Chart does not contain appVersion key. No related plugin."
+            echo "has_appversion=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get Latest Plugin Image Tag
+        if: steps.check_appversion.outputs.has_appversion == 'true'
+        id: get_image_tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PLUGIN_NAME="${{ steps.parse.outputs.chart_name_prefix }}-plugin"
+          echo "Searching for latest release of plugin: ${PLUGIN_NAME}"
+
+          LATEST_PLUGIN_IMAGE_TAG=$(
+            gh api --paginate repos/${{ github.repository }}/tags --jq '.[].name' \
+              | grep -E "^${PLUGIN_NAME}/" \
+              | sed "s|^${PLUGIN_NAME}/||" \
+              | sort -V \
+              | tail -n1
+          )
+
+          if [ -z "$LATEST_PLUGIN_IMAGE_TAG" ]; then
+            echo "Could not find a release for ${PLUGIN_NAME}. Aborting tag."
+            exit 1
+          else
+            echo "Found latest image tag: ${LATEST_PLUGIN_IMAGE_TAG}"
+          fi
+
+          echo "latest_plugin_image_tag=${LATEST_PLUGIN_IMAGE_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.1.0
+
+      - name: Update Chart and Values
+        id: update_files
+        run: |
+          CHART_DIR="${{ steps.parse.outputs.chart_dir }}"
+          CHART_VERSION="${{ steps.parse.outputs.version }}"
+
+          echo "Updating ${CHART_DIR}/Chart.yaml to version ${CHART_VERSION}"
+          yq e ".version = \"${CHART_VERSION}\"" -i "${CHART_DIR}/Chart.yaml"
+
+          if [ "${{ steps.check_appversion.outputs.has_appversion }}" == "true" ]; then
+            APP_VERSION="${{ steps.get_image_tag.outputs.latest_plugin_image_tag }}"
+            
+            echo "Setting appVersion in Chart.yaml to ${APP_VERSION}"
+            yq e ".appVersion = \"${APP_VERSION}\"" -i "${CHART_DIR}/Chart.yaml"
+          fi
+
+          echo "chart_dir=${CHART_DIR}" >> $GITHUB_OUTPUT
+
+      - name: Lint Helm Chart
+        run: |
+          CHART_DIR="${{ steps.parse.outputs.chart_dir }}"
+          echo "Linting chart in directory: ${CHART_DIR}"
+          helm lint "${CHART_DIR}"
+      
+      # The action helm-gh-pages requires the chart to be in a subdirectory 
+      # but if we have multiple charts we cannot use `charts_dir: .` directly
+      # since it would include all charts. So we move the specific chart to a staging directory.
+      - name: Prepare for Publish
+        run: |
+          CHART_DIR="${{ steps.update_files.outputs.chart_dir }}"
+          rm -rf staging
+          mkdir staging
+          mv "${CHART_DIR}" staging/
+
+      - name: Publish Helm chart
+        uses: stefanprodan/helm-gh-pages@v1.7.0
+        with:
+          token: ${{ steps.authenticate.outputs.token }}
+          charts_dir: staging
+          charts_url: https://marketplace.krateo.io
+          owner: krateoplatformops-blueprints
+          repository: marketplace
+          branch: gh-pages
