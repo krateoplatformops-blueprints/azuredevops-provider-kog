@@ -27,7 +27,7 @@ jobs:
           cache-dependency-path: "plugins/go.work.sum"
       
       - name: Run Go Tests
-        run: go test -v ./pkg/... ./cmd/collaborator-plugin/... ./cmd/teamrepo-plugin/...
+        run: go test -v ./pkg/... ./cmd/gitrepository-plugin/... ./cmd/pipeline-plugin/... ./cmd/pipelinepermission-plugin/...
 
   parse-tag:
     name: Parse Git Tag
