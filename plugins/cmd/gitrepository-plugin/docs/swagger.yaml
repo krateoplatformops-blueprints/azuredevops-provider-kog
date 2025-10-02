@@ -1,0 +1,566 @@
+basePath: /
+definitions:
+  cmd_gitrepository-plugin_handlers.AzureDevOpsTime:
+    properties:
+      time.Time:
+        type: string
+    type: object
+  cmd_gitrepository-plugin_handlers.CreateRepositoryRequest:
+    properties:
+      defaultBranch:
+        type: string
+      initialize:
+        description: Indicates if the repository should be initialized with an initial
+          commit
+        type: boolean
+      name:
+        type: string
+      parentRepository:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.GitRepositoryRefMinimal'
+      project:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.TeamProjectReferenceMinimal'
+    type: object
+  cmd_gitrepository-plugin_handlers.CreateRepositoryResponse:
+    properties:
+      _links:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.ReferenceLinks'
+      creationDate:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.AzureDevOpsTime'
+      defaultBranch:
+        type: string
+      id:
+        type: string
+      isDisabled:
+        type: boolean
+      isFork:
+        type: boolean
+      isInMaintenance:
+        type: boolean
+      name:
+        type: string
+      parentRepository:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.GitRepositoryRef'
+      project:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.TeamProjectReference'
+      remoteUrl:
+        type: string
+      size:
+        type: integer
+      sshUrl:
+        type: string
+      url:
+        type: string
+      validRemoteUrls:
+        items:
+          type: string
+        type: array
+      webUrl:
+        type: string
+    type: object
+  cmd_gitrepository-plugin_handlers.GitRepositoryRef:
+    properties:
+      collection:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.TeamProjectCollectionReference'
+      id:
+        type: string
+      isFork:
+        type: boolean
+      name:
+        type: string
+      project:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.TeamProjectReference'
+      remoteUrl:
+        type: string
+      sshUrl:
+        type: string
+      url:
+        type: string
+    type: object
+  cmd_gitrepository-plugin_handlers.GitRepositoryRefMinimal:
+    properties:
+      id:
+        type: string
+      project:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.TeamProjectReferenceMinimal'
+    type: object
+  cmd_gitrepository-plugin_handlers.ProjectState:
+    enum:
+    - deleting
+    - new
+    - wellFormed
+    - createPending
+    - all
+    - unchanged
+    - deleted
+    type: string
+    x-enum-varnames:
+    - ProjectStateDeleting
+    - ProjectStateNew
+    - ProjectStateWellFormed
+    - ProjectStateCreatePending
+    - ProjectStateAll
+    - ProjectStateUnchanged
+    - ProjectStateDeleted
+  cmd_gitrepository-plugin_handlers.ProjectVisibility:
+    enum:
+    - private
+    - public
+    type: string
+    x-enum-varnames:
+    - ProjectVisibilityPrivate
+    - ProjectVisibilityPublic
+  cmd_gitrepository-plugin_handlers.ReferenceLinks:
+    properties:
+      links:
+        additionalProperties: true
+        type: object
+    type: object
+  cmd_gitrepository-plugin_handlers.TeamProjectCollectionReference:
+    properties:
+      avatarUrl:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  cmd_gitrepository-plugin_handlers.TeamProjectReference:
+    properties:
+      abbreviation:
+        type: string
+      defaultTeamImageUrl:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      lastUpdateTime:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.AzureDevOpsTime'
+      name:
+        type: string
+      revision:
+        type: integer
+      state:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.ProjectState'
+      url:
+        type: string
+      visibility:
+        $ref: '#/definitions/cmd_gitrepository-plugin_handlers.ProjectVisibility'
+    type: object
+  cmd_gitrepository-plugin_handlers.TeamProjectReferenceMinimal:
+    properties:
+      id:
+        type: string
+    type: object
+  pipeline.BuildRepository:
+    properties:
+      id:
+        description: Required
+        type: string
+      type:
+        description: 'Required - enum: unknown, gitHub, azureReposGit, azureReposGitHyphenated'
+        type: string
+    type: object
+  pipeline.GetPipelineResponse:
+    properties:
+      _links:
+        $ref: '#/definitions/pipeline.ReferenceLinks'
+      configuration:
+        $ref: '#/definitions/pipeline.PipelineConfiguration'
+      folder:
+        description: Embedded fields from PipelineBase
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      revision:
+        type: integer
+      url:
+        type: string
+    type: object
+  pipeline.PipelineConfiguration:
+    properties:
+      path:
+        type: string
+      repository:
+        allOf:
+        - $ref: '#/definitions/pipeline.BuildRepository'
+        description: Required
+      type:
+        description: 'enum: unknown, yaml, designerJson, justInTime, designerHyphenJson'
+        type: string
+    type: object
+  pipeline.PipelineConfigurationParameters:
+    properties:
+      path:
+        type: string
+      repository:
+        allOf:
+        - $ref: '#/definitions/pipeline.BuildRepository'
+        description: Required
+      type:
+        description: 'Required - enum: unknown, yaml, designerJson, justInTime, designerHyphenJson'
+        type: string
+    type: object
+  pipeline.ReferenceLinks:
+    properties:
+      links:
+        additionalProperties: true
+        type: object
+    type: object
+  pipeline.UpdatePipelineRequest:
+    properties:
+      configuration:
+        $ref: '#/definitions/pipeline.PipelineConfigurationParameters'
+      folder:
+        type: string
+      id:
+        description: maybe to be removed since RDC does not include it
+        type: integer
+      name:
+        type: string
+      revision:
+        type: integer
+    type: object
+  pipeline.UpdatePipelineResponse:
+    properties:
+      _links:
+        $ref: '#/definitions/pipeline.ReferenceLinks'
+      configuration:
+        $ref: '#/definitions/pipeline.PipelineConfiguration'
+      folder:
+        description: Embedded fields from PipelineBase
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      revision:
+        type: integer
+      url:
+        type: string
+    type: object
+  pipelinepermission.IdentityRef:
+    properties:
+      _links:
+        $ref: '#/definitions/pipelinepermission.ReferenceLinks'
+      descriptor:
+        type: string
+      directoryAlias:
+        type: string
+      displayName:
+        type: string
+      id:
+        type: string
+      imageUrl:
+        type: string
+      inactive:
+        type: boolean
+      isAadIdentity:
+        type: boolean
+      isContainer:
+        type: boolean
+      isDeletedInOrigin:
+        type: boolean
+      profileUrl:
+        type: string
+      uniqueName:
+        type: string
+      url:
+        type: string
+    type: object
+  pipelinepermission.Permission:
+    properties:
+      authorized:
+        type: boolean
+      authorizedBy:
+        $ref: '#/definitions/pipelinepermission.IdentityRef'
+      authorizedOn:
+        type: string
+    type: object
+  pipelinepermission.PipelinePermission:
+    properties:
+      authorized:
+        type: boolean
+      authorizedBy:
+        $ref: '#/definitions/pipelinepermission.IdentityRef'
+      authorizedOn:
+        type: string
+      id:
+        type: integer
+    type: object
+  pipelinepermission.ReferenceLinks:
+    properties:
+      links:
+        additionalProperties: true
+        type: object
+    type: object
+  pipelinepermission.Resource:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  pipelinepermission.ResourcePipelinePermissions:
+    properties:
+      allPipelines:
+        $ref: '#/definitions/pipelinepermission.Permission'
+      pipelines:
+        items:
+          $ref: '#/definitions/pipelinepermission.PipelinePermission'
+        type: array
+      resource:
+        $ref: '#/definitions/pipelinepermission.Resource'
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: contact@krateoplatformops.io
+    name: Krateo Support
+    url: https://krateo.io
+  description: Simple wrapper around Azure DevOps API to provide consistency of API
+    response for Krateo Operator Generator (KOG)
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Azure DevOps GitRepository Plugin API for Krateo Operator Generator (KOG)
+  version: "1.0"
+paths:
+  /api/{organization}/{project}/pipelines/{id}:
+    delete:
+      description: Delete a pipeline using build definitions endpoint
+      operationId: delete-pipeline
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name or ID
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Pipeline ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Basic Auth header (Basic <base64-encoded-username:password>)
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content - Pipeline deleted successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Delete a pipeline
+    get:
+      description: Get
+      operationId: get-pipeline
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name or ID
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Pipeline ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: API version (e.g., 7.2-preview.1)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header (Basic <base64-encoded-username:password>)
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Pipeline details
+          schema:
+            $ref: '#/definitions/pipeline.GetPipelineResponse'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      summary: Get a pipeline
+    put:
+      consumes:
+      - application/json
+      description: Update a pipeline using build definitions endpoint
+      operationId: put-pipeline
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name or ID
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Pipeline ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Basic Auth header (Basic <base64-encoded-username:password>)
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Pipeline update request body
+        in: body
+        name: pipelineUpdate
+        required: true
+        schema:
+          $ref: '#/definitions/pipeline.UpdatePipelineRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated pipeline details
+          schema:
+            $ref: '#/definitions/pipeline.UpdatePipelineResponse'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Update a pipeline
+  /api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{resourceId}:
+    get:
+      description: Get
+      operationId: get-pipelinepermission
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Resource type (e.g., pipelines, repositories)
+        in: path
+        name: resourceType
+        required: true
+        type: string
+      - description: Resource ID (e.g., pipeline ID, repository ID)
+        in: path
+        name: resourceId
+        required: true
+        type: string
+      - description: API version (e.g., 7.2-preview.1)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header (Basic <base64-encoded-username:password>)
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Pipeline permission details
+          schema:
+            $ref: '#/definitions/pipelinepermission.ResourcePipelinePermissions'
+      summary: Get the pipeline permission of a resource
+  /api/{organization}/{projectId}/git/repositories:
+    post:
+      consumes:
+      - application/json
+      description: Create a new GitRepository on Azure DevOps using the provided organization,
+        project, and repository details.
+      operationId: post-gitrepository
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project ID or name
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: API version (e.g., 7.2-preview.2)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Specify the source refs to use while creating a fork repo
+        in: query
+        name: sourceRef
+        type: string
+      - description: Basic Auth header (Basic <base64-encoded-username:password>)
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: GitRepository creation request body (with additional fields handled
+          by the plugin)
+        in: body
+        name: gitrepositoryCreate
+        required: true
+        schema:
+          $ref: '#/definitions/cmd_gitrepository-plugin_handlers.CreateRepositoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: GitRepository details
+          schema:
+            $ref: '#/definitions/cmd_gitrepository-plugin_handlers.CreateRepositoryResponse'
+        "202":
+          description: GitRepository details (repo created but creation of branch
+            deisgnated as default branch is pending, user must create it, then the
+            gitrepository-controller will update the default branch later)
+          schema:
+            $ref: '#/definitions/cmd_gitrepository-plugin_handlers.CreateRepositoryResponse'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      summary: Create a new GitRepository on Azure DevOps
+schemes:
+- http
+swagger: "2.0"
