@@ -1,0 +1,15 @@
+apiVersion: v2
+name: azuredevops-provider-kog-pipeline
+description: A Helm chart for deploying the Azure DevOps KOG Pipeline.
+type: application
+version: PIPELINE_CHART_VERSION
+appVersion: PIPELINE_APP_VERSION
+
+home: https://krateo.io
+icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
+keywords:
+  - generator
+sources:
+  - https://github.com/krateoplatformops-blueprints/azuredevops-provider-kog/tree/main/azuredevops-provider-kog-pipeline-blueprint
+annotations:
+  krateoSupportedVersion: ">= 2.5.1"

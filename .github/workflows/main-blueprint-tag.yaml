@@ -1,0 +1,100 @@
+name: main-blueprint-tag
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  release-main-chart:
+    name: Tag main blueprint chart
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Authenticate with GitHub App
+        id: authenticate
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.1.0
+
+      - name: Ensure yq is installed
+        run: |
+          if ! command -v yq >/dev/null; then
+            YQ_BIN=/usr/local/bin/yq
+            sudo curl -sSL "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64" -o "${YQ_BIN}"
+            sudo chmod +x "${YQ_BIN}"
+          fi
+
+      - name: Resolve Dependencies
+        run: |
+          CHART_FILE="./azuredevops-provider-kog-blueprint/Chart.yaml"
+          HELM_REPO_URL="https://marketplace.krateo.io"
+          HELM_REPO_NAME="krateo-marketplace"
+
+          echo "Setting up Helm repository..."
+          helm repo add ${HELM_REPO_NAME} ${HELM_REPO_URL}
+          helm repo update
+
+          # Dynamically find and replace dependency versions
+          for dep_name in $(yq e '.dependencies[].name' "$CHART_FILE"); do
+            echo "Resolving version for dependency: $dep_name"
+            latest_version=$(helm search repo "${HELM_REPO_NAME}/${dep_name}" -o json | jq -r '.[0].version')
+            
+            if [ -n "$latest_version" ] && [ "$latest_version" != "null" ]; then
+              echo "Found latest version: $latest_version"
+              yq e -i "(.dependencies[] | select(.name == \"${dep_name}\")).version = \"${latest_version}\"" "$CHART_FILE"
+              echo "Updated ${dep_name} to version ${latest_version} in Chart.yaml"
+            else
+              echo "Error: Could not determine latest version of ${dep_name} from Helm repo. Aborting tag."
+              exit 1
+            fi
+          done
+
+          echo "Chart.yaml after resolving dependencies"
+          cat "$CHART_FILE"
+
+      - name: Update Chart Version
+        id: update_files
+        run: |
+          CHART_DIR="azuredevops-provider-kog-blueprint"
+          NEW_VERSION="${{ github.ref_name }}"
+          
+          echo "Updating ${CHART_DIR}/Chart.yaml to version ${NEW_VERSION}"
+          yq e ".version = \"${NEW_VERSION}\"" -i "${CHART_DIR}/Chart.yaml"
+          echo "Updated Chart.yaml:"
+          cat "${CHART_DIR}/Chart.yaml"
+
+          echo "chart_dir=${CHART_DIR}" >> $GITHUB_OUTPUT
+
+      # The action helm-gh-pages requires the chart to be in a subdirectory 
+      # but if we have multiple charts we cannot use `charts_dir: .` directly
+      # since it would include all charts. So we move the specific chart to a staging directory.
+      - name: Prepare for Publish
+        run: |
+          CHART_DIR="${{ steps.update_files.outputs.chart_dir }}"
+          rm -rf staging
+          mkdir staging
+          mv "${CHART_DIR}" staging/  
+      
+      - name: Publish Helm chart
+        uses: stefanprodan/helm-gh-pages@master
+        with:
+          token: ${{ steps.authenticate.outputs.token }}
+          charts_dir: staging
+          charts_url: https://marketplace.krateo.io
+          owner: krateoplatformops-blueprints
+          repository: marketplace
+          branch: gh-pages

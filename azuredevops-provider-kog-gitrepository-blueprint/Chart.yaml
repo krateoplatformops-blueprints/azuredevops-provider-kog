@@ -1,0 +1,15 @@
+apiVersion: v2
+name: azuredevops-provider-kog-gitrepository
+description: A Helm chart for deploying the Azure DevOps KOG GitRepository.
+type: application
+version: GITREPOSITORY_CHART_VERSION
+appVersion: GITREPOSITORY_APP_VERSION
+
+home: https://krateo.io
+icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
+keywords:
+  - generator
+sources:
+  - https://github.com/krateoplatformops-blueprints/azuredevops-provider-kog/tree/main/azuredevops-provider-kog-gitrepository-blueprint
+annotations:
+  krateoSupportedVersion: ">= 2.5.1"
