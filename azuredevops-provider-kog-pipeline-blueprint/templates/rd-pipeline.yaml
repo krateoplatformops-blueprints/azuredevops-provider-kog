@@ -13,6 +13,8 @@ spec:
     - id
     - url
     - revision
+    excludedSpecFields:
+    - id
     verbsDescription:
     - action: create
       method: POST
