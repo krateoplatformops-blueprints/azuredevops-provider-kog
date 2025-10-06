@@ -124,7 +124,7 @@ helm install azuredevops-provider-kog azuredevops-provider-kog \
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  --version 1.0.0 \
+  --version 1.1.0 \
   --wait
 ```
 
@@ -161,7 +161,7 @@ helm install azuredevops-provider-kog-gitrepository azuredevops-provider-kog-git
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  --version 1.0.0 \
+  --version 1.1.0 \
   --wait
 ```
 
