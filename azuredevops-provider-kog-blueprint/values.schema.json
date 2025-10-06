@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "azuredevops-provider-kog-gitrepository-blueprint": {
       "additionalProperties": false,
