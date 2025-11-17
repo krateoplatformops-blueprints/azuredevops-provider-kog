@@ -1,0 +1,387 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.18.0
+spec:
+  conversion:
+    strategy: None
+  group: azuredevops.ogen.krateo.io
+  names:
+    categories:
+    - repositorypermission
+    - restresources
+    - rr
+    kind: RepositoryPermission
+    listKind: RepositoryPermissionList
+    plural: repositorypermissions
+    singular: repositorypermission
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              configurationRef:
+                description: A reference to the Configuration CR that holds all the
+                  needed configuration for this resource. OASGen Provider added this
+                  field automatically.
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    description: Namespace of the referenced Configuration CR. If
+                      not provided, the same namespace will be used.
+                    type: string
+                required:
+                - name
+                type: object
+              organization:
+                description: 'PARAMETER: path - Organization name'
+                type: string
+              permissions:
+                properties:
+                  allow:
+                    properties:
+                      administerpermission:
+                        default: false
+                        type: boolean
+                      createbranch:
+                        default: false
+                        type: boolean
+                      createrepository:
+                        default: false
+                        type: boolean
+                      createtag:
+                        default: false
+                        type: boolean
+                      deleterepository:
+                        default: false
+                        type: boolean
+                      dismissadvsecalerts:
+                        default: false
+                        type: boolean
+                      editpolicies:
+                        default: false
+                        type: boolean
+                      forcepush:
+                        default: false
+                        type: boolean
+                      genericcontribute:
+                        default: false
+                        type: boolean
+                      genericread:
+                        default: false
+                        type: boolean
+                      manageadvsecscanning:
+                        default: false
+                        type: boolean
+                      managenote:
+                        default: false
+                        type: boolean
+                      managepermissions:
+                        default: false
+                        type: boolean
+                      policyexempt:
+                        default: false
+                        type: boolean
+                      pullrequestbypasspolicy:
+                        default: false
+                        type: boolean
+                      pullrequestcontribute:
+                        default: false
+                        type: boolean
+                      removeotherslocks:
+                        default: false
+                        type: boolean
+                      renamerepository:
+                        default: false
+                        type: boolean
+                      viewadvsecalerts:
+                        default: false
+                        type: boolean
+                    type: object
+                  deny:
+                    properties:
+                      administerpermission:
+                        default: false
+                        type: boolean
+                      createbranch:
+                        default: false
+                        type: boolean
+                      createrepository:
+                        default: false
+                        type: boolean
+                      createtag:
+                        default: false
+                        type: boolean
+                      deleterepository:
+                        default: false
+                        type: boolean
+                      dismissadvsecalerts:
+                        default: false
+                        type: boolean
+                      editpolicies:
+                        default: false
+                        type: boolean
+                      forcepush:
+                        default: false
+                        type: boolean
+                      genericcontribute:
+                        default: false
+                        type: boolean
+                      genericread:
+                        default: false
+                        type: boolean
+                      manageadvsecscanning:
+                        default: false
+                        type: boolean
+                      managenote:
+                        default: false
+                        type: boolean
+                      managepermissions:
+                        default: false
+                        type: boolean
+                      policyexempt:
+                        default: false
+                        type: boolean
+                      pullrequestbypasspolicy:
+                        default: false
+                        type: boolean
+                      pullrequestcontribute:
+                        default: false
+                        type: boolean
+                      removeotherslocks:
+                        default: false
+                        type: boolean
+                      renamerepository:
+                        default: false
+                        type: boolean
+                      viewadvsecalerts:
+                        default: false
+                        type: boolean
+                    type: object
+                  identity:
+                    properties:
+                      descriptor:
+                        type: string
+                      name:
+                        type: string
+                      type:
+                        type: string
+                    type: object
+                type: object
+              projectId:
+                description: 'PARAMETER: path - Project ID'
+                type: string
+              repositoryId:
+                description: 'PARAMETER: path - Repository ID'
+                type: string
+            required:
+            - configurationRef
+            - organization
+            - projectId
+            - repositoryId
+            type: object
+          status:
+            properties:
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  description: A Condition that may apply to a resource.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        LastTransitionTime is the last time this condition transitioned from one
+                        status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        A Message containing details about this condition's last transition from
+                        one status to another, if any.
+                      type: string
+                    reason:
+                      description: A Reason for this condition's last transition from
+                        one status to another.
+                      type: string
+                    status:
+                      description: Status of this condition; is it currently True,
+                        False, or Unknown?
+                      type: string
+                    type:
+                      description: |-
+                        Type of this condition. At most one of each condition type may apply to
+                        a resource at any point in time.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              permissions:
+                properties:
+                  allow:
+                    properties:
+                      administerpermission:
+                        default: false
+                        type: boolean
+                      createbranch:
+                        default: false
+                        type: boolean
+                      createrepository:
+                        default: false
+                        type: boolean
+                      createtag:
+                        default: false
+                        type: boolean
+                      deleterepository:
+                        default: false
+                        type: boolean
+                      dismissadvsecalerts:
+                        default: false
+                        type: boolean
+                      editpolicies:
+                        default: false
+                        type: boolean
+                      forcepush:
+                        default: false
+                        type: boolean
+                      genericcontribute:
+                        default: false
+                        type: boolean
+                      genericread:
+                        default: false
+                        type: boolean
+                      manageadvsecscanning:
+                        default: false
+                        type: boolean
+                      managenote:
+                        default: false
+                        type: boolean
+                      managepermissions:
+                        default: false
+                        type: boolean
+                      policyexempt:
+                        default: false
+                        type: boolean
+                      pullrequestbypasspolicy:
+                        default: false
+                        type: boolean
+                      pullrequestcontribute:
+                        default: false
+                        type: boolean
+                      removeotherslocks:
+                        default: false
+                        type: boolean
+                      renamerepository:
+                        default: false
+                        type: boolean
+                      viewadvsecalerts:
+                        default: false
+                        type: boolean
+                    type: object
+                  deny:
+                    properties:
+                      administerpermission:
+                        default: false
+                        type: boolean
+                      createbranch:
+                        default: false
+                        type: boolean
+                      createrepository:
+                        default: false
+                        type: boolean
+                      createtag:
+                        default: false
+                        type: boolean
+                      deleterepository:
+                        default: false
+                        type: boolean
+                      dismissadvsecalerts:
+                        default: false
+                        type: boolean
+                      editpolicies:
+                        default: false
+                        type: boolean
+                      forcepush:
+                        default: false
+                        type: boolean
+                      genericcontribute:
+                        default: false
+                        type: boolean
+                      genericread:
+                        default: false
+                        type: boolean
+                      manageadvsecscanning:
+                        default: false
+                        type: boolean
+                      managenote:
+                        default: false
+                        type: boolean
+                      managepermissions:
+                        default: false
+                        type: boolean
+                      policyexempt:
+                        default: false
+                        type: boolean
+                      pullrequestbypasspolicy:
+                        default: false
+                        type: boolean
+                      pullrequestcontribute:
+                        default: false
+                        type: boolean
+                      removeotherslocks:
+                        default: false
+                        type: boolean
+                      renamerepository:
+                        default: false
+                        type: boolean
+                      viewadvsecalerts:
+                        default: false
+                        type: boolean
+                    type: object
+                  identity:
+                    properties:
+                      descriptor:
+                        type: string
+                      name:
+                        type: string
+                      type:
+                        type: string
+                    type: object
+                type: object
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

@@ -2,8 +2,8 @@
 
 This repository contains the source code of a set of plugins for the Azure DevOps Provider KOG.
 
-Specialized web services that address some inconsistencies in the Azure DevOps REST API
-They are designed to work with the [`rest-dynamic-controller`](https://github.com/krateoplatformops/rest-dynamic-controller/) and [`azuredevops-provider-kog`](https://github.com/krateoplatformops/azuredevops-provider-kog-chart).
+These plugins are specialized web services that address some inconsistencies in the Azure DevOps REST API or provide a way to use Azure DevOps API seamlessly within KOG (Krateo Operator Generator).
+They are designed to work as a middleware between the [`rest-dynamic-controller`](https://github.com/krateoplatformops/rest-dynamic-controller/) and the Azure DevOps REST API.
 
 ## Summary
 

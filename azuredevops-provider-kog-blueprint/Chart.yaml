@@ -24,7 +24,7 @@ keywords:
 sources:
   - https://github.com/krateoplatformops-blueprints/azuredevops-provider-kog
 annotations:
-  krateoSupportedVersion: ">= 2.5.1"
+  krateoSupportedVersion: ">= 2.6.0"
 
 dependencies:
   - name: azuredevops-provider-kog-gitrepository # the name of the dependency chart
@@ -46,3 +46,13 @@ dependencies:
     version: AZUREDEVOPS_PROVIDER_KOG_PULLREQUEST_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-pullrequest-blueprint.enabled
+
+  - name: azuredevops-provider-kog-policyconfiguration # the name of the dependency chart
+    version: AZUREDEVOPS_PROVIDER_KOG_POLICYCONFIGURATION_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-policyconfiguration-blueprint.enabled
+
+  - name: azuredevops-provider-kog-repositorypermission # the name of the dependency chart
+    version: AZUREDEVOPS_PROVIDER_KOG_REPOSITORYPERMISSION_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-repositorypermission-blueprint.enabled

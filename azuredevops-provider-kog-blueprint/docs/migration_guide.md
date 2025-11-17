@@ -6,6 +6,9 @@ Currently, the Azure DevOps Provider KOG supports the following resources:
 - `GitRepository`
 - `Pipeline`
 - `PipelinePermission`
+- `PullRequest`
+- `PolicyConfiguration`
+- `RepositoryPermission`
 
 Therefore, currently, Azure DevOps Provider KOG **is not a drop-in replacement** for the Azure DevOps Provider (classic), but it is a new provider that supports a subset of resources.
 
