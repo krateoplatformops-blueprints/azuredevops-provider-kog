@@ -1,13 +1,13 @@
-# Krateo Azure DevOps Provider KOG - Migration Guide
+# Azure DevOps Provider KOG - Migration Guide
 
-This document provides a guide for migrating from Krateo Azure DevOps Provider (classic) resources to the new Krateo Azure DevOps Provider KOG resources.
+This document provides a guide for migrating from Azure DevOps Provider (classic) resources to the new Azure DevOps Provider KOG resources.
 
-Currently, the Krateo Azure DevOps Provider KOG supports the following resources:
+Currently, the Azure DevOps Provider KOG supports the following resources:
 - `GitRepository`
 - `Pipeline`
 - `PipelinePermission`
 
-Therefore, currently, Krateo Azure DevOps Provider KOG **is not a drop-in replacement** for the Krateo Azure DevOps Provider (classic), but it is a new provider that supports a subset of resources.
+Therefore, currently, Azure DevOps Provider KOG **is not a drop-in replacement** for the Azure DevOps Provider (classic), but it is a new provider that supports a subset of resources.
 
 ## Summary
 

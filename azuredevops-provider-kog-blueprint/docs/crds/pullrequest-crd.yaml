@@ -2,7 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
+    controller-gen.kubebuilder.io/version: v0.18.0
   name: pullrequests.azuredevops.ogen.krateo.io
 spec:
   conversion:
@@ -29,7 +29,6 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Represents the data needed to create a pull request.
         properties:
           apiVersion:
             description: |-
@@ -46,8 +45,15 @@ spec:
               In CamelCase.
               More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             type: string
+          metadata:
+            type: object
           spec:
             properties:
+              autoCompleteSetBy:
+                properties:
+                  id:
+                    type: string
+                type: object
               completionOptions:
                 description: Preferences about how the pull request should be completed.
                 properties:
@@ -57,6 +63,7 @@ spec:
                       == false). Auto-complete always waits for required policies
                       (isBlocking == true).
                     items:
+                      format: int32
                       type: integer
                     type: array
                   bypassPolicy:
@@ -120,6 +127,13 @@ spec:
               description:
                 description: The description of the pull request.
                 type: string
+              ignoreTargetRefAndChooseDynamically:
+                description: This optional parameter allows clients to use server-side
+                  dynamic choices for the target ref. Due to preexisting contracts,
+                  users _must_ specify a target ref, but this option will cause the
+                  server to ignore it and choose dynamically from the user's favorites
+                  (or the default branch).
+                type: boolean
               isDraft:
                 description: Draft / WIP pull request.
                 type: boolean
@@ -143,13 +157,14 @@ spec:
                     type: boolean
                 type: object
               organization:
-                description: 'PARAMETER: path - Organization name'
+                description: 'PARAMETER: path - The name of the Azure DevOps organization.'
                 type: string
               project:
-                description: 'PARAMETER: path - Project name or ID'
+                description: 'PARAMETER: path - Project ID or project name'
                 type: string
               repositoryId:
-                description: 'PARAMETER: path - Repository ID'
+                description: 'PARAMETER: path - The repository ID of the pull request''s
+                  target branch.'
                 type: string
               sourceRefName:
                 description: The name of the source branch of the pull request.
@@ -194,6 +209,7 @@ spec:
                           links are readonly, we only want to expose them as read
                           only.
                         type: object
+                        x-kubernetes-preserve-unknown-fields: true
                     type: object
                   descriptor:
                     description: The descriptor is the primary way to reference the
@@ -294,6 +310,7 @@ spec:
                           links are readonly, we only want to expose them as read
                           only.
                         type: object
+                        x-kubernetes-preserve-unknown-fields: true
                     type: object
                   descriptor:
                     description: The descriptor is the primary way to reference the
@@ -347,21 +364,6 @@ spec:
                 description: 'The date when the pull request was created. (format:
                   date-time)'
                 type: string
-              failedObjectRef:
-                properties:
-                  apiVersion:
-                    description: API version of the object.
-                    type: string
-                  kind:
-                    description: Kind of the object.
-                    type: string
-                  name:
-                    description: Name of the object.
-                    type: string
-                  namespace:
-                    description: Namespace of the object.
-                    type: string
-                type: object
               isDraft:
                 description: Draft / WIP pull request.
                 type: boolean
@@ -383,6 +385,365 @@ spec:
                       type: string
                   type: object
                 type: array
+              lastMergeSourceCommit:
+                description: Provides properties that describe a Git commit and associated
+                  metadata.
+                properties:
+                  _links:
+                    description: The class to represent a collection of REST reference
+                      links.
+                    properties:
+                      links:
+                        description: The readonly view of the links.  Because Reference
+                          links are readonly, we only want to expose them as read
+                          only.
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                    type: object
+                  author:
+                    description: User info and date for Git operations.
+                    properties:
+                      date:
+                        description: 'Date of the Git operation. (format: date-time)'
+                        type: string
+                      email:
+                        description: Email address of the user performing the Git
+                          operation.
+                        type: string
+                      imageUrl:
+                        description: Url for the user's avatar.
+                        type: string
+                      name:
+                        description: Name of the user performing the Git operation.
+                        type: string
+                    type: object
+                  changeCounts:
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                  changes:
+                    description: An enumeration of the changes included with the commit.
+                    items:
+                      properties:
+                        changeId:
+                          description: 'ID of the change within the group of changes.
+                            (format: int32)'
+                          format: int32
+                          type: integer
+                        changeType:
+                          description: The type of change that was made to the item.
+                          enum:
+                          - none
+                          - add
+                          - edit
+                          - encoding
+                          - rename
+                          - delete
+                          - undelete
+                          - branch
+                          - merge
+                          - lock
+                          - rollback
+                          - sourceRename
+                          - targetRename
+                          - property
+                          - all
+                          type: string
+                        item:
+                          description: 'Current version. (format: T)'
+                          type: string
+                        newContent:
+                          properties:
+                            content:
+                              type: string
+                            contentType:
+                              enum:
+                              - rawText
+                              - base64Encoded
+                              type: string
+                          type: object
+                        newContentTemplate:
+                          properties:
+                            name:
+                              description: Name of the Template
+                              type: string
+                            type:
+                              description: Type of the Template
+                              type: string
+                          type: object
+                        originalPath:
+                          description: Original path of item if different from current
+                            path.
+                          type: string
+                        sourceServerItem:
+                          description: Path of the item on the server.
+                          type: string
+                        url:
+                          description: URL to retrieve the item.
+                          type: string
+                      type: object
+                    type: array
+                  comment:
+                    description: Comment or message of the commit.
+                    type: string
+                  commentTruncated:
+                    description: Indicates if the comment is truncated from the full
+                      Git commit comment message.
+                    type: boolean
+                  commitId:
+                    description: ID (SHA-1) of the commit.
+                    type: string
+                  commitTooManyChanges:
+                    description: Indicates that commit contains too many changes to
+                      be displayed
+                    type: boolean
+                  committer:
+                    description: User info and date for Git operations.
+                    properties:
+                      date:
+                        description: 'Date of the Git operation. (format: date-time)'
+                        type: string
+                      email:
+                        description: Email address of the user performing the Git
+                          operation.
+                        type: string
+                      imageUrl:
+                        description: Url for the user's avatar.
+                        type: string
+                      name:
+                        description: Name of the user performing the Git operation.
+                        type: string
+                    type: object
+                  parents:
+                    description: An enumeration of the parent commit IDs for this
+                      commit.
+                    items:
+                      type: string
+                    type: array
+                  push:
+                    properties:
+                      _links:
+                        description: The class to represent a collection of REST reference
+                          links.
+                        properties:
+                          links:
+                            description: The readonly view of the links.  Because
+                              Reference links are readonly, we only want to expose
+                              them as read only.
+                            type: object
+                            x-kubernetes-preserve-unknown-fields: true
+                        type: object
+                      date:
+                        description: '(format: date-time)'
+                        type: string
+                      pushId:
+                        description: '(format: int32)'
+                        format: int32
+                        type: integer
+                      pushedBy:
+                        properties:
+                          _links:
+                            description: The class to represent a collection of REST
+                              reference links.
+                            properties:
+                              links:
+                                description: The readonly view of the links.  Because
+                                  Reference links are readonly, we only want to expose
+                                  them as read only.
+                                type: object
+                                x-kubernetes-preserve-unknown-fields: true
+                            type: object
+                          descriptor:
+                            description: The descriptor is the primary way to reference
+                              the graph subject while the system is running. This
+                              field will uniquely identify the same graph subject
+                              across both Accounts and Organizations.
+                            type: string
+                          directoryAlias:
+                            description: Deprecated - Can be retrieved by querying
+                              the Graph user referenced in the "self" entry of the
+                              IdentityRef "_links" dictionary
+                            type: string
+                          displayName:
+                            description: This is the non-unique display name of the
+                              graph subject. To change this field, you must alter
+                              its value in the source provider.
+                            type: string
+                          id:
+                            type: string
+                          imageUrl:
+                            description: Deprecated - Available in the "avatar" entry
+                              of the IdentityRef "_links" dictionary
+                            type: string
+                          inactive:
+                            description: Deprecated - Can be retrieved by querying
+                              the Graph membership state referenced in the "membershipState"
+                              entry of the GraphUser "_links" dictionary
+                            type: boolean
+                          isAadIdentity:
+                            description: Deprecated - Can be inferred from the subject
+                              type of the descriptor (Descriptor.IsAadUserType/Descriptor.IsAadGroupType)
+                            type: boolean
+                          isContainer:
+                            description: Deprecated - Can be inferred from the subject
+                              type of the descriptor (Descriptor.IsGroupType)
+                            type: boolean
+                          isDeletedInOrigin:
+                            type: boolean
+                          profileUrl:
+                            description: Deprecated - not in use in most preexisting
+                              implementations of ToIdentityRef
+                            type: string
+                          uniqueName:
+                            description: Deprecated - use Domain+PrincipalName instead
+                            type: string
+                          url:
+                            description: This url is the full route to the source
+                              resource of this graph subject.
+                            type: string
+                        type: object
+                      url:
+                        type: string
+                    type: object
+                  remoteUrl:
+                    description: Remote URL path to the commit.
+                    type: string
+                  statuses:
+                    description: A list of status metadata from services and extensions
+                      that may associate additional information to the commit.
+                    items:
+                      properties:
+                        _links:
+                          description: The class to represent a collection of REST
+                            reference links.
+                          properties:
+                            links:
+                              description: The readonly view of the links.  Because
+                                Reference links are readonly, we only want to expose
+                                them as read only.
+                              type: object
+                              x-kubernetes-preserve-unknown-fields: true
+                          type: object
+                        context:
+                          description: Status context that uniquely identifies the
+                            status.
+                          properties:
+                            genre:
+                              description: Genre of the status. Typically name of
+                                the service/tool generating the status, can be empty.
+                              type: string
+                            name:
+                              description: Name identifier of the status, cannot be
+                                null or empty.
+                              type: string
+                          type: object
+                        createdBy:
+                          properties:
+                            _links:
+                              description: The class to represent a collection of
+                                REST reference links.
+                              properties:
+                                links:
+                                  description: The readonly view of the links.  Because
+                                    Reference links are readonly, we only want to
+                                    expose them as read only.
+                                  type: object
+                                  x-kubernetes-preserve-unknown-fields: true
+                              type: object
+                            descriptor:
+                              description: The descriptor is the primary way to reference
+                                the graph subject while the system is running. This
+                                field will uniquely identify the same graph subject
+                                across both Accounts and Organizations.
+                              type: string
+                            directoryAlias:
+                              description: Deprecated - Can be retrieved by querying
+                                the Graph user referenced in the "self" entry of the
+                                IdentityRef "_links" dictionary
+                              type: string
+                            displayName:
+                              description: This is the non-unique display name of
+                                the graph subject. To change this field, you must
+                                alter its value in the source provider.
+                              type: string
+                            id:
+                              type: string
+                            imageUrl:
+                              description: Deprecated - Available in the "avatar"
+                                entry of the IdentityRef "_links" dictionary
+                              type: string
+                            inactive:
+                              description: Deprecated - Can be retrieved by querying
+                                the Graph membership state referenced in the "membershipState"
+                                entry of the GraphUser "_links" dictionary
+                              type: boolean
+                            isAadIdentity:
+                              description: Deprecated - Can be inferred from the subject
+                                type of the descriptor (Descriptor.IsAadUserType/Descriptor.IsAadGroupType)
+                              type: boolean
+                            isContainer:
+                              description: Deprecated - Can be inferred from the subject
+                                type of the descriptor (Descriptor.IsGroupType)
+                              type: boolean
+                            isDeletedInOrigin:
+                              type: boolean
+                            profileUrl:
+                              description: Deprecated - not in use in most preexisting
+                                implementations of ToIdentityRef
+                              type: string
+                            uniqueName:
+                              description: Deprecated - use Domain+PrincipalName instead
+                              type: string
+                            url:
+                              description: This url is the full route to the source
+                                resource of this graph subject.
+                              type: string
+                          type: object
+                        creationDate:
+                          description: 'Creation date and time of the status. (format:
+                            date-time)'
+                          type: string
+                        description:
+                          description: Status description. Typically describes current
+                            state of the status.
+                          type: string
+                        id:
+                          description: 'Status identifier. (format: int32)'
+                          format: int32
+                          type: integer
+                        state:
+                          description: State of the status.
+                          enum:
+                          - notSet
+                          - pending
+                          - succeeded
+                          - failed
+                          - error
+                          - notApplicable
+                          - partiallySucceeded
+                          type: string
+                        targetUrl:
+                          description: URL with status details.
+                          type: string
+                        updatedDate:
+                          description: 'Last update date and time of the status. (format:
+                            date-time)'
+                          type: string
+                      type: object
+                    type: array
+                  url:
+                    description: REST URL for this resource.
+                    type: string
+                  workItems:
+                    description: A list of workitems associated with this commit.
+                    items:
+                      properties:
+                        id:
+                          type: string
+                        url:
+                          type: string
+                      type: object
+                    type: array
+                type: object
               mergeStatus:
                 description: The current status of the pull request merge.
                 enum:
@@ -395,6 +756,7 @@ spec:
                 type: string
               pullRequestId:
                 description: 'The ID of the pull request. (format: int32)'
+                format: int32
                 type: integer
               remoteUrl:
                 description: Used internally.
@@ -413,6 +775,7 @@ spec:
                             links are readonly, we only want to expose them as read
                             only.
                           type: object
+                          x-kubernetes-preserve-unknown-fields: true
                       type: object
                     descriptor:
                       description: The descriptor is the primary way to reference
@@ -486,6 +849,7 @@ spec:
                       description: 'Vote on a pull request:<br /> 10 - approved 5
                         - approved with suggestions 0 - no vote -5 - waiting for author
                         -10 - rejected (format: int16)'
+                      format: int32
                       type: integer
                     votedFor:
                       description: Groups or teams that this reviewer contributed
@@ -495,6 +859,7 @@ spec:
                         vote.  VotedFor is a list of such votes.
                       items:
                         type: object
+                        x-kubernetes-preserve-unknown-fields: true
                       type: array
                   type: object
                 type: array

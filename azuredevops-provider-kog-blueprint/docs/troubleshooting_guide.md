@@ -19,6 +19,7 @@ This document serves as a troubleshooting guide for the Krateo Azure DevOps Prov
     - [Case 3.1: Fork With Invalid `sourceRef`](#case-31-fork-with-invalid-sourceref)
     - [Case 3.2: Fork With No Branch Configuration](#case-32-fork-with-no-branch-configuration)
     - [Case 3.3: Fork With Nonexistent Default Branch](#case-33-fork-with-nonexistent-default-branch)
+- [PolicyConfiguration](#policyconfiguration)
 
 ## GitRepository 
 
@@ -27,8 +28,6 @@ Each case states the input configuration and resulting behavior.
 
 Some sample Custom Resources are provided in the [`/samples/gitrepository/` directory](../chart/samples/gitrepository/) of the chart. 
 Files are named after some of the cases described below, e.g., [`gitrepository_2.3.yaml`](../chart/samples/gitrepository/gitrepository_2.3.yaml) corresponds to Case 2.3.
-
----
 
 ### 1. New Repository Cases
 
@@ -151,11 +150,9 @@ Note: it is not recommended to fork from uninitialized repositories.
   The Kubernetes resource will be in a `Ready: False` state until the user creates the `test-branch` on Azure DevOps.
   After the user manually creates the `test-branch` on the GitRepository (not in the parent), the `gitrepository-controller` will update the repository to set `test-branch` as the default branch. Finally, the GitRepository CR will become `Ready: True`.
 
----
-
-
 ## PolicyConfiguration
 
+To list all available policy types in your Azure DevOps organization, you can use the following `curl` command. Make sure to replace `<ORG>`, `<PROJECT>`, and `TOKEN`:
 ```sh
 curl -X GET "https://dev.azure.com/<ORG>/<PROJECT>/_apis/policy/types?api-version=7.2-preview.1" \
 -H "Authorization: Basic TOKEN"

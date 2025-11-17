@@ -151,8 +151,9 @@ configurationId to id
 to conform with the response bodies
 
 
----
-repository permission
+## `RepositoryPermission`
+
+
 "7.2-preview.1"
 https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/security/7.2/security.json
 https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/security/7.2/security.json
