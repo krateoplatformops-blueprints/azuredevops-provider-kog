@@ -3,7 +3,7 @@
 ***KOG***: (*Krateo Operator Generator*)
 
 This is a Krateo Blueprint that deploys the Azure DevOps Provider KOG leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider).
-This provider allows you to manage [Azure DevOps resources](https://azure.microsoft.com/en-us/products/devops) such as `gitrepositories`, `pipelines`, and `pipelinepermissions` using the Krateo platform.
+This provider allows you to manage [Azure DevOps resources](https://azure.microsoft.com/en-us/products/devops) such as `gitrepositories`, `pipelines`, and `pipelinepermissions` in a Kubernetes-native way using Custom Resources (CRs).
 
 ## Summary
 
@@ -41,7 +41,7 @@ This provider allows you to manage [Azure DevOps resources](https://azure.micros
 
 ## Architecture
 
-The diagram below illustrates the high-level architecture of the Krateo Azure DevOps Provider KOG and how it interacts with the Azure DevOps REST API.
+The diagram below illustrates the (partial) high-level architecture of the Azure DevOps Provider KOG and how it interacts with the Azure DevOps REST API.
 
 ```mermaid
 graph TD
@@ -112,7 +112,7 @@ Note that a standard installation of Krateo already contains the OASGen Provider
 
 This project is composed by the following folders:
 - **azuredevops-provider-kog-*-blueprint**: Helm charts that deploys single resources supported by this provider. These charts are useful if you want to deploy only one of the supported resources.
-- **azuredevops-provider-kog-blueprint**: a Helm chart that can deploy all resources supported by this provider. It is useful if you want to manage multiple of the supported resources.
+- **azuredevops-provider-kog-blueprint**: a Helm chart that can deploy all resources supported by this provider (umbrella chart). It is useful if you want to manage multiple of the supported resources.
 - **plugins**: a folder that is a monorepo containing multiple Go plugins. The plugins are used to resolve some inconsistencies of the Azure DevOps REST API. If needed, they are deployed as part of the Helm chart of the specific resource.
 
 ## How to install
@@ -174,32 +174,38 @@ As a matter of fact, currently, this chart allows you to manage the following re
 - `GitRepository`
 - `Pipeline`
 - `PipelinePermission`
+- `PullRequest`
+- `PolicyConfiguration`
+- `RepositoryPermission`
 
-Other resources (`TeamProject`, `Queue`, `Environment`, etc.) can be managed using the [Krateo Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
+Other resources (`TeamProject`, `Queue`, `Environment`, etc.) can be managed using the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
 For example, you can create a `PipelinePermission` resource that references an `Environment` resource created by the Azure DevOps Provider (classic).
 > [!NOTE]  
-> These references are "by id" or other Azure DevOps resource identifiers but not Kubernetes-native. Meaning that the `PipelinePermission` resource will reference the `Environment` by its `id`, not by a Kubernetes resource name and namespace. Said `id` can be found in the `status` field of the `Environment` resource created by the Krateo Azure DevOps Provider (classic). An example on how to reference resource in this way is available in the [Lookup functions example](#lookup-functions-example) section below.
+> The references used by these resources are "by id" or other Azure DevOps resource identifiers but not Kubernetes-native references. Meaning that the `PipelinePermission` resource will reference the `Environment` by its `id`, not by a Kubernetes resource name and namespace. Said `id` can be usually found in the `status` field of the `Environment` resource created by the Azure DevOps Provider (classic). An example on how to reference resource in this way is available in the [Lookup functions example](#lookup-functions-example) section below.
 
 Therefore the overall scenario is the following:
-- You should use the Krateo Azure DevOps Provider (classic) to manage resources that are not supported by this chart, such as `TeamProject`, `Queue`, `Environment`, etc.
-- You should use the Krateo Azure DevOps Provider KOG (this chart) to manage only resources that are supported: `GitRepository`, `Pipeline`, and `PipelinePermission`.
+- You should use the Azure DevOps Provider (classic) to manage resources that are not supported by this chart, such as `TeamProject`, `Queue`, `Environment`, etc.
+- You should use the Azure DevOps Provider KOG (this chart) to manage only resources that are supported: `GitRepository`, `Pipeline`, and `PipelinePermission`.
 
 Note that the following resources: 
 - `GitRepository`
 - `Pipeline`
 - `PipelinePermission` 
+- `PullRequest`
+- `PolicyConfiguration`
+- `RepositoryPermission`
 
-are supported by both the Krateo Azure DevOps Provider (classic) and the Krateo Azure DevOps Provider KOG and a migration guide is available in the [Migration guide](./azuredevops-provider-kog-blueprint/docs/migration_guide.md) section of the `/docs` folder of the main chart.
-The migration guide explains how to migrate from the Krateo Azure DevOps Provider (classic) resources to the Krateo Azure DevOps Provider KOG resources (for what concerns `GitRepository`, `Pipeline`, and `PipelinePermission`).
+are supported by both the Azure DevOps Provider (classic) and the Azure DevOps Provider KOG and a migration guide is available in the [Migration guide](./azuredevops-provider-kog-blueprint/docs/migration_guide.md) section of the `/docs` folder of the main chart.
+The migration guide explains how to migrate from the Azure DevOps Provider (classic) resources to the Azure DevOps Provider KOG resources (for what concerns `GitRepository`, `Pipeline`, and `PipelinePermission`) whenever possible.
 
 ### One-way retro-compatibility
 
-The Krateo Azure DevOps Provider KOG (this blueprint) resources can reference resources created by the Krateo Azure DevOps Provider (classic) but not vice-versa.
+The Azure DevOps Provider KOG (this blueprint) resources can reference resources created by the Azure DevOps Provider (classic) but not vice-versa.
 
 For instance, a `PipelinePermission` resource created by this chart can reference an `Environment` resource created by the Krateo Azure DevOps Provider (classic) but a `PipelinePermission` resource created by the Krateo Azure DevOps Provider (classic) cannot reference a `Pipeline` resource created by this chart.
 
-This is due to the fact that the Krateo Azure DevOps Provider (classic) uses Kubernetes references (name and namespace) to reference other resources, while the Krateo Azure DevOps Provider KOG (this chart) uses Azure DevOps resource identifiers (e.g., `id`) to reference other resources.
-If you try to reference a resource created by this chart in a resource created by the Krateo Azure DevOps Provider (classic), the controller of the Krateo Azure DevOps Provider (classic) will not be able to find the referenced resource due to the different API group and version used by the Krateo Azure DevOps Provider KOG (this chart).
+This is due to the fact that the Azure DevOps Provider (classic) **uses Kubernetes references** (name and namespace) to reference other resources, while the Azure DevOps Provider KOG (this chart) **uses Azure DevOps resource identifiers** (e.g., `id`) to reference other Azure DevOps resources.
+If you try to reference a resource created by this chart in a resource created by the Azure DevOps Provider (classic), the controller of the Azure DevOps Provider (classic) will not be able to find the referenced resource due to the different API group and version used by the Azure DevOps Provider KOG (this chart).
 
 ### Helm Lookup functions example
 
@@ -231,7 +237,7 @@ spec:
 {{- end }}
 ```
 
-Note that in this example, we used a "short-circuit nil guard" / incremental nil-check chain to ensure that the resources exist and have a `status` field with an `id` before trying to access it. 
+Note that in this example, we used a "**short-circuit nil guard**" / incremental nil-check chain to ensure that the resources exist and have a `status` field with an `id` before trying to access it. 
 For example, `{{- if and $project $project.status $project.status.id }}` checks that `$project` is not nil, that it has a `status` field, and that the `status` field has an `id` field.
 Otherwise the template would fail with a nil pointer dereference error if any of the resources do not exist or do not have the expected fields.
 
@@ -239,11 +245,14 @@ Otherwise the template would fail with a nil pointer dereference error if any of
 
 This chart supports the following resources and operations:
 
-| Resource           | Get  | Create | Update | Delete |
-|--------------------|------|--------|--------|--------|
-| GitRepository      | ✅   | ✅     | ✅     | ✅     |
-| Pipeline           | ✅   | ✅     | ✅     | ✅     |
-| PipelinePermission | ✅   | ✅     | 🟡     | 🚫 Not supported    |
+| Resource            | Get  | Create              | Update | Delete |
+|---------------------|------|---------------------|--------|--------|
+| GitRepository       | ✅   | ✅                  | ✅     | ✅     |
+| Pipeline            | ✅   | ✅                  | ✅     | ✅     |
+| PipelinePermission  | ✅   | ✅                  | 🟡     | 🚫 Not supported |
+| PullRequest         | ✅   | ✅                  | ✅     | 🚫 Not supported |
+| PolicyConfiguration | ✅   | ✅                  | ✅     | ✅     |
+| RepositoryPermission| ✅   | 🚫 Not applicable   | ✅     | 🚫 Not supported |
 
 > [!NOTE]  
 > 🚫 *"Not supported"* means that the operation is not supported by the resource (e.g., the underlying REST API does not support it and therefore the controller does not implement it) while 🚫 *"Not applicable"* means that the operation does not apply to the resource.
@@ -587,27 +596,32 @@ This will enable verbose logging for those specific resources, which can be usef
 
 ## Chart structure
 
-Main components of the chart:
+Main components of the umbrella Helm chart (`azuredevops-provider-kog-blueprint`):
 
-- **RestDefinitions**: These are the core resources needed to manage resources leveraging the Krateo OASGen Provider. In this case, they refers to the OpenAPI Specification to be used for the creation of the Custom Resources (CRs) that represent Azure DevOps resources.
+- **/docs** folder: Contains generated CRDs, migration guides, troubleshooting guides, and references to changes made to the OpenAPI Specification (OAS) files of the resources managed by the Azure DevOps Provider KOG.
+
+- **/samples** folder: Contains example resources for each supported resource type as seen in this README. These examples demonstrate how to create and manage Azure DevOps resources using the Krateo Azure DevOps Provider KOG. The folder contains also example of wrong configurations that can be useful for troubleshooting. The latter annotated with comments explaining the errors.
+
+Main components of the single Helm chart for each supported resource:
+
+- **RestDefinitions**: These are the core resources needed to manage resources leveraging the OASGen Provider. In this case, they refers to the OpenAPI Specification to be used for the creation of the Custom Resources (CRs) that represent Azure DevOps resources.
 They also define the operations that can be performed on those resources. Once the chart is installed, RestDefinitions will be created and as a result, specific controllers will be deployed in the cluster to manage the resources defined with those RestDefinitions.
 
 - **ConfigMaps**: Refer directly to the OpenAPI Specification content in the `/assets` folder.
 
 - **/assets** folder: Contains the selected OpenAPI Specification files for the Azure DevOps REST API.
 
-- **/samples** folder: Contains example resources for each supported resource type as seen in this README. These examples demonstrate how to create and manage Azure DevOps resources using the Krateo Azure DevOps Provider KOG. The folder contains also example of wrong configurations that can be useful for troubleshooting. The latter annotated with comments explaining the errors.
-
 - **Deployment**: Deploys a [plugin](https://github.com/krateoplatformops/azuredevops-rest-dynamic-controller-plugin) that is used as a proxy to resolve some inconsistencies of the Azure DevOps REST API. The specific endpoins managed by the plugin are described in the [plugin README](https://github.com/krateoplatformops/azuredevops-rest-dynamic-controller-plugin/blob/main/README.md)
 
-- **Service**: Exposes the plugin described above, allowing the resource controllers to communicate with the Azure DevOps REST API through the plugin, only if needed.
+- **Service**: Exposes the plugin described above in the cluster, allowing the resource controllers to communicate with the Azure DevOps REST API through the plugin, only if needed.
 
 ## API references
 
+References to the official Azure DevOps REST API documentation and specification:
 - [Azure DevOps REST API](https://learn.microsoft.com/en-us/rest/api/azure/devops/)
 - [Azure DevOps REST API specification](https://github.com/MicrosoftDocs/vsts-rest-api-specs)
 
-A document which describe the changes made to the OpenAPI Specification (OAS) of the resources managed by the Krateo Azure DevOps Provider KOG is available in the [OAS changes](./azuredevops-provider-kog-blueprint/docs/oas_changes_reference.md) section of the `/docs` folder of the main chart.
+A document which describe changes made to the OpenAPI Specification (OAS) files of the resources managed by the Azure DevOps Provider KOG is available in the [OAS changes references](./azuredevops-provider-kog-blueprint/docs/oas_changes_reference.md) file within the `/docs` folder of the main chart.
 
 ## Troubleshooting
 

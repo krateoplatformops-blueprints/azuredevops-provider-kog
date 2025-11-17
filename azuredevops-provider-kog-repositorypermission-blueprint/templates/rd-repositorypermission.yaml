@@ -24,9 +24,10 @@ spec:
           inCustomResource: spec.permissions.identity.name
         - inQuery: identityType
           inCustomResource: spec.permissions.identity.type
-    # We need to use `create` to generate correct spec in the CRD. 
-    # Since currently OASGen do not support using `update` action to populate spec.
+    # We need to use `create` to generate correct spec section in the CRD. 
+    # Since currently OASGen Provider do not support using `update` action to populate spec but only `create` action.
     # At runtime, 'create' action will not be used by RDC.
+    # Indeed, in the README the Create operation is marked as "not applicable".
     - action: create
       method: POST
       path: /plugin/repositorypermission/{organization}/{projectId}/{repositoryId}
