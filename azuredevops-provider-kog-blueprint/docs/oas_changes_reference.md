@@ -1,14 +1,15 @@
 # Krateo Azure DevOps Provider KOG - OpenAPI Specification (OAS) Changes reference
 
-This documents serves as a reference for the changes made to the OpenAPI Specification (OAS) of the resources managed by the Azure DevOps Provider KOG.
-Note that the changes are made to comply with some requirements of the Krateo Rest Dynamic Controller or to fix issues with the Azure DevOps REST API.
+This documents serves as a reference for changes made to the OpenAPI Specification (OAS) of the resources managed by the Azure DevOps Provider KOG.
+Note that the changes are made to **comply with some requirements** of the OASGen Provider and/or Rest Dynamic Controller or to **fix issues or inconsistencies** within the Azure DevOps REST API.
 
 ## Summary
 
-- [Summary](#summary)
 - [GitRepository](#gitrepository)
 - [Pipeline](#pipeline)
 - [PipelinePermission](#pipelinepermission)
+- [PullRequest](#pullrequest)
+- [Policy](#policy)
 
 ## `GitRepository`
 
@@ -81,3 +82,79 @@ An `enum` has been added to the `resourceType` field for both the GET and PATCH 
 +       - variablegroup
 +       - securefile
 ```
+
+## `PullRequest`
+
+**Version**: `7.2-preview.2`
+**Original file**:
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/git/7.2/git.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/03cce9dd0355aa5a5fa808dcc0bd15aadda383b9/specification/git/7.2/git.json
+
+**Transformations**: 
+- Original file is converted from JSON to YAML and from swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
+- File is pruned to only include the endpoints and schemas relevant to Pull Requests.
+
+**List of change made to the OpenAPI Specification (OAS)**:
+- Added the following plugin endpoints:
+  - `PATCH /api/{organization}/{project}/git/repositories/{repositoryId}/pullrequests/{pullRequestId}`
+- Commented out the following endpoints that are not used in favor of the new plugin endpoints:
+  - `PATCH /{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}`
+- Commented out in every endpoint the portion:
+```yaml
+      security:
+      - oauth2:
+        - vso.code_write
+```
+since authentication is handled at the root level of the file and with basic auth scheme.
+- Modified status code for the `POST /{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests` endpoint from `200` to `201` since the API returns `201 Created` on successful creation and not `200 OK`.
+
+- Created new schemas for request bodies (`CreatePullRequestReq` and `UpdatePullRequestReq`), to ensure that only the relevant fields are included when creating or updating a pull request.
+
+- Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller.
+
+- Commented out `x-ms-*` items.
+
+- Commented out the parameters section at root level as it just to inform about api versions
+
+
+
+
+
+  -d '{
+    "status": "completed"
+  }'
+
+{"$id":"1","innerException":null,"message":"Invalid argument value.\r\nParameter name: You must specify a valid LastMergeSourceCommit to perform this operation.","typeName":"Microsoft.TeamFoundation.SourceControl.WebServer.InvalidArgumentValueException, Microsoft.TeamFoundation.SourceControl.WebServer","typeKey":"InvalidArgumentValueException","errorCode":0,"eventId":0}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## `Policy`
+
+TO BE COMPLETED
+
+created:
+- PolicyReq
+
+- PolicyConfigurationSettings
+
+- PolicyScope
+
+thanks to
+https://github.com/MicrosoftDocs/vsts-rest-api-specs/tree/master/specification/policy/7.2/httpExamples
+
+
+changed:
+configurationId to id
+to conform with the response bodies

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-repositorypermission
+data:
+  repositorypermission.yaml: |
+{{ tpl (.Files.Get "assets/repositorypermission.yaml") . | indent 4 }}

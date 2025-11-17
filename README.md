@@ -49,6 +49,8 @@ graph TD
 
     APC -- Direct calls --> ADO_API
 
+    APC_KOG -- Uses --> KOG
+
     KOG -- Instanciates --> RDC1
     KOG -- Instanciates --> RDC2
     KOG -- Instanciates --> RDC3
@@ -71,7 +73,8 @@ graph TD
 
     subgraph Krateo Ecosystem
         APC[azuredevops-provider <br> 'classic']
-        KOG[azuredevops-provider-kog]
+        APC_KOG[azuredevops-provider-kog]
+        KOG[oasgen-provider]
         RDC1[rest-dynamic-controller-1 <br> Pipeline]
         RDC2[rest-dynamic-controller-2 <br> PipelinePermission]
         RDC3[rest-dynamic-controller-3 <br> GitRepository]
@@ -101,9 +104,9 @@ graph TD
 
 ## Requirements
 
-[Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) (0.6.0+) should be installed in your cluster. 
+[Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) (0.8.0+) should be installed in your cluster. 
 Follow the related Helm Chart [README](https://github.com/krateoplatformops/oasgen-provider-chart) for installation instructions.
-Note that a standard installation of Krateo contains the OASGen Provider.
+Note that a standard installation of Krateo already contains the OASGen Provider.
 
 ## Project structure
 
@@ -117,7 +120,6 @@ This project is composed by the following folders:
 ### Full provider installation
 
 To install the **azuredevops-provider-kog-blueprint** Helm chart (full provider), use the following command:
-
 
 ```sh
 helm install azuredevops-provider-kog azuredevops-provider-kog \

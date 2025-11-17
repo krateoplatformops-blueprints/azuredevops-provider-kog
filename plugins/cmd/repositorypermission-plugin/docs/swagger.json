@@ -1,0 +1,278 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Simple wrapper around Azure DevOps API to provide consistency of API response for Krateo Operator Generator (KOG)",
+        "title": "Azure DevOps RepositoryPermission Plugin API for Krateo Operator Generator (KOG)",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Krateo Support",
+            "url": "https://krateo.io",
+            "email": "contact@krateoplatformops.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/plugin/repositorypermission/{organization}/{projectId}/{repositoryId}": {
+            "get": {
+                "description": "Retrieve the permissions for a specific repository in Azure DevOps",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Repository Permissions"
+                ],
+                "summary": "Get repository permissions",
+                "operationId": "get-repositorypermission",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Organization name",
+                        "name": "organization",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Repository ID",
+                        "name": "repositoryId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Type of identity (e.g., 'azure-group', 'build-service')",
+                        "name": "identityType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Name of the identity (e.g., Contributors), not used if identityType is 'build-service' or if identityDescriptor is provided",
+                        "name": "identityName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Descriptor of the identity, has priority over identityType and identityName",
+                        "name": "identityDescriptor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "API version (e.g., 7.2-preview.2)",
+                        "name": "api-version",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Basic Auth header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retrieved repository permission",
+                        "schema": {
+                            "$ref": "#/definitions/repositorypermission.RepositoryPermissionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Set or update the permissions for a specific repository in Azure DevOps. Identity information comes from the request body.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Repository Permissions"
+                ],
+                "summary": "Set repository permissions",
+                "operationId": "post-repositorypermission",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Organization name",
+                        "name": "organization",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Repository ID",
+                        "name": "repositoryId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "API version (e.g., 7.2-preview.2)",
+                        "name": "api-version",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Basic Auth header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Permission settings to apply. Identity info (type, name, descriptor) is specified in permissions.identity.",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repositorypermission.RepositoryPermissionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated repository permission",
+                        "schema": {
+                            "$ref": "#/definitions/repositorypermission.RepositoryPermissionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "repositorypermission.PermissionsInfo": {
+            "type": "object",
+            "properties": {
+                "allow": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                },
+                "deny": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                },
+                "identity": {
+                    "$ref": "#/definitions/repositorypermission.RepositoryPermissionIdentity"
+                }
+            }
+        },
+        "repositorypermission.RepositoryPermissionIdentity": {
+            "type": "object",
+            "properties": {
+                "descriptor": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "repositorypermission.RepositoryPermissionRequest": {
+            "type": "object",
+            "properties": {
+                "permissions": {
+                    "$ref": "#/definitions/repositorypermission.PermissionsInfo"
+                }
+            }
+        },
+        "repositorypermission.RepositoryPermissionResponse": {
+            "type": "object",
+            "properties": {
+                "organization": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "$ref": "#/definitions/repositorypermission.PermissionsInfo"
+                },
+                "projectId": {
+                    "type": "string"
+                },
+                "repositoryId": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,342 @@
+openapi: 3.0.1
+info:
+  title: Azure DevOps RepositoryPermission Plugin API for Krateo Operator Generator (KOG)
+  description: Simple wrapper around Azure DevOps API to provide consistency of API response for Krateo Operator Generator (KOG)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Krateo Support
+    url: https://krateo.io
+    email: contact@krateoplatformops.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: "1.0"
+servers:
+  - url: {{ include "repositorypermission.webServiceUrl" . }}
+paths:
+  /plugin/repositorypermission/{organization}/{projectId}/{repositoryId}:
+    get:
+      tags:
+        - Repository Permissions
+      summary: Get repository permissions
+      description: Retrieve the permissions for a specific repository in Azure DevOps
+      operationId: get-repositorypermission
+      parameters:
+        - name: organization
+          in: path
+          description: Organization name
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: repositoryId
+          in: path
+          description: Repository ID
+          required: true
+          schema:
+            type: string
+        - name: identityType
+          in: query
+          description: Type of identity (e.g., 'azure-group', 'build-service')
+          schema:
+            type: string
+        - name: identityName
+          in: query
+          description: Name of the identity (e.g., Contributors), not used if identityType is 'build-service' or if identityDescriptor is provided
+          schema:
+            type: string
+        - name: identityDescriptor
+          in: query
+          description: Descriptor of the identity, has priority over identityType and identityName
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.2)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Retrieved repository permission
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/repositorypermission.RepositoryPermissionResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+    post:
+      tags:
+        - Repository Permissions
+      summary: Set repository permissions
+      description: Set or update the permissions for a specific repository in Azure DevOps. Identity information comes from the request body.
+      operationId: post-repositorypermission
+      parameters:
+        - name: organization
+          in: path
+          description: Organization name
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: repositoryId
+          in: path
+          description: Repository ID
+          required: true
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.2)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Permission settings to apply. Identity info (type, name, descriptor) is specified in permissions.identity.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/repositorypermission.RepositoryPermissionRequest'
+        required: true
+      responses:
+        "200":
+          description: Updated repository permission
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/repositorypermission.RepositoryPermissionResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    repositorypermission.PermissionsInfo:
+      type: object
+      properties:
+        allow:
+          type: object
+          # FIXED
+          #additionalProperties:
+          #  type: boolean
+          properties:
+            administerpermission:
+              type: boolean
+              default: false
+            genericread:
+              type: boolean
+              default: false
+            genericcontribute:
+              type: boolean
+              default: false
+            forcepush:
+              type: boolean
+              default: false
+            createbranch:
+              type: boolean
+              default: false
+            createtag:
+              type: boolean
+              default: false
+            managenote:
+              type: boolean
+              default: false
+            policyexempt:
+              type: boolean
+              default: false
+            createrepository:
+              type: boolean
+              default: false
+            deleterepository:
+              type: boolean
+              default: false
+            renamerepository:
+              type: boolean
+              default: false
+            editpolicies:
+              type: boolean
+              default: false
+            removeotherslocks:
+              type: boolean
+              default: false
+            managepermissions:
+              type: boolean
+              default: false
+            pullrequestcontribute:
+              type: boolean
+              default: false
+            pullrequestbypasspolicy:
+              type: boolean
+              default: false
+            viewadvsecalerts:
+              type: boolean
+              default: false
+            dismissadvsecalerts:
+              type: boolean
+              default: false
+            manageadvsecscanning:
+              type: boolean
+              default: false
+        deny:
+          type: object
+          # FIXED
+          #additionalProperties:
+          #  type: boolean
+          properties:
+            administerpermission:
+              type: boolean
+              default: false
+            genericread:
+              type: boolean
+              default: false
+            genericcontribute:
+              type: boolean
+              default: false
+            forcepush:
+              type: boolean
+              default: false
+            createbranch:
+              type: boolean
+              default: false
+            createtag:
+              type: boolean
+              default: false
+            managenote:
+              type: boolean
+              default: false
+            policyexempt:
+              type: boolean
+              default: false
+            createrepository:
+              type: boolean
+              default: false
+            deleterepository:
+              type: boolean
+              default: false
+            renamerepository:
+              type: boolean
+              default: false
+            editpolicies:
+              type: boolean
+              default: false
+            removeotherslocks:
+              type: boolean
+              default: false
+            managepermissions:
+              type: boolean
+              default: false
+            pullrequestcontribute:
+              type: boolean
+              default: false
+            pullrequestbypasspolicy:
+              type: boolean
+              default: false
+            viewadvsecalerts:
+              type: boolean
+              default: false
+            dismissadvsecalerts:
+              type: boolean
+              default: false
+            manageadvsecscanning:
+              type: boolean
+              default: false
+        identity:
+          $ref: '#/components/schemas/repositorypermission.RepositoryPermissionIdentity'
+    repositorypermission.RepositoryPermissionIdentity:
+      type: object
+      properties:
+        descriptor:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+    repositorypermission.RepositoryPermissionRequest:
+      type: object
+      properties:
+        permissions:
+          $ref: '#/components/schemas/repositorypermission.PermissionsInfo'
+    repositorypermission.RepositoryPermissionResponse:
+      type: object
+      properties:
+        organization:
+          type: string
+        permissions:
+          $ref: '#/components/schemas/repositorypermission.PermissionsInfo'
+        projectId:
+          type: string
+        repositoryId:
+          type: string
+  
+  
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the token as the password.
+      scheme: basic
+x-original-swagger-version: "2.0"

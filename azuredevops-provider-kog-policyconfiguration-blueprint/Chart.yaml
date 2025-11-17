@@ -1,0 +1,15 @@
+apiVersion: v2
+name: azuredevops-provider-kog-policyconfiguration
+description: A Helm chart for deploying the Azure DevOps KOG Policy Configuration.
+type: application
+version: 0.0.1
+#appVersion: POLICYCONFIGURATION_APP_VERSION
+
+home: https://krateo.io
+icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
+keywords:
+  - generator
+sources:
+  - https://github.com/krateoplatformops-blueprints/azuredevops-provider-kog/tree/main/azuredevops-provider-kog-policyconfiguration-blueprint
+annotations:
+  krateoSupportedVersion: ">= 2.6.0"

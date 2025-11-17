@@ -1,0 +1,1073 @@
+basePath: /
+definitions:
+  gitrepository.AzureDevOpsTime:
+    properties:
+      time.Time:
+        type: string
+    type: object
+  gitrepository.CreateRepositoryRequest:
+    properties:
+      defaultBranch:
+        type: string
+      initialize:
+        description: Indicates if the repository should be initialized with an initial
+          commit
+        type: boolean
+      name:
+        type: string
+      parentRepository:
+        $ref: '#/definitions/gitrepository.GitRepositoryRefMinimal'
+      project:
+        $ref: '#/definitions/gitrepository.TeamProjectReferenceMinimal'
+    type: object
+  gitrepository.CreateRepositoryResponse:
+    properties:
+      _links:
+        $ref: '#/definitions/gitrepository.ReferenceLinks'
+      creationDate:
+        $ref: '#/definitions/gitrepository.AzureDevOpsTime'
+      defaultBranch:
+        type: string
+      id:
+        type: string
+      isDisabled:
+        type: boolean
+      isFork:
+        type: boolean
+      isInMaintenance:
+        type: boolean
+      name:
+        type: string
+      parentRepository:
+        $ref: '#/definitions/gitrepository.GitRepositoryRef'
+      project:
+        $ref: '#/definitions/gitrepository.TeamProjectReference'
+      remoteUrl:
+        type: string
+      size:
+        type: integer
+      sshUrl:
+        type: string
+      url:
+        type: string
+      validRemoteUrls:
+        items:
+          type: string
+        type: array
+      webUrl:
+        type: string
+    type: object
+  gitrepository.GitRepositoryRef:
+    properties:
+      collection:
+        $ref: '#/definitions/gitrepository.TeamProjectCollectionReference'
+      id:
+        type: string
+      isFork:
+        type: boolean
+      name:
+        type: string
+      project:
+        $ref: '#/definitions/gitrepository.TeamProjectReference'
+      remoteUrl:
+        type: string
+      sshUrl:
+        type: string
+      url:
+        type: string
+    type: object
+  gitrepository.GitRepositoryRefMinimal:
+    properties:
+      id:
+        type: string
+      project:
+        $ref: '#/definitions/gitrepository.TeamProjectReferenceMinimal'
+    type: object
+  gitrepository.ProjectState:
+    enum:
+    - deleting
+    - new
+    - wellFormed
+    - createPending
+    - all
+    - unchanged
+    - deleted
+    type: string
+    x-enum-varnames:
+    - ProjectStateDeleting
+    - ProjectStateNew
+    - ProjectStateWellFormed
+    - ProjectStateCreatePending
+    - ProjectStateAll
+    - ProjectStateUnchanged
+    - ProjectStateDeleted
+  gitrepository.ProjectVisibility:
+    enum:
+    - private
+    - public
+    type: string
+    x-enum-varnames:
+    - ProjectVisibilityPrivate
+    - ProjectVisibilityPublic
+  gitrepository.ReferenceLinks:
+    properties:
+      links:
+        additionalProperties: true
+        type: object
+    type: object
+  gitrepository.TeamProjectCollectionReference:
+    properties:
+      avatarUrl:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  gitrepository.TeamProjectReference:
+    properties:
+      abbreviation:
+        type: string
+      defaultTeamImageUrl:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      lastUpdateTime:
+        $ref: '#/definitions/gitrepository.AzureDevOpsTime'
+      name:
+        type: string
+      revision:
+        type: integer
+      state:
+        $ref: '#/definitions/gitrepository.ProjectState'
+      url:
+        type: string
+      visibility:
+        $ref: '#/definitions/gitrepository.ProjectVisibility'
+    type: object
+  gitrepository.TeamProjectReferenceMinimal:
+    properties:
+      id:
+        type: string
+    type: object
+  pipeline.BuildRepository:
+    properties:
+      id:
+        description: Required
+        type: string
+      type:
+        description: 'Required - enum: unknown, gitHub, azureReposGit, azureReposGitHyphenated'
+        type: string
+    type: object
+  pipeline.GetPipelineResponse:
+    properties:
+      _links:
+        $ref: '#/definitions/pipeline.ReferenceLinks'
+      configuration:
+        $ref: '#/definitions/pipeline.PipelineConfiguration'
+      folder:
+        description: Embedded fields from PipelineBase
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      revision:
+        type: integer
+      url:
+        type: string
+    type: object
+  pipeline.PipelineConfiguration:
+    properties:
+      path:
+        type: string
+      repository:
+        allOf:
+        - $ref: '#/definitions/pipeline.BuildRepository'
+        description: Required
+      type:
+        description: 'enum: unknown, yaml, designerJson, justInTime, designerHyphenJson'
+        type: string
+    type: object
+  pipeline.PipelineConfigurationParameters:
+    properties:
+      path:
+        type: string
+      repository:
+        allOf:
+        - $ref: '#/definitions/pipeline.BuildRepository'
+        description: Required
+      type:
+        description: 'Required - enum: unknown, yaml, designerJson, justInTime, designerHyphenJson'
+        type: string
+    type: object
+  pipeline.ReferenceLinks:
+    properties:
+      links:
+        additionalProperties: true
+        type: object
+    type: object
+  pipeline.UpdatePipelineRequest:
+    properties:
+      configuration:
+        $ref: '#/definitions/pipeline.PipelineConfigurationParameters'
+      folder:
+        type: string
+      id:
+        description: maybe to be removed since RDC does not include it
+        type: integer
+      name:
+        type: string
+      revision:
+        type: integer
+    type: object
+  pipeline.UpdatePipelineResponse:
+    properties:
+      _links:
+        $ref: '#/definitions/pipeline.ReferenceLinks'
+      configuration:
+        $ref: '#/definitions/pipeline.PipelineConfiguration'
+      folder:
+        description: Embedded fields from PipelineBase
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      revision:
+        type: integer
+      url:
+        type: string
+    type: object
+  pipelinepermission.IdentityRef:
+    properties:
+      _links:
+        $ref: '#/definitions/pipelinepermission.ReferenceLinks'
+      descriptor:
+        type: string
+      directoryAlias:
+        type: string
+      displayName:
+        type: string
+      id:
+        type: string
+      imageUrl:
+        type: string
+      inactive:
+        type: boolean
+      isAadIdentity:
+        type: boolean
+      isContainer:
+        type: boolean
+      isDeletedInOrigin:
+        type: boolean
+      profileUrl:
+        type: string
+      uniqueName:
+        type: string
+      url:
+        type: string
+    type: object
+  pipelinepermission.Permission:
+    properties:
+      authorized:
+        type: boolean
+      authorizedBy:
+        $ref: '#/definitions/pipelinepermission.IdentityRef'
+      authorizedOn:
+        type: string
+    type: object
+  pipelinepermission.PipelinePermission:
+    properties:
+      authorized:
+        type: boolean
+      authorizedBy:
+        $ref: '#/definitions/pipelinepermission.IdentityRef'
+      authorizedOn:
+        type: string
+      id:
+        type: integer
+    type: object
+  pipelinepermission.ReferenceLinks:
+    properties:
+      links:
+        additionalProperties: true
+        type: object
+    type: object
+  pipelinepermission.Resource:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  pipelinepermission.ResourcePipelinePermissions:
+    properties:
+      allPipelines:
+        $ref: '#/definitions/pipelinepermission.Permission'
+      pipelines:
+        items:
+          $ref: '#/definitions/pipelinepermission.PipelinePermission'
+        type: array
+      resource:
+        $ref: '#/definitions/pipelinepermission.Resource'
+    type: object
+  pullrequest.GitChange:
+    properties:
+      changeId:
+        type: integer
+      changeType:
+        type: string
+      item:
+        type: string
+      newContent:
+        $ref: '#/definitions/pullrequest.ItemContent'
+      newContentTemplate:
+        $ref: '#/definitions/pullrequest.GitTemplate'
+      originalPath:
+        type: string
+      sourceServerItem:
+        type: string
+      url:
+        type: string
+    type: object
+  pullrequest.GitCommitRef:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      author:
+        $ref: '#/definitions/pullrequest.GitUserDate'
+      changeCounts:
+        additionalProperties:
+          type: integer
+        type: object
+      changes:
+        items:
+          $ref: '#/definitions/pullrequest.GitChange'
+        type: array
+      comment:
+        type: string
+      commentTruncated:
+        type: boolean
+      commitId:
+        type: string
+      committer:
+        $ref: '#/definitions/pullrequest.GitUserDate'
+      parents:
+        items:
+          type: string
+        type: array
+      remoteUrl:
+        type: string
+      statuses:
+        items:
+          $ref: '#/definitions/pullrequest.GitStatus'
+        type: array
+      url:
+        type: string
+      workItems:
+        items:
+          $ref: '#/definitions/pullrequest.ResourceRef'
+        type: array
+    type: object
+  pullrequest.GitForkRef:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      creator:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      isLocked:
+        type: boolean
+      isLockedBy:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      name:
+        type: string
+      objectId:
+        type: string
+      peeledObjectId:
+        type: string
+      repository:
+        $ref: '#/definitions/pullrequest.GitRepository'
+      statuses:
+        items:
+          $ref: '#/definitions/pullrequest.GitStatus'
+        type: array
+      url:
+        type: string
+    type: object
+  pullrequest.GitPullRequest:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      artifactId:
+        type: string
+      autoCompleteSetBy:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      closedBy:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      closedDate:
+        type: string
+      codeReviewId:
+        type: integer
+      commits:
+        items:
+          $ref: '#/definitions/pullrequest.GitCommitRef'
+        type: array
+      completionOptions:
+        $ref: '#/definitions/pullrequest.GitPullRequestCompletionOptions'
+      completionQueueTime:
+        type: string
+      createdBy:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      creationDate:
+        type: string
+      description:
+        type: string
+      forkSource:
+        $ref: '#/definitions/pullrequest.GitForkRef'
+      isDraft:
+        type: boolean
+      labels:
+        items:
+          $ref: '#/definitions/pullrequest.WebApiTagDefinition'
+        type: array
+      lastMergeCommit:
+        $ref: '#/definitions/pullrequest.GitCommitRef'
+      lastMergeSourceCommit:
+        $ref: '#/definitions/pullrequest.GitCommitRef'
+      lastMergeTargetCommit:
+        $ref: '#/definitions/pullrequest.GitCommitRef'
+      mergeFailureMessage:
+        type: string
+      mergeFailureType:
+        type: string
+      mergeId:
+        type: string
+      mergeOptions:
+        $ref: '#/definitions/pullrequest.GitPullRequestMergeOptions'
+      mergeStatus:
+        type: string
+      pullRequestId:
+        type: integer
+      remoteUrl:
+        type: string
+      repository:
+        $ref: '#/definitions/pullrequest.GitRepository'
+      reviewers:
+        items:
+          $ref: '#/definitions/pullrequest.IdentityRefWithVote'
+        type: array
+      sourceRefName:
+        type: string
+      status:
+        type: string
+      supportsIterations:
+        type: boolean
+      targetRefName:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+      workItemRefs:
+        items:
+          $ref: '#/definitions/pullrequest.ResourceRef'
+        type: array
+    type: object
+  pullrequest.GitPullRequestCompletionOptions:
+    properties:
+      autoCompleteIgnoreConfigIds:
+        items:
+          type: integer
+        type: array
+      bypassPolicy:
+        type: boolean
+      bypassReason:
+        type: string
+      deleteSourceBranch:
+        type: boolean
+      mergeCommitMessage:
+        type: string
+      mergeStrategy:
+        type: string
+      squashMerge:
+        type: boolean
+      transitionWorkItems:
+        type: boolean
+      triggeredByAutoComplete:
+        type: boolean
+    type: object
+  pullrequest.GitPullRequestMergeOptions:
+    properties:
+      conflictAuthorshipCommits:
+        type: boolean
+      detectRenameFalsePositives:
+        type: boolean
+      disableRenames:
+        type: boolean
+    type: object
+  pullrequest.GitRepository:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      defaultBranch:
+        type: string
+      id:
+        type: string
+      isFork:
+        type: boolean
+      name:
+        type: string
+      parentRepository:
+        $ref: '#/definitions/pullrequest.GitRepositoryRef'
+      project:
+        $ref: '#/definitions/pullrequest.TeamProjectReference'
+      remoteUrl:
+        type: string
+      size:
+        type: integer
+      sshUrl:
+        type: string
+      url:
+        type: string
+      webUrl:
+        type: string
+    type: object
+  pullrequest.GitRepositoryRef:
+    properties:
+      collection:
+        $ref: '#/definitions/pullrequest.TeamProjectCollectionReference'
+      id:
+        type: string
+      isFork:
+        type: boolean
+      name:
+        type: string
+      project:
+        $ref: '#/definitions/pullrequest.TeamProjectReference'
+      remoteUrl:
+        type: string
+      sshUrl:
+        type: string
+      url:
+        type: string
+    type: object
+  pullrequest.GitStatus:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      context:
+        $ref: '#/definitions/pullrequest.GitStatusContext'
+      createdBy:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      creationDate:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      state:
+        type: string
+      targetUrl:
+        type: string
+      updatedDate:
+        type: string
+    type: object
+  pullrequest.GitStatusContext:
+    properties:
+      genre:
+        type: string
+      name:
+        type: string
+    type: object
+  pullrequest.GitTemplate:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  pullrequest.GitUserDate:
+    properties:
+      date:
+        type: string
+      email:
+        type: string
+      imageUrl:
+        type: string
+      name:
+        type: string
+    type: object
+  pullrequest.IdentityRef:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      descriptor:
+        type: string
+      directoryAlias:
+        type: string
+      displayName:
+        type: string
+      id:
+        type: string
+      imageUrl:
+        type: string
+      inactive:
+        type: boolean
+      isAadIdentity:
+        type: boolean
+      isContainer:
+        type: boolean
+      isDeletedInOrigin:
+        type: boolean
+      profileUrl:
+        type: string
+      uniqueName:
+        type: string
+      url:
+        type: string
+    type: object
+  pullrequest.IdentityRefWithVote:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      descriptor:
+        type: string
+      directoryAlias:
+        type: string
+      displayName:
+        type: string
+      hasDeclined:
+        type: boolean
+      id:
+        type: string
+      imageUrl:
+        type: string
+      inactive:
+        type: boolean
+      isAadIdentity:
+        type: boolean
+      isContainer:
+        type: boolean
+      isDeletedInOrigin:
+        type: boolean
+      isFlagged:
+        type: boolean
+      isReapprove:
+        type: boolean
+      isRequired:
+        type: boolean
+      profileUrl:
+        type: string
+      reviewerUrl:
+        type: string
+      uniqueName:
+        type: string
+      url:
+        type: string
+      vote:
+        type: integer
+    type: object
+  pullrequest.ItemContent:
+    properties:
+      content:
+        type: string
+      contentType:
+        type: string
+    type: object
+  pullrequest.ReferenceLinks:
+    properties:
+      links:
+        additionalProperties: true
+        type: object
+    type: object
+  pullrequest.ResourceRef:
+    properties:
+      id:
+        type: string
+      url:
+        type: string
+    type: object
+  pullrequest.TeamProjectCollectionReference:
+    properties:
+      avatarUrl:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  pullrequest.TeamProjectReference:
+    properties:
+      abbreviation:
+        type: string
+      defaultTeamImageUrl:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      lastUpdateTime:
+        type: string
+      name:
+        type: string
+      revision:
+        type: integer
+      state:
+        type: string
+      url:
+        type: string
+      visibility:
+        type: string
+    type: object
+  pullrequest.UpdatePullRequestReq:
+    properties:
+      completionOptions:
+        $ref: '#/definitions/pullrequest.GitPullRequestCompletionOptions'
+      description:
+        type: string
+      mergeOptions:
+        $ref: '#/definitions/pullrequest.GitPullRequestMergeOptions'
+      status:
+        type: string
+      targetRefName:
+        type: string
+      title:
+        type: string
+    type: object
+  pullrequest.WebApiTagDefinition:
+    properties:
+      active:
+        type: boolean
+      id:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: contact@krateoplatformops.io
+    name: Krateo Support
+    url: https://krateo.io
+  description: Simple wrapper around Azure DevOps API to provide consistency of API
+    response for Krateo Operator Generator (KOG)
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Azure DevOps PullRequest Plugin API for Krateo Operator Generator (KOG)
+  version: "1.0"
+paths:
+  /api/{organization}/{project}/git/repositories/{repositoryId}/pullrequests/{pullRequestId}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing pull request.
+      operationId: update-pullrequest
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name or ID
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Repository ID
+        in: path
+        name: repositoryId
+        required: true
+        type: string
+      - description: Pull Request ID
+        in: path
+        name: pullRequestId
+        required: true
+        type: integer
+      - description: API version (e.g., 7.2-preview.2)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Pull request updates
+        in: body
+        name: pullRequest
+        required: true
+        schema:
+          $ref: '#/definitions/pullrequest.UpdatePullRequestReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated pull request
+          schema:
+            $ref: '#/definitions/pullrequest.GitPullRequest'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update a pull request
+  /api/{organization}/{project}/pipelines/{id}:
+    delete:
+      description: Delete a pipeline using build definitions endpoint
+      operationId: delete-pipeline
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name or ID
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Pipeline ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Basic Auth header (Basic <base64-encoded-username:password>)
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content - Pipeline deleted successfully
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Delete a pipeline
+    get:
+      description: Get
+      operationId: get-pipeline
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name or ID
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Pipeline ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: API version (e.g., 7.2-preview.1)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header (Basic <base64-encoded-username:password>)
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Pipeline details
+          schema:
+            $ref: '#/definitions/pipeline.GetPipelineResponse'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      summary: Get a pipeline
+    put:
+      consumes:
+      - application/json
+      description: Update a pipeline using build definitions endpoint
+      operationId: put-pipeline
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name or ID
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Pipeline ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Basic Auth header (Basic <base64-encoded-username:password>)
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Pipeline update request body
+        in: body
+        name: pipelineUpdate
+        required: true
+        schema:
+          $ref: '#/definitions/pipeline.UpdatePipelineRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated pipeline details
+          schema:
+            $ref: '#/definitions/pipeline.UpdatePipelineResponse'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Update a pipeline
+  /api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{resourceId}:
+    get:
+      description: Get
+      operationId: get-pipelinepermission
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Resource type (e.g., pipelines, repositories)
+        in: path
+        name: resourceType
+        required: true
+        type: string
+      - description: Resource ID (e.g., pipeline ID, repository ID)
+        in: path
+        name: resourceId
+        required: true
+        type: string
+      - description: API version (e.g., 7.2-preview.1)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header (Basic <base64-encoded-username:password>)
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Pipeline permission details
+          schema:
+            $ref: '#/definitions/pipelinepermission.ResourcePipelinePermissions'
+      summary: Get the pipeline permission of a resource
+  /api/{organization}/{projectId}/git/repositories:
+    post:
+      consumes:
+      - application/json
+      description: Create a new GitRepository on Azure DevOps using the provided organization,
+        project, and repository details.
+      operationId: post-gitrepository
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project ID or name
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: API version (e.g., 7.2-preview.2)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Specify the source refs to use while creating a fork repo
+        in: query
+        name: sourceRef
+        type: string
+      - description: Basic Auth header (Basic <base64-encoded-username:password>)
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: GitRepository creation request body (with additional fields handled
+          by the plugin)
+        in: body
+        name: gitrepositoryCreate
+        required: true
+        schema:
+          $ref: '#/definitions/gitrepository.CreateRepositoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: GitRepository details
+          schema:
+            $ref: '#/definitions/gitrepository.CreateRepositoryResponse'
+        "202":
+          description: GitRepository details (repo created but creation of branch
+            deisgnated as default branch is pending, user must create it, then the
+            gitrepository-controller will update the default branch later)
+          schema:
+            $ref: '#/definitions/gitrepository.CreateRepositoryResponse'
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      summary: Create a new GitRepository on Azure DevOps
+schemes:
+- http
+swagger: "2.0"

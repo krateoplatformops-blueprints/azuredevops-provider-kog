@@ -41,3 +41,8 @@ dependencies:
     version: AZUREDEVOPS_PROVIDER_KOG_PIPELINEPERMISSION_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-pipelinepermission-blueprint.enabled
+
+  - name: azuredevops-provider-kog-pullrequest # the name of the dependency chart
+    version: AZUREDEVOPS_PROVIDER_KOG_PULLREQUEST_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-pullrequest-blueprint.enabled

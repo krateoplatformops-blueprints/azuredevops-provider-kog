@@ -8,7 +8,7 @@ The `plugins/` directory is a Go workspace, defined by the `go.work` file at its
 
 The key principle of this model is that the `go.work` file is the **single source of truth** for resolving dependencies between local modules. The individual `go.mod` files for each plugin do **not** contain `replace` directives to find the local `pkg` module. This makes the workspace setup clean but requires all commands to be run in a workspace-aware context.
 
-## The Workspace Root: The Golden Rule
+## The Workspace Root
 
 To ensure the Go toolchain can see and use the `go.work` file, **all `go` commands MUST be executed from the workspace root directory.**
 
@@ -89,6 +89,9 @@ docker build --build-arg PLUGIN_NAME=gitrepository-plugin -t gitrepository-plugi
 
 # Example: Build the pipeline-plugin Docker image
 docker build --build-arg PLUGIN_NAME=pipeline-plugin -t pipeline-plugin:latest .
+
+# Example: Push the built image to a container registry
+docker push gitrepository-plugin:latest
 ```
 
 Note that at the root of the `azuredevops-provider-kog` repository, there are GitHub Actions workflows that automate the building and publishing of these Docker images.

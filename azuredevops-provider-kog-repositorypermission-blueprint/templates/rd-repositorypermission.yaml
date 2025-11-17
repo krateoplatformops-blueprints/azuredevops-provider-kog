@@ -1,0 +1,42 @@
+kind: RestDefinition
+apiVersion: ogen.krateo.io/v1alpha1
+metadata:
+  name: {{ .Release.Name }}-repositorypermission
+spec:
+  oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-repositorypermission/repositorypermission.yaml
+  resourceGroup: azuredevops.ogen.krateo.io
+  resource:
+    kind: RepositoryPermission
+    additionalStatusFields:
+    - permissions
+    excludedSpecFields:
+    - identityDescriptor
+    - identityName
+    - identityType
+    verbsDescription:
+    - action: get
+      method: GET
+      path: /plugin/repositorypermission/{organization}/{projectId}/{repositoryId}
+      requestFieldMapping:
+        - inQuery: identityDescriptor
+          inCustomResource: spec.permissions.identity.descriptor
+        - inQuery: identityName
+          inCustomResource: spec.permissions.identity.name
+        - inQuery: identityType
+          inCustomResource: spec.permissions.identity.type
+    # We need to use `create` to generate correct spec in the CRD. 
+    # Since currently OASGen do not support using `update` action to populate spec.
+    # At runtime, 'create' action will not be used by RDC.
+    - action: create
+      method: POST
+      path: /plugin/repositorypermission/{organization}/{projectId}/{repositoryId}
+    - action: update
+      method: POST
+      path: /plugin/repositorypermission/{organization}/{projectId}/{repositoryId}
+    configurationFields:
+    # Common among all actions
+    - fromOpenAPI:
+        name: api-version
+        in: query
+      fromRestDefinition:
+        actions: ["*"]

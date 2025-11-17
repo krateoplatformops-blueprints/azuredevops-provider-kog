@@ -1,0 +1,68 @@
+package repositorypermission
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/pkg/errors"
+)
+
+type IdentityResponse struct {
+	Count int        `json:"count"`
+	Value []Identity `json:"value"`
+}
+type Identity struct {
+	ID                  string   `json:"id"`
+	Descriptor          string   `json:"descriptor"`
+	SubjectDescriptor   string   `json:"subjectDescriptor"`
+	ProviderDisplayName string   `json:"providerDisplayName"`
+	CustomDisplayName   string   `json:"customDisplayName"`
+	IsActive            bool     `json:"isActive"`
+	Members             []string `json:"members"`
+	MemberOf            []string `json:"memberOf"`
+	MemberIds           []string `json:"memberIds"`
+	ResourceVersion     int      `json:"resourceVersion"`
+	MetaTypeID          int      `json:"metaTypeId"`
+}
+
+type UserType string
+
+const (
+	BuildService UserType = "build-service"
+	AzureGroup   UserType = "azure-group"
+)
+
+func (u *UserType) ResolveIdentityDescriptorFromUserType() (string, error) {
+	switch *u {
+	case BuildService:
+		return "Microsoft.TeamFoundation.ServiceIdentity", nil
+	case AzureGroup:
+		return "Microsoft.TeamFoundation.Identity", nil
+	}
+	return " ", errors.Errorf("The specified usertype is not valid")
+}
+
+type IdentityParams struct {
+	Type        UserType
+	Name        string // Name is ignored if Type is build-service
+	ProjectId   string
+	ProjectName string
+}
+
+func (resp *IdentityResponse) IdentityMatch(identity *IdentityParams) (*Identity, error) {
+	for _, v := range resp.Value {
+		resolvedId, err := identity.Type.ResolveIdentityDescriptorFromUserType()
+		if err != nil {
+			return nil, err
+		}
+		if strings.Contains(v.Descriptor, resolvedId) {
+			if identity.Type == BuildService && v.ProviderDisplayName == identity.ProjectId {
+				return &v, nil
+			}
+			if identity.Type == AzureGroup && v.ProviderDisplayName == fmt.Sprintf("[%s]\\%s", identity.ProjectName, identity.Name) {
+				return &v, nil
+			}
+		}
+	}
+	return nil, errors.Errorf("Identity not found")
+}

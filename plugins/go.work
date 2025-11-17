@@ -4,5 +4,7 @@ use (
 	./cmd/gitrepository-plugin
 	./cmd/pipeline-plugin
 	./cmd/pipelinepermission-plugin
+	./cmd/pullrequest-plugin
+	./cmd/repositorypermission-plugin
 	./pkg
 )
