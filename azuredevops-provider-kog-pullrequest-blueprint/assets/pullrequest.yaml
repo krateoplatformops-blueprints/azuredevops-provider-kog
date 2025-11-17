@@ -259,7 +259,7 @@ paths:
               $ref: '#/components/schemas/CreatePullRequestReq'
         required: true
       responses:
-        '201': # Changed from 200 to 201
+        '201': # FIX: Changed from 200 to 201
           description: successful operation
           content:
             application/json:
@@ -359,7 +359,7 @@ paths:
       #x-ms-vss-method: GetPullRequest
       #x-ms-preview: true
     
-    # Commented out due to RDC behavior of sending the entire object on update even if only a few fields are changed
+    # Commented out due to RDC standard behavior of sending the entire object on update even if only a few fields are changed
     # This cause an error on the external API side, so currently the update operation (PATCH) needs to be done via a plugin
     #patch:
     #  tags:
@@ -523,8 +523,6 @@ paths:
               schema:
                 type: string
       x-codegen-request-body-name: pullRequest
-
-
 components:
   schemas:
     Change:

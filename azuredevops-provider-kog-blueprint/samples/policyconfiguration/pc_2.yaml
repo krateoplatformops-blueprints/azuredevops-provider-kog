@@ -33,9 +33,6 @@ spec:
       - "32915def-23aa-609f-b91d-9a8d94384aa2"
       #- "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
     scope:
-      #- repositoryId: null # this shape is not supported by crdgen
-      #- repositoryId: "null" # this shape give error from Azure DevOps API
-      # not putting repositoryId field give error from Azure DevOps API (field is required by the API)
       - repositoryId: null
         refName: "refs/heads/main"
         matchKind: Exact

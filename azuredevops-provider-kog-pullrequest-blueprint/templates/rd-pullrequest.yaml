@@ -10,9 +10,9 @@ spec:
     identifiers:
     - title # Title is enough since the `findby` action supports query filtering
     additionalStatusFields:
-    - closedBy # to be restored with new crdgen version
+    - closedBy
     - closedDate
-    - createdBy # to be restored with new crdgen version
+    - createdBy
     - creationDate
     - isDraft
     - labels
@@ -66,7 +66,7 @@ spec:
       requestFieldMapping:
         - inBody: lastMergeSourceCommit # this is needed otherwise the update fails in case of status change to `completed`
           inCustomResource: status.lastMergeSourceCommit
-    # DELETE method is not supported for Pull Requests in Azure DevOps, set the status to "abandoned" instead
+    # DELETE method is not supported for Pull Requests in Azure DevOps, set the status field of the spec to "abandoned" instead
     configurationFields:
     # Common among all actions
     - fromOpenAPI:

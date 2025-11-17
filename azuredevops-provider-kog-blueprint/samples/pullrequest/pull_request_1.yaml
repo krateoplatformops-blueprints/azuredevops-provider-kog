@@ -2,7 +2,7 @@
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: PullRequest
 metadata:
-  name: sample-pullrequest-test-10-11-009
+  name: sample-pullrequest-test
   namespace: default
   annotations:
     krateo.io/connector-verbose: "true"
@@ -18,8 +18,8 @@ spec:
     mergeCommitMessage: "Squash merge for feature X, test from Krateo"
     mergeStrategy: squash
     transitionWorkItems: true
-  description: "Test PR description from Krateo, test-10-11-009"
-  isDraft: false # this field cannot be updated after creation
+  description: "Test PR description from Krateo"
+  isDraft: false # this field cannot be updated after creation of the CR as it is not among updatable fields allowed by the external API
   mergeOptions:
     conflictAuthorshipCommits: true
     detectRenameFalsePositives: false
@@ -27,8 +27,8 @@ spec:
   organization: krateo-kog
   project: project-1-classic
   repositoryId: 5605b0ba-e2fa-4aab-af0b-0888321b3a08 # repo-1-classic
-  sourceRefName: "refs/heads/test-10-11-009"
-  status: completed
+  sourceRefName: "refs/heads/test-branch"
+  status: active
   supportsIterations: true
   targetRefName: "refs/heads/main"
-  title: "Test PR from Krateo test-10-11-009"
+  title: "Test PR from Krateo test-branch"

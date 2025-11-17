@@ -1,4 +1,4 @@
-# Krateo Azure DevOps Provider KOG - OpenAPI Specification (OAS) Changes reference
+# Azure DevOps Provider KOG - OpenAPI Specification (OAS) Changes reference
 
 This documents serves as a reference for changes made to the OpenAPI Specification (OAS) of the resources managed by the Azure DevOps Provider KOG.
 Note that the changes are made to **comply with some requirements** of the OASGen Provider and/or Rest Dynamic Controller or to **fix issues or inconsistencies** within the Azure DevOps REST API.
@@ -9,38 +9,54 @@ Note that the changes are made to **comply with some requirements** of the OASGe
 - [Pipeline](#pipeline)
 - [PipelinePermission](#pipelinepermission)
 - [PullRequest](#pullrequest)
-- [Policy](#policy)
+- [PolicyConfiguration](#policyconfiguration)
+- [RepositoryPermission](#repositorypermission)
 
 ## `GitRepository`
 
-Version: 7.2-preview.2
+**Version**: 7.2-preview.2
+**Original specification file**:
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/git/7.2/git.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/ed36f85e1796b78f1c88961a45396e31c6618000/specification/git/7.2/git.json
 
-Specification file:
-https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/ed36f85e1796b78f1c88961a45396e31c6618000/specification/git/7.2/git.json
+**Transformations**: 
+- Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
+- File is pruned to only include the endpoints and schemas relevant to GitRepositories.
 
-The path parameter `project` has been changed to `projectId` on every endpoint that requires it.
-Otherwise there would be a potential clash between `project` field in path and `project` field in the response body that would cause issues with Rest Dynamic Controller.
+**List of change made to the OpenAPI Specification (OAS)**:
+- The path parameter `project` has been changed to `projectId` on every endpoint that requires it.
+Otherwise there would be a potential clash between `project` field in path and `project` field in the request/response body ( fork-related field) that would cause issues with Rest Dynamic Controller operations.
 Note that `projectId` could be either a project name or a project ID even if the field is named `projectId`.
-
-The path parameter `repositoryId` has been changed to `id` on every endpoint that requires it. This is done to align with the naming convention used in response bodies.
-
-In the `delete` endpoint the response status code has been changed from `200` to `204` as the Azure DevOps REST API actually returns a `204 No Content` status code when a repository is deleted successfully.
-
-Some schemas were created, such as `GitRepositoryUpdateOptions`. 
-This schema is used in the `update` operation of the `GitRepository` resource to allow updating only the name and default branch of a Git repository.
+- The path parameter `repositoryId` has been changed to `id` on every endpoint that requires it. This is done to be aligned with the naming convention used in response bodies by the Azure DevOps REST API.
+- In the `delete` endpoint the response status code has been changed from `200` to `204` as the Azure DevOps REST API actually returns a `204 No Content` status code when a repository is deleted successfully.
+- Some addtional schemas are added, such as `GitRepositoryUpdateOptions`. 
+This schema is used in the `update` operation to allow updating only the name and default branch of a Git repository.
 
 ## `Pipeline`
 
-Version: 7.2-preview.1
+**Version**: 7.2-preview.1
+**Original specification file**:
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/pipelines/7.2/pipelines.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/pipelines/7.2/pipelines.json
 
-The schema for the request body of the `create` operation has been modified to include additional fields not documented in the original OpenAPI Specification (OAS) but required for a successful operation (`configuration.repository` and `configuration.path`).
+**Transformations**: 
+- Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
+- File is pruned to only include the endpoints and schemas relevant to GitRepositories.
 
-Note: Build Definitions are used in order to perform `update` and `delete` operations which are not available for Pipelines.
-Build Definitions use version 7.2-preview.7.
+**List of change made to the OpenAPI Specification (OAS)**:
+- The schema for the request body of the `create` operation has been modified to include additional fields not documented in the original OpenAPI Specification (OAS) but required for a successful operation (`configuration.repository` and `configuration.path`).
+- Note: Build Definitions are used in order to perform `update` and `delete` operations which are not available for Pipelines, via a plugin. Build Definitions use version 7.2-preview.7.
 
 ## `PipelinePermission`
 
-Version: 7.2-preview.1
+**Version**: 7.2-preview.1
+**Original specification file**:
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/approvalsAndChecks/7.2/pipelinePermissions.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/approvalsAndChecks/7.2/pipelinePermissions.json
+
+**Transformations**: 
+- Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
+- File is pruned to only include the endpoints and schemas relevant to GitRepositories.
 
 Since the Azure DevOps REST API returns only the pipelines that are authorized for the user, the `PipelinePermission` resource of this provider allows you to set the `authorized` field of each `pipeline` in the `pipelines` array to `true` only.
 Therefore, the OpenAPI Specification (OAS) of the `PipelinePermission` resource has been modified to restrict the `authorized` field to only accept `true` and set it as the default value.
@@ -66,7 +82,7 @@ The PATCH operation is used in the RestDefinition `pipelinepermission` for the `
 -         format: date-time
 ```
 
-An `enum` has been added to the `resourceType` field for both the GET and PATCH operations:
+An `enum` has been added to the `resourceType` field for both the GET and PATCH operations, to restrict its possible values to the supported resource types.
 ```diff
   - name: resourceType
     in: path
@@ -86,61 +102,36 @@ An `enum` has been added to the `resourceType` field for both the GET and PATCH 
 ## `PullRequest`
 
 **Version**: `7.2-preview.2`
-**Original file**:
+**Original specification file**:
 - Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/git/7.2/git.json
 - Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/03cce9dd0355aa5a5fa808dcc0bd15aadda383b9/specification/git/7.2/git.json
 
 **Transformations**: 
-- Original file is converted from JSON to YAML and from swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
+- Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
 - File is pruned to only include the endpoints and schemas relevant to Pull Requests.
 
 **List of change made to the OpenAPI Specification (OAS)**:
-- Added the following plugin endpoints:
+- Added the following plugin endpoint:
   - `PATCH /api/{organization}/{project}/git/repositories/{repositoryId}/pullrequests/{pullRequestId}`
-- Commented out the following endpoints that are not used in favor of the new plugin endpoints:
+- Commented out the following endpoint that is not used in favor of the new plugin endpoint:
   - `PATCH /{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}`
-- Commented out in every endpoint the portion:
-```yaml
-      security:
-      - oauth2:
-        - vso.code_write
-```
-since authentication is handled at the root level of the file and with basic auth scheme.
-- Modified status code for the `POST /{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests` endpoint from `200` to `201` since the API returns `201 Created` on successful creation and not `200 OK`.
-
-- Created new schemas for request bodies (`CreatePullRequestReq` and `UpdatePullRequestReq`), to ensure that only the relevant fields are included when creating or updating a pull request.
-
-- Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller.
-
-- Commented out `x-ms-*` items.
-
-- Commented out the parameters section at root level as it just to inform about api versions
+- Modified status code for the `POST /{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests` endpoint from `200` to `201` since the API actually returns `201 Created` on successful creation and not `200 OK`.
+- Created new schemas for request bodies (`CreatePullRequestReq` and `UpdatePullRequestReq`), to ensure that only the relevant fields are included when creating or updating a Pull Request while the original `GitPullRequest` schema includes many read-only fields that should not be part of the request body.
+- Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
+- Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
+- Commented out the `components.parameters` section at root level as it just to inform about api versions.
 
 
 
 
+## `PolicyConfiguration`
 
-  -d '{
-    "status": "completed"
-  }'
+7.2-preview.1
 
-{"$id":"1","innerException":null,"message":"Invalid argument value.\r\nParameter name: You must specify a valid LastMergeSourceCommit to perform this operation.","typeName":"Microsoft.TeamFoundation.SourceControl.WebServer.InvalidArgumentValueException, Microsoft.TeamFoundation.SourceControl.WebServer","typeKey":"InvalidArgumentValueException","errorCode":0,"eventId":0}
-
-
+https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/policy/7.2/policy.json
+https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/policy/7.2/policy.json
 
 
-
-
-
-
-
-
-
-
-
-
-
-## `Policy`
 
 TO BE COMPLETED
 
@@ -158,3 +149,10 @@ https://github.com/MicrosoftDocs/vsts-rest-api-specs/tree/master/specification/p
 changed:
 configurationId to id
 to conform with the response bodies
+
+
+---
+repository permission
+"7.2-preview.1"
+https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/security/7.2/security.json
+https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/security/7.2/security.json
