@@ -104,7 +104,7 @@ graph TD
 
 ## Requirements
 
-[Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) (0.8.0+) should be installed in your cluster. 
+[Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) (0.9.0+) should be installed in your cluster. 
 Follow the related Helm Chart [README](https://github.com/krateoplatformops/oasgen-provider-chart) for installation instructions.
 Note that a standard installation of Krateo already contains the OASGen Provider.
 
@@ -313,6 +313,7 @@ spec:
   name: "test-gitrepository-kog"                  # Name of the repository to create or manage  
   defaultBranch: "refs/heads/test-branch"         # Default branch for the repository, can be omitted if you want to use the default branch set by Azure DevOps or the default branch of the parent repository if you are forking a repository. 
   # Note that if you specify a default branch in a non-forked repository, the repository must be initialized with a first commit (and therefore `initialize` must be set to `true`), otherwise the repository will not be created successfully.
+  
   # When forking a repository, `initialize` is ignored.
   initialize: true                                # Whether to initialize the repository with a first commit. If set to true, the repository will be initialized with a first commit.
 
@@ -467,7 +468,8 @@ spec:
 
 To revoke permissions for a pipeline, you need to:
 1. Manually remove the specific `Pipeline` in the Azure DevOps UI under the `Pipeline permission` section of the resource you want to manage (e.g., `Environment`, `Queue`, etc.). Note that the location of the `Pipeline permission` section may vary depending on the type of resource you are managing.
-2. Update the `PipelinePermission` resource on Kubernetes by removing the specific pipeline `id` from the `pipelines` array in the `PipelinePermission` resource. 
+2. Update the `PipelinePermission` resource on Kubernetes by removing the specific pipeline `id` from the `pipelines` array in the `PipelinePermission` resource.
+3. Apply the updated `PipelinePermission` resource to the cluster and let the controller reconcile the state.
 
 ## Authentication
 
@@ -573,25 +575,9 @@ For example, you can create a single `GitRepositoryConfiguration` resource and r
 
 As examplified in the examples in the folder `/samples/configs`, in the case of this provider, the configuration resources are used to specify the API versions to be used for each operation (create, update, delete, get, findby) for the specific resource type.
 
-### values.yaml
-
-You can customize the chart by modifying the `values.yaml` file.
-For instance, you can select which resources the provider should support in the oncoming installation by setting the `restdefinitions` field in the `values.yaml` file. 
-This may be useful if you want to limit the resources managed by the provider to only those you need, reducing the overhead of managing unnecessary controllers. For instance, if you only need to manage `GitRepository` resources, you can disable the other resources by setting the `restdefinitions` field as follows:
-```yaml
-restdefinitions:
-  pipelinepermission:
-    enabled: false
-  gitrepository:
-    enabled: true
-  pipeline:
-    enabled: false
-```
-The default configuration of the chart enables all resources supported by the chart.
-
 ### Verbose logging
 
-In order to enable verbose logging for the controllers, you can add the `krateo.io/connector-verbose: "true"` annotation to the metadata of the resources you want to manage, as shown in the examples above. 
+In order to enable verbose logging for the controllers, you can add the `krateo.io/connector-verbose: "true"` annotation to the metadata of the resources (e.g., `GitRepository`, `Pipeline`, `PipelinePermission`) you want to manage, as shown in the examples above. 
 This will enable verbose logging for those specific resources, which can be useful for debugging and troubleshooting as it will provide more detailed information about the operations performed by the controllers.
 
 ## Chart structure
