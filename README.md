@@ -275,21 +275,8 @@ The `GitRepository` resource is used to manage Azure DevOps GitRepositories.
 
 #### GitRepository schema
 
-The `GitRepository` resource schema includes the following fields:
-
-| Field | Type | Description | Notes |
-| :--- | :--- | :--- | :--- |
-| `configurationRef.name` | `string` | Name of the GitRepositoryConfiguration resource to use. |
-| `configurationRef.namespace` | `string` | Namespace of the GitRepositoryConfiguration resource to use. |
-| `organization` | `string` | The name of the Azure DevOps organization. |
-| `projectId` | `string` | The ID or name of the project. |
-| `name` | `string` | The name of the repository to create or manage. |
-| `defaultBranch` | `string` | The default branch for the repository (e.g., `refs/heads/main`). |
-| `initialize` | `boolean` | If `true`, initializes the repository with a first commit (with README file) | Ignored when forking a repository. |
-| `parentRepository.id` | `string` | ID of the parent repository to fork. | Needed only when forking a repository. |
-| `parentRepository.project.id` | `string` | ID of the parent repository's project. | Needed only when forking a repository. |
-| `project.id` | `string` | ID of the project where the forked repository will be created (same project as `projectId`). | Needed only when forking a repository. |
-| `sourceRef` | `string` | The source ref to use when creating a fork. Omitting it copies all branches. | Needed only when forking a repository. |
+The `GitRepository` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/gitrepository.md).
+The `GitRepository` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/gitrepository-crd.yaml).
 
 #### GitRepository example CR
 
@@ -347,20 +334,8 @@ The `Pipeline` resource is used to manage Azure DevOps pipelines.
 
 #### Pipeline schema
 
-The `Pipeline` resource schema includes the following fields:
-
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `configurationRef.name` | `string` | Name of the PipelineConfiguration resource to use. |
-| `configurationRef.namespace` | `string` | Namespace of the PipelineConfiguration resource to use. |
-| `organization` | `string` | The name of the Azure DevOps organization. |
-| `project` | `string` | The name or ID of the project. |
-| `name` | `string` | The name of the pipeline. |
-| `configuration.path` | `string` | Path to the pipeline configuration file within the repository. |
-| `configuration.repository.id` | `string` | ID of the repository where the pipeline is defined. |
-| `configuration.repository.type` | `string` | Type of the repository (e.g., `azureReposGit`). |
-| `configuration.type` | `string` | Type of the pipeline configuration (e.g., `yaml`). |
-
+The `Pipeline` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pipeline.md).
+The `Pipeline` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pipeline-crd.yaml).
 
 #### Pipeline example CR
 
@@ -416,18 +391,8 @@ The choice is driven by the fact that Azure DevOps REST API allows to retrieve o
 
 The `PipelinePermission` resource schema includes the following fields:
 
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `configurationRef.name` | `string` | Name of the PipelineConfiguration resource to use. |
-| `configurationRef.namespace` | `string` | Namespace of the PipelineConfiguration resource to use. |
-| `organization` | `string` | The name of the Azure DevOps organization. |
-| `project` | `string` | The name or ID of the project. |
-| `resourceType` | `string` | The type of resource to authorize (e.g., `repository`, `environment`, `queue`, `teamproject`, `endpoint`, `variablegroup`, `securefile`). |
-| `resourceId` | `string` | The ID of the resource to authorize. |
-| `allPipelines.authorized` | `boolean` | Set to `true` to authorize all pipelines, `false` to specify permissions individually. |
-| `pipelines` | `array` | A list of pipeline objects to authorize. |
-| `pipelines.id` | `integer` | The ID of the pipeline to grant permission to. |
-| `pipelines.authorized` | `boolean` | Set to `true` to grant permission. Defaults to `true` (so you don't need to specify it explicitly in the CR). Setting to `false` is not allowed. |
+The `PipelinePermission` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pipelinepermission.md).
+The `PipelinePermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pipelinepermission-crd.yaml).
 
 Note: in the case of managing a `PipelinePermission` for an Agent Pool, the `resourceType` should be set to `queue`.
 
@@ -479,14 +444,159 @@ The `PullRequest` resource is used to manage Azure DevOps pull requests.
 - **Update**: You can update the title, description, and status of an existing pull request. Note that many fields of a pull request are not updatable.
 - **Delete**: Deleting a `PullRequest` CR on the Kubernetes cluster will not delete the pull request on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The concept of deleting pull requests is not supported by Azure DevOps REST API but you can close a pull request by updating its status to `abandoned`, which is supported by this CR.
 
-#### PipelinePermission schema
-The `PullRequest` resource schema:
+#### PullRequest schema
 
+The `PullRequest` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pullrequest.md).
+The `PullRequest` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pullrequest-crd.yaml).
 
+An example of a `PullRequest` resource is:
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: PullRequest
+metadata:
+  name: sample-pullrequest-test
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  configurationRef:
+    name: sample-pullrequest-config
+    namespace: default
+  completionOptions:
+    #autoCompleteIgnoreConfigIds: []
+    #bypassPolicy: false
+    #bypassReason: ""
+    deleteSourceBranch: false
+    mergeCommitMessage: "Squash merge for feature X, test from Krateo"
+    mergeStrategy: squash
+    transitionWorkItems: true
+  description: "Test PR description from Krateo"
+  isDraft: false # this field cannot be updated after creation of the CR as it is not among updatable fields allowed by the external API
+  mergeOptions:
+    conflictAuthorshipCommits: true
+    detectRenameFalsePositives: false
+    disableRenames: false
+  organization: krateo-kog
+  project: project-1-classic
+  repositoryId: 5605b0ba-e2fa-4aab-af0b-0888321b3a08 # repo-1-classic
+  sourceRefName: "refs/heads/test-branch"
+  status: active
+  supportsIterations: true
+  targetRefName: "refs/heads/main"
+  title: "Test PR from Krateo test-branch"
+```
 
+### PolicyConfiguration
 
+The `PolicyConfiguration` resource is used to manage Azure DevOps policy configurations for repositories.
 
+#### PolicyConfiguration operations
+- **Create**: You can create a `PolicyConfiguration` resource to create a new policy configuration in Azure DevOps. You can specify the type of policy, settings, and other optional fields.
+- **Update**: You can update the settings of an existing policy configuration.
+- **Delete**: You can delete an existing policy configuration. This will remove the policy configuration from Azure DevOps.
 
+#### PolicyConfiguration schema
+
+The `PolicyConfiguration` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/policyconfiguration.md).
+The `PolicyConfiguration` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/policyconfiguration-crd.yaml).
+
+An example of a `PolicyConfiguration` resource is:
+```yaml
+# Example inspired by: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/03cce9dd0355aa5a5fa808dcc0bd15aadda383b9/specification/policy/7.2/httpExamples/configurations/POST__policy_configurations.json
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: PolicyConfiguration
+metadata:
+  name: pc-2
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  configurationRef:
+    name: my-policyconfiguration-config
+    namespace: default
+
+  isBlocking: true              # required                 
+  isEnabled: true               # required
+  
+  organization: krateo-kog      # required
+  project: project-1-classic    # required
+  
+  type:
+    id: "fd2167ab-b0be-447a-8ec8-39368250530e" # required. Policy type: "Required reviewers"
+
+  settings:
+    addedFilesOnly: true
+    creatorVoteCounts: true
+    minimumApproverCount: 1
+    filenamePatterns:
+      - "**/*.go"
+      - "**/*.md"
+      - "**/*.yaml"
+    requiredReviewerIds:
+      - "32915def-23aa-609f-b91d-9a8d94384aa2"
+      #- "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    scope:
+      - repositoryId: null
+        refName: "refs/heads/main"
+        matchKind: Exact
+      - repositoryId: null
+        refName: "refs/heads/release/*"
+        matchKind: Prefix
+```
+
+### RepositoryPermission
+
+The `RepositoryPermission` resource is used to manage repository permissions in Azure DevOps. It is an abstaction over the underlying Access Control Entries (ACEs) used by Azure DevOps to manage permissions.
+
+#### RepositoryPermission operations
+
+- **Update**: You can update the permissions for a specific identity (user or group) on a specific repository. You can explicitly allow or deny specific permissions.
+- **Get**: You can retrieve the current permissions for a specific identity on a specific repository
+- **Create**: Not applicable, as permissions are managed by updating existing entries. Note that the RestDefinition has the create operation defined, but it is not used by Rest Dynamic Controller but just by OASGen provider at CRD generation time.
+- **Delete**: Deleting a `RepositoryPermission` CR on the Kubernetes cluster will not delete the permissions on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. You need to properly update the permissions to revoke them.
+
+#### RepositoryPermission schema
+
+The `RepositoryPermission` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/repositorypermission.md).
+The `RepositoryPermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/repositorypermission-crd.yaml).
+
+An example of a `RepositoryPermission` resource is:
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: RepositoryPermission
+metadata:
+  name: rp-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-repositorypermission-config
+    namespace: default
+
+  organization: krateo-kog                            # required
+  projectId: 99837031-4e4e-4753-9a47-73fcc4cba766     # required
+  repositoryId: c2f8d804-7c2f-4f3f-bd69-70c3169cfb8c  # required
+
+  permissions:
+    identity:
+      type: azure-group
+      name: Contributors # not used if type is `build-service` or if descriptor is provided
+      #descriptor: Microsoft.TeamFoundation.Identity;abcdef12-3456-7890-abcd-ef1234567890 # has priority over name or type+name
+    allow:
+      # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
+      # If you want to explicitly allow a permission, set it to true
+      createbranch: true
+      renamerepository: false # "Not set"
+
+    deny:
+      # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
+      # If you want to explicitly deny a permission, set it to true
+      createtag: true
+      forcepush: true
+      editpolicies: true
+```
 
 ## Authentication
 
@@ -581,6 +691,9 @@ Currently, the supported configuration resources are:
 - `GitRepositoryConfiguration`
 - `PipelineConfiguration`
 - `PipelinePermissionConfiguration`
+- `PullRequestConfiguration`
+- `PolicyConfigurationConfiguration`
+- `RepositoryPermissionConfiguration`
 
 These configuration resources are used to store the authentication information (i.e., reference to the Kubernetes Secret containing the Azure DevOps PAT) and other configuration options for the resource type.
 
