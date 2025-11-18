@@ -1,8 +1,8 @@
-# Azure DevOps Provider KOG Blueprint
+# Azure DevOps Provider KOG
 
 ***KOG***: (*Krateo Operator Generator*)
 
-This is a Krateo Blueprint that deploys the Azure DevOps Provider KOG leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider).
+This is a Helm chart that deploys the Azure DevOps Provider KOG leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider).
 This provider allows you to manage [Azure DevOps resources](https://azure.microsoft.com/en-us/products/devops) such as `gitrepositories`, `pipelines`, and `pipelinepermissions` in a Kubernetes-native way using Custom Resources (CRs).
 
 ## Summary

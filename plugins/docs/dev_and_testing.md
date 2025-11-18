@@ -62,7 +62,9 @@ You can still run tests for a single module, but the command must still be execu
 go test -v -cover ./cmd/gitrepository-plugin/...
 ```
 
-## Building Binaries
+## Build instructions
+
+This project is a Go workspace-based monorepo containing multiple, independent plugins. The build system is centralized in this directory (`plugins/`).
 
 ### Building a Single Plugin
 
@@ -78,20 +80,41 @@ go build ./cmd/pipeline-plugin
 ```
 This will produce a binary in the `plugins/` directory.
 
-### Building Docker Images
+### Building with ko
 
-The `Dockerfile` at the root of the `plugins/` directory is also workspace-aware. It copies the entire workspace context to correctly build the target plugin. Builds must be initiated with the `plugins/` directory as the Docker context.
+The primary way to build and publish the container images is using Google's `ko` tool. The configuration is in the `.ko.yaml` file in this directory. This is useful for local development.
+
+The `.ko.yaml` file defines a unique image name for each plugin. To build and publish all plugins, simply run:
+
+```sh
+ko publish .
+```
+
+`ko` will read the `.ko.yaml` file, build each plugin specified, and push them to the container registry defined in your `KO_DOCKER_REPO` environment variable.
+
+Example published images:
+- `KO_DOCKER_REPO`/gitrepository-plugin
+- `KO_DOCKER_REPO`/pipeline-plugin
+
+### Building and Pushing Docker Images
+
+The `Dockerfile` at the root of the `plugins/` directory is also workspace-aware. It copies the entire workspace context to correctly build the target plugin. 
+
+Builds must be initiated with the `plugins/` directory as the Docker context. Indeed, it sets the necessary build context to access the shared `pkg` directory.
+Note that the `PLUGIN_NAME` argument must match the name of the subdirectory containing the `main.go` file for the desired plugin therefore it is case-sensitive and must be exact.
 
 **Terminal Location:** `plugins/`
 ```sh
 # Example: Build the gitrepository-plugin Docker image
-docker build --build-arg PLUGIN_NAME=gitrepository-plugin -t gitrepository-plugin:latest .
+docker build --build-arg PLUGIN_NAME=gitrepository-plugin -t <your-docker-namespace>/gitrepository-plugin:latest .
 
 # Example: Build the pipeline-plugin Docker image
-docker build --build-arg PLUGIN_NAME=pipeline-plugin -t pipeline-plugin:latest .
+docker build --build-arg PLUGIN_NAME=pipeline-plugin -t <your-docker-namespace>/pipeline-plugin:latest .
 
 # Example: Push the built image to a container registry
-docker push gitrepository-plugin:latest
+docker push <your-docker-namespace>/gitrepository-plugin:latest
 ```
 
-Note that at the root of the `azuredevops-provider-kog` repository, there are GitHub Actions workflows that automate the building and publishing of these Docker images.
+Note that at the root of the `azuredevops-provider-kog` repository, there are GitHub Actions workflows that automate the building and publishing of these Docker images as part of the release process.
+See the [release documentation](../../docs/release.md) for more details.
+
