@@ -408,7 +408,7 @@ Reference to the official [Azure DevOps REST API documentation](https://learn.mi
 #### PipelinePermission operations
 
 - **Create**: You can create a `PipelinePermission` resource to grant permissions for specific pipelines to use a specific resource, such as `environment`, `queue`, etc.
-- **Update**: Updating is only partially supported, meaning that you cannot directly revoke permissions (change the `authorized` field to `false`) for existing authorized pipelines (see the [section below](#how-to-revoke-permissions) on how to revoke permissions for pipelines). You can only add new authorized pipelines in the `pipelines` array. You can also change permissions for all pipelines in the project by setting the `allPipelines` field to `authorized: true` or `authorized: false`.
+- **Update**: Updating is only partially supported, meaning that you cannot directly revoke permissions (change the `authorized` field to `false`) for existing authorized pipelines (see the [section below](#how-to-revoke-permissions) on how to revoke permissions for pipelines). You can only **add new authorized pipelines** in the `pipelines` array. You can also change permissions for all pipelines in the project by setting the `allPipelines` field to `authorized: true` or `authorized: false`.
 - **Delete**: Deleting a `PipelinePermission` resource on the Kubernetes cluster will not revoke permissions for the pipelines on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The Azure DevOps pipelines will still have the permissions granted by the `PipelinePermission` resource until you manually revoke them in the Azure DevOps UI (see the [section below](#how-to-revoke-permissions) on how to revoke permissions for pipelines).
 The choice is driven by the fact that Azure DevOps REST API allows to retrieve only the pipelines that are authorized, therefore the management of both authorized and unauthorized pipelines is not possible.
 
@@ -461,7 +461,6 @@ spec:
     - id: 79
       # authorized: true is not required to be set here, since it is already the default value (and `authorized: false` is not allowed)
     - id: 80
-
 ```
 
 #### How to revoke permissions
@@ -470,6 +469,24 @@ To revoke permissions for a pipeline, you need to:
 1. Manually remove the specific `Pipeline` in the Azure DevOps UI under the `Pipeline permission` section of the resource you want to manage (e.g., `Environment`, `Queue`, etc.). Note that the location of the `Pipeline permission` section may vary depending on the type of resource you are managing.
 2. Update the `PipelinePermission` resource on Kubernetes by removing the specific pipeline `id` from the `pipelines` array in the `PipelinePermission` resource.
 3. Apply the updated `PipelinePermission` resource to the cluster and let the controller reconcile the state.
+
+### PullRequest
+
+The `PullRequest` resource is used to manage Azure DevOps pull requests.
+
+#### PullRequest operations
+- **Create**: You can create a `PullRequest` resource to create a new pull request in Azure DevOps. You can specify the source and target branches, title, description, and other optional fields.
+- **Update**: You can update the title, description, and status of an existing pull request. Note that many fields of a pull request are not updatable.
+- **Delete**: Deleting a `PullRequest` CR on the Kubernetes cluster will not delete the pull request on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The concept of deleting pull requests is not supported by Azure DevOps REST API but you can close a pull request by updating its status to `abandoned`, which is supported by this CR.
+
+#### PipelinePermission schema
+The `PullRequest` resource schema:
+
+
+
+
+
+
 
 ## Authentication
 
@@ -613,3 +630,7 @@ A document which describe changes made to the OpenAPI Specification (OAS) files 
 
 For troubleshooting, you can refer to the [Troubleshooting guide](./azuredevops-provider-kog-blueprint/docs/troubleshooting_guide.md) in the `/docs` folder of the main chart.
 It contains common issues and solutions related to this chart.
+
+## Release process
+
+Please refer to the [Release guide](./docs/release.md) in the `/docs` folder for detailed instructions on how to release new versions of the chart and its components.

@@ -25,12 +25,12 @@ Note that the changes are made to **comply with some requirements** of the OASGe
 
 **List of change made to the OpenAPI Specification (OAS)**:
 - The path parameter `project` has been changed to `projectId` on every endpoint that requires it.
-Otherwise there would be a potential clash between `project` field in path and `project` field in the request/response body ( fork-related field) that would cause issues with Rest Dynamic Controller operations.
+Otherwise there would be a potential clash between `project` field in path and `project` field in the request/response body (which is a fork-related field, used when forking a repository) that would cause issues with Rest Dynamic Controller operations due to ambiguity.
 Note that `projectId` could be either a project name or a project ID even if the field is named `projectId`.
 - The path parameter `repositoryId` has been changed to `id` on every endpoint that requires it. This is done to be aligned with the naming convention used in response bodies by the Azure DevOps REST API.
 - In the `delete` endpoint the response status code has been changed from `200` to `204` as the Azure DevOps REST API actually returns a `204 No Content` status code when a repository is deleted successfully.
 - Some addtional schemas are added, such as `GitRepositoryUpdateOptions`. 
-This schema is used in the `update` operation to allow updating only the name and default branch of a Git repository.
+This schema is used in the `update` operation to allow updating only the name and default branch of a GitRepository.
 
 ## `Pipeline`
 
@@ -41,11 +41,11 @@ This schema is used in the `update` operation to allow updating only the name an
 
 **Transformations**: 
 - Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
-- File is pruned to only include the endpoints and schemas relevant to GitRepositories.
+- File is pruned to only include the endpoints and schemas relevant to Pipelines.
 
 **List of change made to the OpenAPI Specification (OAS)**:
 - The schema for the request body of the `create` operation has been modified to include additional fields not documented in the original OpenAPI Specification (OAS) but required for a successful operation (`configuration.repository` and `configuration.path`).
-- Note: Build Definitions are used in order to perform `update` and `delete` operations which are not available for Pipelines, via a plugin. Build Definitions use version 7.2-preview.7.
+- Note: Build Definitions APIs are used, via a plugin, in order to perform `update` and `delete` operations which are not available for Pipelines. Build Definitions use version 7.2-preview.7.
 
 ## `PipelinePermission`
 
@@ -56,48 +56,15 @@ This schema is used in the `update` operation to allow updating only the name an
 
 **Transformations**: 
 - Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
-- File is pruned to only include the endpoints and schemas relevant to GitRepositories.
+- File is pruned to only include the endpoints and schemas relevant to PipelinePermissions.
 
-Since the Azure DevOps REST API returns only the pipelines that are authorized for the user, the `PipelinePermission` resource of this provider allows you to set the `authorized` field of each `pipeline` in the `pipelines` array to `true` only.
-Therefore, the OpenAPI Specification (OAS) of the `PipelinePermission` resource has been modified to restrict the `authorized` field to only accept `true` and set it as the default value.
-This is done by defining a custom schema named `PermissionTrueOnly`.
-In addition, the `ResourcePipelinePermissionsTrueOnlyNoAuthorizationDetails` and `PipelinePermissionTrueOnlyNoAuthorizationDetails` schemas are defined.
+**List of change made to the OpenAPI Specification (OAS)**:
+- Since the Azure DevOps REST API returns only the pipelines that are authorized for the user, the `PipelinePermission` resource of this provider allows you to set the `authorized` field of each `pipeline` in the `pipelines` array to `true` only.
+Therefore, the OpenAPI Specification (OAS) of the `PipelinePermission` resource has been modified to restrict the `authorized` field to only accept `true` and set it as the default value at creation time of the CR. This is done by defining a custom schema named `PermissionTrueOnly`.
+- The `ResourcePipelinePermissionsTrueOnlyNoAuthorizationDetails` and `PipelinePermissionTrueOnlyNoAuthorizationDetails` schemas are defined.
 This is done to address the PATCH operation defined in the OAS (reducing the fields of the request body).
 The PATCH operation is used in the RestDefinition `pipelinepermission` for the `create` and `update` operations.
-
-```diff
-- Permission:
-+ PermissionTrueOnlyNoAuthorizationDetails:
-    type: object
-    properties:
-      authorized:
-        type: boolean
-+       enum:
-+       - true          # Only true allowed in the CR
-+       default: true   # Default value is true
--       authorizedBy:
--         $ref: '#/components/schemas/IdentityRef'
--       authorizedOn:
--         type: string
--         format: date-time
-```
-
-An `enum` has been added to the `resourceType` field for both the GET and PATCH operations, to restrict its possible values to the supported resource types.
-```diff
-  - name: resourceType
-    in: path
-    required: true
-    schema:
-      type: string
-+     enum:
-+       - repository
-+       - environment
-+       - queue
-+       - teamproject
-+       - endpoint
-+       - variablegroup
-+       - securefile
-```
+- An `enum` has been added to the `resourceType` field for both the GET and PATCH operations, to restrict its possible values to the supported resource types (repository, environment, queue, teamproject, endpoint, variablegroup, securefile).
 
 ## `PullRequest`
 
@@ -108,7 +75,7 @@ An `enum` has been added to the `resourceType` field for both the GET and PATCH 
 
 **Transformations**: 
 - Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
-- File is pruned to only include the endpoints and schemas relevant to Pull Requests.
+- File is pruned to only include the endpoints and schemas relevant to PullRequests.
 
 **List of change made to the OpenAPI Specification (OAS)**:
 - Added the following plugin endpoint:
@@ -121,39 +88,56 @@ An `enum` has been added to the `resourceType` field for both the GET and PATCH 
 - Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
 - Commented out the `components.parameters` section at root level as it just to inform about api versions.
 
-
-
-
 ## `PolicyConfiguration`
 
-7.2-preview.1
+**Version**: `7.2-preview.1`
+**Original specification file**:
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/policy/7.2/policy.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/policy/7.2/policy.json
 
-https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/policy/7.2/policy.json
-https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/policy/7.2/policy.json
+**Transformations**: 
+- Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
+- File is pruned to only include the endpoints and schemas relevant to PolicyConfigurations.
 
-
-
-TO BE COMPLETED
-
-created:
-- PolicyReq
-
-- PolicyConfigurationSettings
-
-- PolicyScope
-
-thanks to
-https://github.com/MicrosoftDocs/vsts-rest-api-specs/tree/master/specification/policy/7.2/httpExamples
-
-
-changed:
-configurationId to id
-to conform with the response bodies
-
+**List of change made to the OpenAPI Specification (OAS)**:
+- Created the following schemas required for proper functioning of the PolicyConfiguration resource and Rest Dynamic Controller operations: `PolicyReq`, `PolicyConfigurationSettings`, `PolicyScope`. These schemas were inferred from the examples provided at: https://github.com/MicrosoftDocs/vsts-rest-api-specs/tree/master/specification/policy/7.2/httpExamples.
+`PolicyReq` is used as request body schema for `create` and `update` operations instead of the original `PolicyConfiguration` schema which contains read-only fields that should not be part of the request body but are included in the response body.
+- Changed `configurationId` to `id` in path parameters to conform with the response bodies of the Azure DevOps REST API.
+- Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
+- Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
+- Commented out the `components.parameters` section at root level as it just to inform about api versions.
 
 ## `RepositoryPermission`
 
+Note: `RepositoryPermission` resource is an abstraction over the `AccessControlEntries` resource provided by the Azure DevOps REST API.
+The OAS file is obtained by using thw `swag` tool to generate an OpenAPI Specification (OAS) from Go code. In this case, the Go code of the plugin that implemtent the `RepositoryPermission` resource over the `AccessControlEntries` resource.
 
-"7.2-preview.1"
-https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/security/7.2/security.json
-https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/security/7.2/security.json
+**Version**: `7.2-preview.1` (AccessControlEntries)
+**Original specification file** (AccessControlEntries):
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/security/7.2/security.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/security/7.2/security.json
+
+**List of change made to the OpenAPI Specification (OAS)** (generated entirely from the plugin code):
+- Manually commented out the `additionalProperties` fields in the `allow` and `deny` properties to provide a fixed set of permissions that can be set on a RepositoryPermission resource. This is necessary to obtain a correct reconciliation of the resource by the Rest Dynamic Controller.
+For example, part of the the modified `PermissionInfo` schema is as follows:
+```yaml
+        deny:
+          type: object
+          # FIXED
+          #additionalProperties:
+          #  type: boolean
+          properties:
+            administerpermission:
+              type: boolean
+              default: false
+            genericread:
+              type: boolean
+              default: false
+            genericcontribute:
+              type: boolean
+              default: false
+            forcepush:
+              type: boolean
+              default: false
+            ...
+```
