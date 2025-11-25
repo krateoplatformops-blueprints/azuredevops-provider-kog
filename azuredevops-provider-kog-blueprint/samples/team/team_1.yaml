@@ -1,0 +1,16 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Team
+metadata:
+  name: team-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-team-config
+    namespace: default
+  organization: krateo-kog
+  projectId: 99837031-4e4e-4753-9a47-73fcc4cba766 # Note: this must be a projectId, not a project name
+  description: "Team created via KOG, test 00001"
+  name: Team-KOG-00001

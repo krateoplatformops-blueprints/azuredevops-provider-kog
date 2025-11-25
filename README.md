@@ -38,6 +38,7 @@ This provider allows you to manage [Azure DevOps resources](https://azure.micros
   - [Verbose logging](#verbose-logging)
 - [Chart structure](#chart-structure)
 - [Troubleshooting](#troubleshooting)
+- [Release process](#release-process)
 
 ## Architecture
 
@@ -55,18 +56,15 @@ graph TD
     KOG -- Instanciates --> RDC2
     KOG -- Instanciates --> RDC3
 
-    
     RDC1 --> Pipeline
     RDC1 -- Direct calls --> ADO_API
 
     RDC2 --> PipelinePermission
     RDC2 -- Direct calls --> ADO_API
     
-    
     RDC3 -- Direct calls --> ADO_API
     RDC3 --> GitRepository
 
-    
     Pipeline -- "Fixes folder path,<br>consistent update/delete" --> ADO_API
     PipelinePermission -- "Ensures allPipelines<br>property is set" --> ADO_API
     GitRepository -- "Supports defaultBranch,<br>initialization, fork validation" --> ADO_API
@@ -106,7 +104,7 @@ graph TD
 
 [Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) (0.9.0+) should be installed in your cluster. 
 Follow the related Helm Chart [README](https://github.com/krateoplatformops/oasgen-provider-chart) for installation instructions.
-Note that a standard installation of Krateo already contains the OASGen Provider.
+Note that a standard installation of Krateo already has the OASGen Provider installed.
 
 ## Project structure
 

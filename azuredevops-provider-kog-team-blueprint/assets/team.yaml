@@ -1,0 +1,496 @@
+openapi: 3.0.1
+info:
+  title: Core
+  description: ''
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.2-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Avatar
+- name: Categorized Teams
+  description: 'Manage teams in Azure DevOps Services.
+
+    A DevOps account has one or more team projects.
+
+    Each team project has one or more teams that contribute to that project.'
+- name: Teams
+  description: 'Manage teams in Azure DevOps Services.
+
+    A DevOps account has one or more team projects.
+
+    Each team project has one or more teams that contribute to that project.'
+paths:
+  /{organization}/_apis/projects/{projectId}/teams:
+    get:
+      tags:
+      - Teams
+      description: Get a list of teams.
+      operationId: Teams_Get Teams
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: $mine
+        in: query
+        description: If true return all the teams requesting user is member, otherwise return all the teams user has read
+          access.
+        schema:
+          type: boolean
+      - name: $top
+        in: query
+        description: Maximum number of teams to return.
+        schema:
+          type: integer
+          format: int32
+      - name: $skip
+        in: query
+        description: Number of teams to skip.
+        schema:
+          type: integer
+          format: int32
+      - name: $expandIdentity
+        in: query
+        description: A value indicating whether or not to expand Identity information in the result WebApiTeam object.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.3' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebApiTeam'
+      #security:
+      #- oauth2:
+      #  - vso.profile
+      #  - vso.project
+      #x-ms-docs-override-version: 7.2-preview.3
+      #x-ms-vss-resource: teams
+      #x-ms-vss-method: GetTeams
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/teams/GET__projects__projectId__teams.json
+    post:
+      tags:
+      - Teams
+      description: 'Create a team in a team project.
+
+
+        Possible failure scenarios
+
+        Invalid project name/ID (project doesn''t exist) 404
+
+        Invalid team name or description 400
+
+        Team already exists 400
+
+        Insufficient privileges 400'
+      operationId: Teams_Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: projectId
+        in: path
+        description: The name or ID (GUID) of the team project in which to create the team.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.3' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The team data used to create the team.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebApiTeam'
+        required: true
+      responses:
+        #'200':
+        '201': # FIXED
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebApiTeam'
+      #security:
+      #- oauth2:
+      #  - vso.project_manage
+      #x-ms-docs-override-version: 7.2-preview.3
+      #x-ms-vss-resource: teams
+      #x-ms-vss-method: CreateTeam
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/teams/POST__projects__projectId__teams.json
+      #x-codegen-request-body-name: body
+  /{organization}/_apis/projects/{projectId}/teams/{teamId}:
+    get:
+      tags:
+      - Teams
+      description: Get a specific team.
+      operationId: Teams_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: projectId
+        in: path
+        description: The name or ID (GUID) of the team project containing the team.
+        required: true
+        schema:
+          type: string
+      - name: teamId
+        in: path
+        description: The name or ID (GUID) of the team.
+        required: true
+        schema:
+          type: string
+      - name: $expandIdentity
+        in: query
+        description: A value indicating whether or not to expand Identity information in the result WebApiTeam object.
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.3' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebApiTeam'
+      #security: []
+      #x-ms-docs-override-version: 7.2-preview.3
+      #x-ms-vss-resource: teams
+      #x-ms-vss-method: GetTeam
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/teams/GET__projects__projectId__teams__teamId_.json
+    delete:
+      tags:
+      - Teams
+      description: Delete a team.
+      operationId: Teams_Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: projectId
+        in: path
+        description: The name or ID (GUID) of the team project containing the team to delete.
+        required: true
+        schema:
+          type: string
+      - name: teamId
+        in: path
+        description: The name or ID of the team to delete.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.3' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        #'200':
+        '204': # FIXED
+          description: successful operation
+          content: {}
+      #security:
+      #- oauth2:
+      #  - vso.project_manage
+      #x-ms-docs-override-version: 7.2-preview.3
+      #x-ms-vss-resource: teams
+      #x-ms-vss-method: DeleteTeam
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/teams/DELETE__projects__projectId__teams__newTeamId_.json
+    patch:
+      tags:
+      - Teams
+      description: Update a team's name and/or description.
+      operationId: Teams_Update
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: projectId
+        in: path
+        description: The name or ID (GUID) of the team project containing the team to update.
+        required: true
+        schema:
+          type: string
+      - name: teamId
+        in: path
+        description: The name of ID of the team to update.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.3' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebApiTeam'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebApiTeam'
+      #security:
+      #- oauth2:
+      #  - vso.project_write
+      #x-ms-docs-override-version: 7.2-preview.3
+      #x-ms-vss-resource: teams
+      #x-ms-vss-method: UpdateTeam
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/teams/PATCH__projects__projectId__teams.json
+      #x-codegen-request-body-name: body
+components:
+  schemas:
+    Identity:
+      description: ''
+      allOf:
+      - $ref: '#/components/schemas/IdentityBase'
+    IdentityBase:
+      type: object
+      properties:
+        customDisplayName:
+          type: string
+          description: The custom display name for the identity (if any). Setting this property to an empty string will clear
+            the existing custom display name. Setting this property to null will not affect the existing persisted value (since
+            null values do not get sent over the wire or to the database)
+        descriptor:
+          $ref: '#/components/schemas/IdentityDescriptor'
+        id:
+          type: string
+          description: Identity Identifier. Also called Storage Key, or VSID
+          format: uuid
+        isActive:
+          type: boolean
+          description: True if the identity has a membership in any Azure Devops group in the organization.
+        isContainer:
+          type: boolean
+          description: True if the identity is a group.
+        masterId:
+          type: string
+          format: uuid
+        memberIds:
+          type: array
+          description: Id of the members of the identity (groups only).
+          items:
+            type: string
+            format: uuid
+        memberOf:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityDescriptor'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/IdentityDescriptor'
+        metaTypeId:
+          type: integer
+          format: int32
+        properties:
+          $ref: '#/components/schemas/PropertiesCollection'
+        providerDisplayName:
+          type: string
+          description: The display name for the identity as specified by the source identity provider.
+        resourceVersion:
+          type: integer
+          format: int32
+        socialDescriptor:
+          type: string
+        subjectDescriptor:
+          type: string
+          description: Subject descriptor of a Graph entity.
+        uniqueUserId:
+          type: integer
+          format: int32
+      description: Base Identity class to allow "trimmed" identity class in the GetConnectionData API Makes sure that on-the-wire
+        representations of the derived classes are compatible with each other (e.g. Server responds with PublicIdentity object
+        while client deserializes it as Identity object) Derived classes should not have additional [DataMember] properties
+    IdentityDescriptor:
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: The unique identifier for this identity, not exceeding 256 chars, which will be persisted.
+        identityType:
+          type: string
+          description: Type of descriptor (for example, Windows, Passport, etc.).
+      description: An Identity descriptor is a wrapper for the identity type (Windows SID, Passport) along with a unique identifier
+        such as the SID or PUID.
+    PropertiesCollection:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: The count of properties in the collection.
+          format: int32
+        item:
+          type: object
+          properties: {}
+        keys:
+          type: array
+          description: The set of keys in the collection.
+          items:
+            type: string
+        values:
+          type: array
+          description: The set of values in the collection.
+          items:
+            type: string
+      description: The class represents a property bag as a collection of key-value pairs. Values of all primitive types (any
+        type with a `TypeCode != TypeCode.Object`) except for `DBNull` are accepted. Values of type Byte[], Int32, Double,
+        DateType and String preserve their type, other primitives are retuned as a String. Byte[] expected as base64 encoded
+        string.
+    WebApiTeam:
+      properties:
+        description:
+          type: string
+          description: Team description
+        identity:
+          $ref: '#/components/schemas/Identity'
+        identityUrl:
+          type: string
+          description: Identity REST API Url to this team
+        projectId:
+          type: string
+          format: uuid
+        projectName:
+          type: string
+      description: ''
+      allOf:
+      - $ref: '#/components/schemas/WebApiTeamRef'
+    WebApiTeamRef:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Team (Identity) Guid. A Team Foundation ID.
+          format: uuid
+        name:
+          type: string
+          description: Team name
+        url:
+          type: string
+          description: Team REST API Url
+      description: ''
+  #parameters:
+  #  api-Version-preview.1:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  #  api-Version-preview.2:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  #  api-Version-preview.3:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.3' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  #  api-Version-preview.4:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the token as the password.
+      scheme: basic
+    #oauth2:
+    #  type: oauth2
+    #  flows:
+    #    authorizationCode:
+    #      authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+    #      tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+    #      scopes:
+    #        vso.profile: Grants the ability to read your profile, accounts, collections, projects, teams, and other top-level
+    #          organizational artifacts.
+    #        vso.project: Grants the ability to read projects and teams.
+    #        vso.project_manage: Grants the ability to create, read, update, and delete projects and teams.
+    #        vso.project_write: Grants the ability to read and update projects and teams.
+    #        vso.work: Grants the ability to read work items, queries, boards, area and iterations paths, and other work item
+    #          tracking related metadata. Also grants the ability to execute queries, search work items and to receive notifications
+    #          about work item events via service hooks.
+#x-ms-vss-area: Core
+#x-ms-vss-resource-area-id: 79134c72-4a58-4b42-976c-04e7115f32bf
+#x-original-swagger-version: '2.0'

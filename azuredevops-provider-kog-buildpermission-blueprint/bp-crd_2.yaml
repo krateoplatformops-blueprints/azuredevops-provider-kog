@@ -3,24 +3,24 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: "2025-11-24T12:34:31Z"
+  creationTimestamp: "2025-11-24T23:24:01Z"
   generation: 1
-  name: repositorypermissions.azuredevops.ogen.krateo.io
-  resourceVersion: "2566500"
-  uid: 0e15502e-a1a0-4b84-a354-46ed3989c563
+  name: buildpermissions.azuredevops.ogen.krateo.io
+  resourceVersion: "2683358"
+  uid: 791f1544-e8c7-48f4-a3f7-1fc8f4f46a2c
 spec:
   conversion:
     strategy: None
   group: azuredevops.ogen.krateo.io
   names:
     categories:
-    - repositorypermission
+    - buildpermission
     - restresources
     - rr
-    kind: RepositoryPermission
-    listKind: RepositoryPermissionList
-    plural: repositorypermissions
-    singular: repositorypermission
+    kind: BuildPermission
+    listKind: BuildPermissionList
+    plural: buildpermissions
+    singular: buildpermission
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -53,6 +53,9 @@ spec:
             type: object
           spec:
             properties:
+              buildDefinitionId:
+                description: 'PARAMETER: query - Build Definition ID'
+                type: string
               configurationRef:
                 description: A reference to the Configuration CR that holds all the
                   needed configuration for this resource. OASGen Provider added this
@@ -74,166 +77,162 @@ spec:
                 properties:
                   allow:
                     properties:
-                      Administer:
+                      AbandonBuilds:
                         default: false
-                        description: 'displayName: ''Administer'''
+                        description: 'displayName: ''Abandon builds'''
                         type: boolean
-                      CreateBranch:
+                      AdministerBuildPermissions:
                         default: false
-                        description: 'displayName: ''Create branch'''
+                        description: 'displayName: ''Administer build permissions'''
                         type: boolean
-                      CreateRepository:
+                      CreateBuildDefinition:
                         default: false
-                        description: 'displayName: ''Create repository'''
+                        description: 'displayName: ''Create build pipeline'''
                         type: boolean
-                      CreateTag:
+                      DeleteBuildDefinition:
                         default: false
-                        description: 'displayName: ''Create tag'''
+                        description: 'displayName: ''Delete build pipeline'''
                         type: boolean
-                      DeleteRepository:
+                      DeleteBuilds:
                         default: false
-                        description: 'displayName: ''Delete or disable repository'''
+                        description: 'displayName: ''Delete builds'''
                         type: boolean
-                      DismissAdvSecAlerts:
+                      DestroyBuilds:
                         default: false
-                        description: 'displayName: ''Advanced Security: manage and
-                          dismiss alerts'''
+                        description: 'displayName: ''Destroy builds'''
                         type: boolean
-                      EditPolicies:
+                      EditBuildDefinition:
                         default: false
-                        description: 'displayName: ''Edit policies'''
+                        description: 'displayName: ''Edit build pipeline'''
                         type: boolean
-                      ForcePush:
+                      EditBuildQuality:
                         default: false
-                        description: 'displayName: ''Force push (rewrite history,
-                          delete branches and tags)'''
+                        description: 'displayName: ''Edit build quality'''
                         type: boolean
-                      GenericContribute:
+                      EditPipelineQueueConfigurationPermission:
                         default: false
-                        description: 'displayName: ''Contribute'''
+                        description: 'displayName: ''Edit queue build configuration'''
                         type: boolean
-                      GenericRead:
+                      ManageBuildQualities:
                         default: false
-                        description: 'displayName: ''Read'''
+                        description: 'displayName: ''Manage build qualities'''
                         type: boolean
-                      ManageAdvSecScanning:
+                      ManageBuildQueue:
                         default: false
-                        description: 'displayName: ''Advanced Security: manage settings'''
+                        description: 'displayName: ''Manage build queue'''
                         type: boolean
-                      ManageNote:
+                      ManageStageRunOrderPermission:
                         default: false
-                        description: 'displayName: ''Manage notes'''
+                        description: 'displayName: ''Manage stage run order'''
                         type: boolean
-                      ManagePermissions:
+                      OverrideBuildCheckInValidation:
                         default: false
-                        description: 'displayName: ''Manage permissions'''
+                        description: 'displayName: ''Override check-in validation
+                          by build'''
                         type: boolean
-                      PolicyExempt:
+                      QueueBuilds:
                         default: false
-                        description: 'displayName: ''Bypass policies when pushing'''
+                        description: 'displayName: ''Queue builds'''
                         type: boolean
-                      PullRequestBypassPolicy:
+                      RetainIndefinitely:
                         default: false
-                        description: 'displayName: ''Bypass policies when completing
-                          pull requests'''
+                        description: 'displayName: ''Retain indefinitely'''
                         type: boolean
-                      PullRequestContribute:
+                      StopBuilds:
                         default: false
-                        description: 'displayName: ''Contribute to pull requests'''
+                        description: 'displayName: ''Stop builds'''
                         type: boolean
-                      RemoveOthersLocks:
+                      UpdateBuildInformation:
                         default: false
-                        description: 'displayName: ''Remove others'' locks'''
+                        description: 'displayName: ''Update build information'''
                         type: boolean
-                      RenameRepository:
+                      ViewBuildDefinition:
                         default: false
-                        description: 'displayName: ''Rename repository'''
+                        description: 'displayName: ''View build pipeline'''
                         type: boolean
-                      ViewAdvSecAlerts:
+                      ViewBuilds:
                         default: false
-                        description: 'displayName: ''Advanced Security: view alerts'''
+                        description: 'displayName: ''View Builds'''
                         type: boolean
                     type: object
                   deny:
                     properties:
-                      Administer:
+                      AbandonBuilds:
                         default: false
-                        description: 'displayName: ''Administer'''
+                        description: 'displayName: ''Abandon builds'''
                         type: boolean
-                      CreateBranch:
+                      AdministerBuildPermissions:
                         default: false
-                        description: 'displayName: ''Create branch'''
+                        description: 'displayName: ''Administer build permissions'''
                         type: boolean
-                      CreateRepository:
+                      CreateBuildDefinition:
                         default: false
-                        description: 'displayName: ''Create repository'''
+                        description: 'displayName: ''Create build pipeline'''
                         type: boolean
-                      CreateTag:
+                      DeleteBuildDefinition:
                         default: false
-                        description: 'displayName: ''Create tag'''
+                        description: 'displayName: ''Delete build pipeline'''
                         type: boolean
-                      DeleteRepository:
+                      DeleteBuilds:
                         default: false
-                        description: 'displayName: ''Delete or disable repository'''
+                        description: 'displayName: ''Delete builds'''
                         type: boolean
-                      DismissAdvSecAlerts:
+                      DestroyBuilds:
                         default: false
-                        description: 'displayName: ''Advanced Security: manage and
-                          dismiss alerts'''
+                        description: 'displayName: ''Destroy builds'''
                         type: boolean
-                      EditPolicies:
+                      EditBuildDefinition:
                         default: false
-                        description: 'displayName: ''Edit policies'''
+                        description: 'displayName: ''Edit build pipeline'''
                         type: boolean
-                      ForcePush:
+                      EditBuildQuality:
                         default: false
-                        description: 'displayName: ''Force push (rewrite history,
-                          delete branches and tags)'''
+                        description: 'displayName: ''Edit build quality'''
                         type: boolean
-                      GenericContribute:
+                      EditPipelineQueueConfigurationPermission:
                         default: false
-                        description: 'displayName: ''Contribute'''
+                        description: 'displayName: ''Edit queue build configuration'''
                         type: boolean
-                      GenericRead:
+                      ManageBuildQualities:
                         default: false
-                        description: 'displayName: ''Read'''
+                        description: 'displayName: ''Manage build qualities'''
                         type: boolean
-                      ManageAdvSecScanning:
+                      ManageBuildQueue:
                         default: false
-                        description: 'displayName: ''Advanced Security: manage settings'''
+                        description: 'displayName: ''Manage build queue'''
                         type: boolean
-                      ManageNote:
+                      ManageStageRunOrderPermission:
                         default: false
-                        description: 'displayName: ''Manage notes'''
+                        description: 'displayName: ''Manage stage run order'''
                         type: boolean
-                      ManagePermissions:
+                      OverrideBuildCheckInValidation:
                         default: false
-                        description: 'displayName: ''Manage permissions'''
+                        description: 'displayName: ''Override check-in validation
+                          by build'''
                         type: boolean
-                      PolicyExempt:
+                      QueueBuilds:
                         default: false
-                        description: 'displayName: ''Bypass policies when pushing'''
+                        description: 'displayName: ''Queue builds'''
                         type: boolean
-                      PullRequestBypassPolicy:
+                      RetainIndefinitely:
                         default: false
-                        description: 'displayName: ''Bypass policies when completing
-                          pull requests'''
+                        description: 'displayName: ''Retain indefinitely'''
                         type: boolean
-                      PullRequestContribute:
+                      StopBuilds:
                         default: false
-                        description: 'displayName: ''Contribute to pull requests'''
+                        description: 'displayName: ''Stop builds'''
                         type: boolean
-                      RemoveOthersLocks:
+                      UpdateBuildInformation:
                         default: false
-                        description: 'displayName: ''Remove others'' locks'''
+                        description: 'displayName: ''Update build information'''
                         type: boolean
-                      RenameRepository:
+                      ViewBuildDefinition:
                         default: false
-                        description: 'displayName: ''Rename repository'''
+                        description: 'displayName: ''View build pipeline'''
                         type: boolean
-                      ViewAdvSecAlerts:
+                      ViewBuilds:
                         default: false
-                        description: 'displayName: ''Advanced Security: view alerts'''
+                        description: 'displayName: ''View Builds'''
                         type: boolean
                     type: object
                   identity:
@@ -249,14 +248,16 @@ spec:
               projectId:
                 description: 'PARAMETER: path - Project ID'
                 type: string
-              repositoryId:
-                description: 'PARAMETER: path - Repository ID'
-                type: string
+              projectLevel:
+                default: false
+                description: 'PARAMETER: query - Whether to manage permissions at
+                  the project level (true) or build level (pipeline level) (false).
+                  Default is false.'
+                type: boolean
             required:
             - configurationRef
             - organization
             - projectId
-            - repositoryId
             type: object
           status:
             properties:
@@ -300,166 +301,162 @@ spec:
                 properties:
                   allow:
                     properties:
-                      Administer:
+                      AbandonBuilds:
                         default: false
-                        description: 'displayName: ''Administer'''
+                        description: 'displayName: ''Abandon builds'''
                         type: boolean
-                      CreateBranch:
+                      AdministerBuildPermissions:
                         default: false
-                        description: 'displayName: ''Create branch'''
+                        description: 'displayName: ''Administer build permissions'''
                         type: boolean
-                      CreateRepository:
+                      CreateBuildDefinition:
                         default: false
-                        description: 'displayName: ''Create repository'''
+                        description: 'displayName: ''Create build pipeline'''
                         type: boolean
-                      CreateTag:
+                      DeleteBuildDefinition:
                         default: false
-                        description: 'displayName: ''Create tag'''
+                        description: 'displayName: ''Delete build pipeline'''
                         type: boolean
-                      DeleteRepository:
+                      DeleteBuilds:
                         default: false
-                        description: 'displayName: ''Delete or disable repository'''
+                        description: 'displayName: ''Delete builds'''
                         type: boolean
-                      DismissAdvSecAlerts:
+                      DestroyBuilds:
                         default: false
-                        description: 'displayName: ''Advanced Security: manage and
-                          dismiss alerts'''
+                        description: 'displayName: ''Destroy builds'''
                         type: boolean
-                      EditPolicies:
+                      EditBuildDefinition:
                         default: false
-                        description: 'displayName: ''Edit policies'''
+                        description: 'displayName: ''Edit build pipeline'''
                         type: boolean
-                      ForcePush:
+                      EditBuildQuality:
                         default: false
-                        description: 'displayName: ''Force push (rewrite history,
-                          delete branches and tags)'''
+                        description: 'displayName: ''Edit build quality'''
                         type: boolean
-                      GenericContribute:
+                      EditPipelineQueueConfigurationPermission:
                         default: false
-                        description: 'displayName: ''Contribute'''
+                        description: 'displayName: ''Edit queue build configuration'''
                         type: boolean
-                      GenericRead:
+                      ManageBuildQualities:
                         default: false
-                        description: 'displayName: ''Read'''
+                        description: 'displayName: ''Manage build qualities'''
                         type: boolean
-                      ManageAdvSecScanning:
+                      ManageBuildQueue:
                         default: false
-                        description: 'displayName: ''Advanced Security: manage settings'''
+                        description: 'displayName: ''Manage build queue'''
                         type: boolean
-                      ManageNote:
+                      ManageStageRunOrderPermission:
                         default: false
-                        description: 'displayName: ''Manage notes'''
+                        description: 'displayName: ''Manage stage run order'''
                         type: boolean
-                      ManagePermissions:
+                      OverrideBuildCheckInValidation:
                         default: false
-                        description: 'displayName: ''Manage permissions'''
+                        description: 'displayName: ''Override check-in validation
+                          by build'''
                         type: boolean
-                      PolicyExempt:
+                      QueueBuilds:
                         default: false
-                        description: 'displayName: ''Bypass policies when pushing'''
+                        description: 'displayName: ''Queue builds'''
                         type: boolean
-                      PullRequestBypassPolicy:
+                      RetainIndefinitely:
                         default: false
-                        description: 'displayName: ''Bypass policies when completing
-                          pull requests'''
+                        description: 'displayName: ''Retain indefinitely'''
                         type: boolean
-                      PullRequestContribute:
+                      StopBuilds:
                         default: false
-                        description: 'displayName: ''Contribute to pull requests'''
+                        description: 'displayName: ''Stop builds'''
                         type: boolean
-                      RemoveOthersLocks:
+                      UpdateBuildInformation:
                         default: false
-                        description: 'displayName: ''Remove others'' locks'''
+                        description: 'displayName: ''Update build information'''
                         type: boolean
-                      RenameRepository:
+                      ViewBuildDefinition:
                         default: false
-                        description: 'displayName: ''Rename repository'''
+                        description: 'displayName: ''View build pipeline'''
                         type: boolean
-                      ViewAdvSecAlerts:
+                      ViewBuilds:
                         default: false
-                        description: 'displayName: ''Advanced Security: view alerts'''
+                        description: 'displayName: ''View Builds'''
                         type: boolean
                     type: object
                   deny:
                     properties:
-                      Administer:
+                      AbandonBuilds:
                         default: false
-                        description: 'displayName: ''Administer'''
+                        description: 'displayName: ''Abandon builds'''
                         type: boolean
-                      CreateBranch:
+                      AdministerBuildPermissions:
                         default: false
-                        description: 'displayName: ''Create branch'''
+                        description: 'displayName: ''Administer build permissions'''
                         type: boolean
-                      CreateRepository:
+                      CreateBuildDefinition:
                         default: false
-                        description: 'displayName: ''Create repository'''
+                        description: 'displayName: ''Create build pipeline'''
                         type: boolean
-                      CreateTag:
+                      DeleteBuildDefinition:
                         default: false
-                        description: 'displayName: ''Create tag'''
+                        description: 'displayName: ''Delete build pipeline'''
                         type: boolean
-                      DeleteRepository:
+                      DeleteBuilds:
                         default: false
-                        description: 'displayName: ''Delete or disable repository'''
+                        description: 'displayName: ''Delete builds'''
                         type: boolean
-                      DismissAdvSecAlerts:
+                      DestroyBuilds:
                         default: false
-                        description: 'displayName: ''Advanced Security: manage and
-                          dismiss alerts'''
+                        description: 'displayName: ''Destroy builds'''
                         type: boolean
-                      EditPolicies:
+                      EditBuildDefinition:
                         default: false
-                        description: 'displayName: ''Edit policies'''
+                        description: 'displayName: ''Edit build pipeline'''
                         type: boolean
-                      ForcePush:
+                      EditBuildQuality:
                         default: false
-                        description: 'displayName: ''Force push (rewrite history,
-                          delete branches and tags)'''
+                        description: 'displayName: ''Edit build quality'''
                         type: boolean
-                      GenericContribute:
+                      EditPipelineQueueConfigurationPermission:
                         default: false
-                        description: 'displayName: ''Contribute'''
+                        description: 'displayName: ''Edit queue build configuration'''
                         type: boolean
-                      GenericRead:
+                      ManageBuildQualities:
                         default: false
-                        description: 'displayName: ''Read'''
+                        description: 'displayName: ''Manage build qualities'''
                         type: boolean
-                      ManageAdvSecScanning:
+                      ManageBuildQueue:
                         default: false
-                        description: 'displayName: ''Advanced Security: manage settings'''
+                        description: 'displayName: ''Manage build queue'''
                         type: boolean
-                      ManageNote:
+                      ManageStageRunOrderPermission:
                         default: false
-                        description: 'displayName: ''Manage notes'''
+                        description: 'displayName: ''Manage stage run order'''
                         type: boolean
-                      ManagePermissions:
+                      OverrideBuildCheckInValidation:
                         default: false
-                        description: 'displayName: ''Manage permissions'''
+                        description: 'displayName: ''Override check-in validation
+                          by build'''
                         type: boolean
-                      PolicyExempt:
+                      QueueBuilds:
                         default: false
-                        description: 'displayName: ''Bypass policies when pushing'''
+                        description: 'displayName: ''Queue builds'''
                         type: boolean
-                      PullRequestBypassPolicy:
+                      RetainIndefinitely:
                         default: false
-                        description: 'displayName: ''Bypass policies when completing
-                          pull requests'''
+                        description: 'displayName: ''Retain indefinitely'''
                         type: boolean
-                      PullRequestContribute:
+                      StopBuilds:
                         default: false
-                        description: 'displayName: ''Contribute to pull requests'''
+                        description: 'displayName: ''Stop builds'''
                         type: boolean
-                      RemoveOthersLocks:
+                      UpdateBuildInformation:
                         default: false
-                        description: 'displayName: ''Remove others'' locks'''
+                        description: 'displayName: ''Update build information'''
                         type: boolean
-                      RenameRepository:
+                      ViewBuildDefinition:
                         default: false
-                        description: 'displayName: ''Rename repository'''
+                        description: 'displayName: ''View build pipeline'''
                         type: boolean
-                      ViewAdvSecAlerts:
+                      ViewBuilds:
                         default: false
-                        description: 'displayName: ''Advanced Security: view alerts'''
+                        description: 'displayName: ''View Builds'''
                         type: boolean
                     type: object
                   identity:
@@ -481,20 +478,20 @@ spec:
 status:
   acceptedNames:
     categories:
-    - repositorypermission
+    - buildpermission
     - restresources
     - rr
-    kind: RepositoryPermission
-    listKind: RepositoryPermissionList
-    plural: repositorypermissions
-    singular: repositorypermission
+    kind: BuildPermission
+    listKind: BuildPermissionList
+    plural: buildpermissions
+    singular: buildpermission
   conditions:
-  - lastTransitionTime: "2025-11-24T12:34:31Z"
+  - lastTransitionTime: "2025-11-24T23:24:01Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2025-11-24T12:34:31Z"
+  - lastTransitionTime: "2025-11-24T23:24:01Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"

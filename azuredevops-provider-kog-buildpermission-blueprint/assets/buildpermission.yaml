@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: Azure DevOps RepositoryPermission Plugin API for Krateo Operator Generator (KOG)
+  title: Azure DevOps BuildPermission Plugin API for Krateo Operator Generator (KOG)
   description: Simple wrapper around Azure DevOps API to provide consistency of API response for Krateo Operator Generator (KOG)
   termsOfService: http://swagger.io/terms/
   contact:
@@ -12,15 +12,15 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: "1.0"
 servers:
-  - url: {{ include "repositorypermission.webServiceUrl" . }}
+  - url: {{ include "buildpermission.webServiceUrl" . }}
 paths:
-  /plugin/repositorypermission/{organization}/{projectId}/{repositoryId}:
+  /plugin/buildpermission/{organization}/{projectId}:
     get:
       tags:
-        - Repository Permissions
-      summary: Get repository permissions
-      description: Retrieve the permissions for a specific repository in Azure DevOps
-      operationId: get-repositorypermission
+        - Build Permissions
+      summary: Get build permissions
+      description: Retrieve the permissions for a specific build definition in Azure DevOps
+      operationId: get-buildpermission
       parameters:
         - name: organization
           in: path
@@ -34,10 +34,9 @@ paths:
           required: true
           schema:
             type: string
-        - name: repositoryId
-          in: path
-          description: Repository ID
-          required: true
+        - name: buildDefinitionId
+          in: query
+          description: Build Definition ID
           schema:
             type: string
         - name: identityType
@@ -55,6 +54,12 @@ paths:
           description: Descriptor of the identity, has priority over identityType and identityName
           schema:
             type: string
+        - name: projectLevel
+          in: query
+          description: Whether to manage permissions at the project level (true) or build level (pipeline level) (false). Default is false.
+          schema:
+            type: boolean
+            default: false
         - name: api-version
           in: query
           description: API version (e.g., 7.2-preview.2)
@@ -69,11 +74,11 @@ paths:
             type: string
       responses:
         "200":
-          description: Retrieved repository permission
+          description: Retrieved build permission
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/repositorypermission.RepositoryPermissionResponse'
+                $ref: '#/components/schemas/buildpermission.BuildPermissionResponse'
         "400":
           description: Bad Request
           content:
@@ -100,10 +105,10 @@ paths:
                 type: string
     post:
       tags:
-        - Repository Permissions
-      summary: Set repository permissions
-      description: Set or update the permissions for a specific repository in Azure DevOps. Identity information comes from the request body.
-      operationId: post-repositorypermission
+        - Build Permissions
+      summary: Set build permissions
+      description: Set or update the permissions for a specific build definition in Azure DevOps. Identity information comes from the request body.
+      operationId: post-buildpermission
       parameters:
         - name: organization
           in: path
@@ -117,12 +122,17 @@ paths:
           required: true
           schema:
             type: string
-        - name: repositoryId
-          in: path
-          description: Repository ID
-          required: true
+        - name: buildDefinitionId
+          in: query
+          description: Build Definition ID
           schema:
             type: string
+        - name: projectLevel
+          in: query
+          description: Whether to manage permissions at the project level (true) or build level (pipeline level) (false). Default is false.
+          schema:
+            type: boolean
+            default: false
         - name: api-version
           in: query
           description: API version (e.g., 7.2-preview.2)
@@ -140,15 +150,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/repositorypermission.RepositoryPermissionRequest'
+              $ref: '#/components/schemas/buildpermission.BuildPermissionRequest'
         required: true
       responses:
         "200":
-          description: Updated repository permission
+          description: Updated build permission
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/repositorypermission.RepositoryPermissionResponse'
+                $ref: '#/components/schemas/buildpermission.BuildPermissionResponse'
         "400":
           description: Bad Request
           content:
@@ -176,176 +186,7 @@ paths:
       x-codegen-request-body-name: body
 components:
   schemas:
-    repositorypermission.PermissionsInfo:
-      type: object
-      properties:
-        allow:
-          type: object
-          # FIXED
-          #additionalProperties:
-          #  type: boolean
-          properties:
-            Administer:
-              type: boolean
-              default: false
-              description: "displayName: 'Administer' "
-            GenericRead:
-              type: boolean
-              default: false
-              description: "displayName: 'Read' "
-            GenericContribute:
-              type: boolean
-              default: false
-              description: "displayName: 'Contribute' "
-            ForcePush:
-              type: boolean
-              default: false
-              description: "displayName: 'Force push (rewrite history, delete branches and tags)' "
-            CreateBranch:
-              type: boolean
-              default: false
-              description: "displayName: 'Create branch' "
-            CreateTag:
-              type: boolean
-              default: false
-              description: "displayName: 'Create tag' "
-            ManageNote:
-              type: boolean
-              default: false
-              description: "displayName: 'Manage notes' "
-            PolicyExempt:
-              type: boolean
-              default: false
-              description: "displayName: 'Bypass policies when pushing' "
-            CreateRepository:
-              type: boolean
-              default: false
-              description: "displayName: 'Create repository' "
-            DeleteRepository:
-              type: boolean
-              default: false
-              description: "displayName: 'Delete or disable repository' "
-            RenameRepository:
-              type: boolean
-              default: false
-              description: "displayName: 'Rename repository' "
-            EditPolicies:
-              type: boolean
-              default: false
-              description: "displayName: 'Edit policies' "
-            RemoveOthersLocks:
-              type: boolean
-              default: false
-              description: "displayName: 'Remove others' locks' "
-            ManagePermissions:
-              type: boolean
-              default: false
-              description: "displayName: 'Manage permissions' "
-            PullRequestContribute:
-              type: boolean
-              default: false
-              description: "displayName: 'Contribute to pull requests' "
-            PullRequestBypassPolicy:
-              type: boolean
-              default: false
-              description: "displayName: 'Bypass policies when completing pull requests' "
-            ViewAdvSecAlerts:
-              type: boolean
-              default: false
-              description: "displayName: 'Advanced Security: view alerts' "
-            DismissAdvSecAlerts:
-              type: boolean
-              default: false
-              description: "displayName: 'Advanced Security: manage and dismiss alerts' "
-            ManageAdvSecScanning:
-              type: boolean
-              default: false
-              description: "displayName: 'Advanced Security: manage settings' "
-        deny:
-          type: object
-          # FIXED
-          #additionalProperties:
-          #  type: boolean
-          properties:
-            Administer:
-              type: boolean
-              default: false
-              description: "displayName: 'Administer' "
-            GenericRead:
-              type: boolean
-              default: false
-              description: "displayName: 'Read' "
-            GenericContribute:
-              type: boolean
-              default: false
-              description: "displayName: 'Contribute' "
-            ForcePush:
-              type: boolean
-              default: false
-              description: "displayName: 'Force push (rewrite history, delete branches and tags)' "
-            CreateBranch:
-              type: boolean
-              default: false
-              description: "displayName: 'Create branch' "
-            CreateTag:
-              type: boolean
-              default: false
-              description: "displayName: 'Create tag' "
-            ManageNote:
-              type: boolean
-              default: false
-              description: "displayName: 'Manage notes' "
-            PolicyExempt:
-              type: boolean
-              default: false
-              description: "displayName: 'Bypass policies when pushing' "
-            CreateRepository:
-              type: boolean
-              default: false
-              description: "displayName: 'Create repository' "
-            DeleteRepository:
-              type: boolean
-              default: false
-              description: "displayName: 'Delete or disable repository' "
-            RenameRepository:
-              type: boolean
-              default: false
-              description: "displayName: 'Rename repository' "
-            EditPolicies:
-              type: boolean
-              default: false
-              description: "displayName: 'Edit policies' "
-            RemoveOthersLocks:
-              type: boolean
-              default: false
-              description: "displayName: 'Remove others' locks' "
-            ManagePermissions:
-              type: boolean
-              default: false
-              description: "displayName: 'Manage permissions' "
-            PullRequestContribute:
-              type: boolean
-              default: false
-              description: "displayName: 'Contribute to pull requests' "
-            PullRequestBypassPolicy:
-              type: boolean
-              default: false
-              description: "displayName: 'Bypass policies when completing pull requests' "
-            ViewAdvSecAlerts:
-              type: boolean
-              default: false
-              description: "displayName: 'Advanced Security: view alerts' "
-            DismissAdvSecAlerts:
-              type: boolean
-              default: false
-              description: "displayName: 'Advanced Security: manage and dismiss alerts' "
-            ManageAdvSecScanning:
-              type: boolean
-              default: false
-              description: "displayName: 'Advanced Security: manage settings' "
-        identity:
-          $ref: '#/components/schemas/repositorypermission.RepositoryPermissionIdentity'
-    repositorypermission.RepositoryPermissionIdentity:
+    buildpermission.BuildPermissionIdentity:
       type: object
       properties:
         descriptor:
@@ -354,22 +195,193 @@ components:
           type: string
         type:
           type: string
-    repositorypermission.RepositoryPermissionRequest:
+    buildpermission.BuildPermissionRequest:
       type: object
       properties:
         permissions:
-          $ref: '#/components/schemas/repositorypermission.PermissionsInfo'
-    repositorypermission.RepositoryPermissionResponse:
+          $ref: '#/components/schemas/buildpermission.PermissionsInfo'
+    buildpermission.BuildPermissionResponse:
       type: object
       properties:
+        buildDefinitionId:
+          type: string
         organization:
           type: string
         permissions:
-          $ref: '#/components/schemas/repositorypermission.PermissionsInfo'
+          $ref: '#/components/schemas/buildpermission.PermissionsInfo'
         projectId:
           type: string
-        repositoryId:
-          type: string
+        projectLevel:
+          type: boolean
+    buildpermission.PermissionsInfo:
+      type: object
+      properties:
+        allow:
+          type: object
+          # FIXED
+          #additionalProperties:
+          #  type: boolean
+          properties:
+            ViewBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'View Builds' "
+            EditBuildQuality:
+              type: boolean
+              default: false
+              description: "displayName: 'Edit build quality' "
+            RetainIndefinitely:
+              type: boolean
+              default: false
+              description: "displayName: 'Retain indefinitely' "
+            DeleteBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'Delete builds' "
+            ManageBuildQualities:
+              type: boolean
+              default: false
+              description: "displayName: 'Manage build qualities' "
+            DestroyBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'Destroy builds' "
+            UpdateBuildInformation:
+              type: boolean
+              default: false
+              description: "displayName: 'Update build information' "
+            QueueBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'Queue builds' "
+            ManageBuildQueue:
+              type: boolean
+              default: false
+              description: "displayName: 'Manage build queue' "
+            StopBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'Stop builds' "
+            ViewBuildDefinition:
+              type: boolean
+              default: false
+              description: "displayName: 'View build pipeline' "
+            EditBuildDefinition:
+              type: boolean
+              default: false
+              description: "displayName: 'Edit build pipeline' "
+            DeleteBuildDefinition:
+              type: boolean
+              default: false
+              description: "displayName: 'Delete build pipeline' "
+            OverrideBuildCheckInValidation:
+              type: boolean
+              default: false
+              description: "displayName: 'Override check-in validation by build' "
+            AdministerBuildPermissions:
+              type: boolean
+              default: false
+              description: "displayName: 'Administer build permissions' "
+            CreateBuildDefinition:
+              type: boolean
+              default: false
+              description: "displayName: 'Create build pipeline' "
+            EditPipelineQueueConfigurationPermission:
+              type: boolean
+              default: false
+              description: "displayName: 'Edit queue build configuration' "
+            ManageStageRunOrderPermission:
+              type: boolean
+              default: false
+              description: "displayName: 'Manage stage run order' "
+            AbandonBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'Abandon builds' "    
+        deny:
+          type: object
+          # FIXED
+          #additionalProperties:
+          #  type: boolean
+          properties:
+            ViewBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'View Builds' "
+            EditBuildQuality:
+              type: boolean
+              default: false
+              description: "displayName: 'Edit build quality' "
+            RetainIndefinitely:
+              type: boolean
+              default: false
+              description: "displayName: 'Retain indefinitely' "
+            DeleteBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'Delete builds' "
+            ManageBuildQualities:
+              type: boolean
+              default: false
+              description: "displayName: 'Manage build qualities' "
+            DestroyBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'Destroy builds' "
+            UpdateBuildInformation:
+              type: boolean
+              default: false
+              description: "displayName: 'Update build information' "
+            QueueBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'Queue builds' "
+            ManageBuildQueue:
+              type: boolean
+              default: false
+              description: "displayName: 'Manage build queue' "
+            StopBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'Stop builds' "
+            ViewBuildDefinition:
+              type: boolean
+              default: false
+              description: "displayName: 'View build pipeline' "
+            EditBuildDefinition:
+              type: boolean
+              default: false
+              description: "displayName: 'Edit build pipeline' "
+            DeleteBuildDefinition:
+              type: boolean
+              default: false
+              description: "displayName: 'Delete build pipeline' "
+            OverrideBuildCheckInValidation:
+              type: boolean
+              default: false
+              description: "displayName: 'Override check-in validation by build' "
+            AdministerBuildPermissions:
+              type: boolean
+              default: false
+              description: "displayName: 'Administer build permissions' "
+            CreateBuildDefinition:
+              type: boolean
+              default: false
+              description: "displayName: 'Create build pipeline' "
+            EditPipelineQueueConfigurationPermission:
+              type: boolean
+              default: false
+              description: "displayName: 'Edit queue build configuration' "
+            ManageStageRunOrderPermission:
+              type: boolean
+              default: false
+              description: "displayName: 'Manage stage run order' "
+            AbandonBuilds:
+              type: boolean
+              default: false
+              description: "displayName: 'Abandon builds' "
+        identity:
+          $ref: '#/components/schemas/buildpermission.BuildPermissionIdentity'
   securitySchemes:
     accessToken:
       type: http

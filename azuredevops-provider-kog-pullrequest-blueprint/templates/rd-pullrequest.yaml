@@ -26,10 +26,10 @@ spec:
     - url
     - lastMergeSourceCommit
     excludedSpecFields:
-    - pullRequestId                             # From get action, path parameter not needed in spec
-    - maxCommentLength                          # From findby action, query parameter not needed in spec
-    - $skip                                     # From findby action, query parameter not needed in spec
-    - $top                                      # From findby action, query parameter not needed in spec
+    - pullRequestId
+    - maxCommentLength
+    - $skip
+    - $top
     - completionOptions.triggeredByAutoComplete
     - '["searchCriteria.creatorId"]'
     - '["searchCriteria.includeLinks"]'

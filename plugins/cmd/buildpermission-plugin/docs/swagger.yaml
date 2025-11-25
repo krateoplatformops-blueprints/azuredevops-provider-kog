@@ -1,0 +1,206 @@
+basePath: /
+definitions:
+  buildpermission.BuildPermissionIdentity:
+    properties:
+      descriptor:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  buildpermission.BuildPermissionRequest:
+    properties:
+      permissions:
+        $ref: '#/definitions/buildpermission.PermissionsInfo'
+    type: object
+  buildpermission.BuildPermissionResponse:
+    properties:
+      buildDefinitionId:
+        type: string
+      organization:
+        type: string
+      permissions:
+        $ref: '#/definitions/buildpermission.PermissionsInfo'
+      projectId:
+        type: string
+      projectLevel:
+        type: boolean
+    type: object
+  buildpermission.PermissionsInfo:
+    properties:
+      allow:
+        additionalProperties:
+          type: boolean
+        type: object
+      deny:
+        additionalProperties:
+          type: boolean
+        type: object
+      identity:
+        $ref: '#/definitions/buildpermission.BuildPermissionIdentity'
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: contact@krateoplatformops.io
+    name: Krateo Support
+    url: https://krateo.io
+  description: Simple wrapper around Azure DevOps API to provide consistency of API
+    response for Krateo Operator Generator (KOG)
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Azure DevOps BuildPermission Plugin API for Krateo Operator Generator (KOG)
+  version: "1.0"
+paths:
+  /plugin/buildpermission/{organization}/{projectId}:
+    get:
+      description: Retrieve the permissions for a specific build definition in Azure
+        DevOps
+      operationId: get-buildpermission
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Build Definition ID
+        in: query
+        name: buildDefinitionId
+        type: string
+      - description: Type of identity (e.g., 'azure-group', 'build-service')
+        in: query
+        name: identityType
+        type: string
+      - description: Name of the identity (e.g., Contributors), not used if identityType
+          is 'build-service' or if identityDescriptor is provided
+        in: query
+        name: identityName
+        type: string
+      - description: Descriptor of the identity, has priority over identityType and
+          identityName
+        in: query
+        name: identityDescriptor
+        type: string
+      - default: false
+        description: Whether to manage permissions at the project level (true) or
+          build level (pipeline level) (false). Default is false.
+        in: query
+        name: projectLevel
+        type: boolean
+      - description: API version (e.g., 7.2-preview.2)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Retrieved build permission
+          schema:
+            $ref: '#/definitions/buildpermission.BuildPermissionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get build permissions
+      tags:
+      - Build Permissions
+    post:
+      consumes:
+      - application/json
+      description: Set or update the permissions for a specific build definition in
+        Azure DevOps. Identity information comes from the request body.
+      operationId: post-buildpermission
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: Build Definition ID
+        in: query
+        name: buildDefinitionId
+        type: string
+      - default: false
+        description: Whether to manage permissions at the project level (true) or
+          build level (pipeline level) (false). Default is false.
+        in: query
+        name: projectLevel
+        type: boolean
+      - description: API version (e.g., 7.2-preview.2)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Permission settings to apply. Identity info (type, name, descriptor)
+          is specified in permissions.identity.
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/buildpermission.BuildPermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated build permission
+          schema:
+            $ref: '#/definitions/buildpermission.BuildPermissionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Set build permissions
+      tags:
+      - Build Permissions
+schemes:
+- http
+swagger: "2.0"

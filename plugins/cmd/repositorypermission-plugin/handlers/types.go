@@ -3,7 +3,6 @@ package repositorypermission
 import (
 	"path"
 	"reflect"
-	"strings"
 )
 
 const (
@@ -75,43 +74,43 @@ const (
 func (p PermissionBit) String() string {
 	switch p {
 	case Administer:
-		return "administerpermission"
+		return "Administer"
 	case GenericRead:
-		return "genericread"
+		return "GenericRead"
 	case GenericContribute:
-		return "genericcontribute"
+		return "GenericContribute"
 	case ForcePush:
-		return "forcepush"
+		return "ForcePush"
 	case CreateBranch:
-		return "createbranch"
+		return "CreateBranch"
 	case CreateTag:
-		return "createtag"
+		return "CreateTag"
 	case ManageNote:
-		return "managenote"
+		return "ManageNote"
 	case PolicyExempt:
-		return "policyexempt"
+		return "PolicyExempt"
 	case CreateRepository:
-		return "createrepository"
+		return "CreateRepository"
 	case DeleteRepository:
-		return "deleterepository"
+		return "DeleteRepository"
 	case RenameRepository:
-		return "renamerepository"
+		return "RenameRepository"
 	case EditPolicies:
-		return "editpolicies"
+		return "EditPolicies"
 	case RemoveOthersLocks:
-		return "removeotherslocks"
+		return "RemoveOthersLocks"
 	case ManagePermissions:
-		return "managepermissions"
+		return "ManagePermissions"
 	case PullRequestContribute:
-		return "pullrequestcontribute"
+		return "PullRequestContribute"
 	case PullRequestBypassPolicy:
-		return "pullrequestbypasspolicy"
+		return "PullRequestBypassPolicy"
 	case ViewAdvSecAlerts:
-		return "viewadvsecalerts"
+		return "ViewAdvSecAlerts"
 	case DismissAdvSecAlerts:
-		return "dismissadvsecalerts"
+		return "DismissAdvSecAlerts"
 	case ManageAdvSecScanning:
-		return "manageadvsecscanning"
+		return "ManageAdvSecScanning"
 	default:
 		return ""
 	}
@@ -125,7 +124,7 @@ func comparePermissionBits(bitmask int, check int) bool {
 // bitmaskToPermissionFlags converts a permission bitmask to a PermissionFlags struct
 func bitmaskToPermissionFlags(bitmask int) PermissionFlags {
 	return PermissionFlags{
-		AdministerPermission:    comparePermissionBits(bitmask, int(Administer)),
+		Administer:              comparePermissionBits(bitmask, int(Administer)),
 		GenericRead:             comparePermissionBits(bitmask, int(GenericRead)),
 		GenericContribute:       comparePermissionBits(bitmask, int(GenericContribute)),
 		ForcePush:               comparePermissionBits(bitmask, int(ForcePush)),
@@ -151,7 +150,7 @@ func bitmaskToPermissionFlags(bitmask int) PermissionFlags {
 func permissionFlagsToBitmask(f PermissionFlags) int {
 	bitmask := 0
 
-	if f.AdministerPermission {
+	if f.Administer {
 		bitmask |= int(Administer)
 	}
 	if f.GenericRead {
@@ -257,46 +256,46 @@ func mapToPermissionFlags(perms map[string]bool) PermissionFlags {
 		}
 
 		// Normalize the key to lowercase for case-insensitive matching
-		key = strings.ToLower(key)
+		//key = strings.ToLower(key)
 
 		switch key {
-		case "administerpermission":
-			flags.AdministerPermission = true
-		case "genericread":
+		case "Administer":
+			flags.Administer = true
+		case "GenericRead":
 			flags.GenericRead = true
-		case "genericcontribute":
+		case "GenericContribute":
 			flags.GenericContribute = true
-		case "forcepush":
+		case "ForcePush":
 			flags.ForcePush = true
-		case "createbranch":
+		case "CreateBranch":
 			flags.CreateBranch = true
-		case "createtag":
+		case "CreateTag":
 			flags.CreateTag = true
-		case "managenote":
+		case "ManageNote":
 			flags.ManageNote = true
-		case "policyexempt":
+		case "PolicyExempt":
 			flags.PolicyExempt = true
-		case "createrepository":
+		case "CreateRepository":
 			flags.CreateRepository = true
-		case "deleterepository":
+		case "DeleteRepository":
 			flags.DeleteRepository = true
-		case "renamerepository":
+		case "RenameRepository":
 			flags.RenameRepository = true
-		case "editpolicies":
+		case "EditPolicies":
 			flags.EditPolicies = true
-		case "removeotherslocks":
+		case "RemoveOthersLocks":
 			flags.RemoveOthersLocks = true
-		case "managepermissions":
+		case "ManagePermissions":
 			flags.ManagePermissions = true
-		case "pullrequestcontribute":
+		case "PullRequestContribute":
 			flags.PullRequestContribute = true
-		case "pullrequestbypasspolicy":
+		case "PullRequestBypassPolicy":
 			flags.PullRequestBypassPolicy = true
-		case "viewadvsecalerts":
+		case "ViewAdvSecAlerts":
 			flags.ViewAdvSecAlerts = true
-		case "dismissadvsecalerts":
+		case "DismissAdvSecAlerts":
 			flags.DismissAdvSecAlerts = true
-		case "manageadvsecscanning":
+		case "ManageAdvSecScanning":
 			flags.ManageAdvSecScanning = true
 		}
 	}
@@ -328,28 +327,28 @@ type RepositoryPermissionIdentity struct {
 
 // PermissionFlags represents all available repository permissions as boolean flags
 type PermissionFlags struct {
-	AdministerPermission    bool `json:"administerpermission"`
-	GenericRead             bool `json:"genericread"`
-	GenericContribute       bool `json:"genericcontribute"`
-	ForcePush               bool `json:"forcepush"`
-	CreateBranch            bool `json:"createbranch"`
-	CreateTag               bool `json:"createtag"`
-	ManageNote              bool `json:"managenote"`
-	PolicyExempt            bool `json:"policyexempt"`
-	CreateRepository        bool `json:"createrepository"`
-	DeleteRepository        bool `json:"deleterepository"`
-	RenameRepository        bool `json:"renamerepository"`
-	EditPolicies            bool `json:"editpolicies"`
-	RemoveOthersLocks       bool `json:"removeotherslocks"`
-	ManagePermissions       bool `json:"managepermissions"`
-	PullRequestContribute   bool `json:"pullrequestcontribute"`
-	PullRequestBypassPolicy bool `json:"pullrequestbypasspolicy"`
-	ViewAdvSecAlerts        bool `json:"viewadvsecalerts"`
-	DismissAdvSecAlerts     bool `json:"dismissadvsecalerts"`
-	ManageAdvSecScanning    bool `json:"manageadvsecscanning"`
+	Administer              bool `json:"Administer"`
+	GenericRead             bool `json:"GenericRead"`
+	GenericContribute       bool `json:"GenericContribute"`
+	ForcePush               bool `json:"ForcePush"`
+	CreateBranch            bool `json:"CreateBranch"`
+	CreateTag               bool `json:"CreateTag"`
+	ManageNote              bool `json:"ManageNote"`
+	PolicyExempt            bool `json:"PolicyExempt"`
+	CreateRepository        bool `json:"CreateRepository"`
+	DeleteRepository        bool `json:"DeleteRepository"`
+	RenameRepository        bool `json:"RenameRepository"`
+	EditPolicies            bool `json:"EditPolicies"`
+	RemoveOthersLocks       bool `json:"RemoveOthersLocks"`
+	ManagePermissions       bool `json:"ManagePermissions"`
+	PullRequestContribute   bool `json:"PullRequestContribute"`
+	PullRequestBypassPolicy bool `json:"PullRequestBypassPolicy"`
+	ViewAdvSecAlerts        bool `json:"ViewAdvSecAlerts"`
+	DismissAdvSecAlerts     bool `json:"DismissAdvSecAlerts"`
+	ManageAdvSecScanning    bool `json:"ManageAdvSecScanning"`
 }
 
-// RepositoryPermissionReq represents the request body for setting repository permissions
+// RepositoryPermissionRequest represents the request body for setting repository permissions
 type RepositoryPermissionRequest struct {
 	Permissions PermissionsInfo `json:"permissions" yaml:"permissions"`
 }

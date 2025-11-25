@@ -214,172 +214,172 @@ A reference to the Configuration CR that holds all the needed configuration for 
         </tr>
     </thead>
     <tbody><tr>
-        <td><b>administerpermission</b></td>
+        <td><b>Administer</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Administer'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createbranch</b></td>
+        <td><b>CreateBranch</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create branch'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createrepository</b></td>
+        <td><b>CreateRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createtag</b></td>
+        <td><b>CreateTag</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create tag'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>deleterepository</b></td>
+        <td><b>DeleteRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Delete or disable repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>dismissadvsecalerts</b></td>
+        <td><b>DismissAdvSecAlerts</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: manage and dismiss alerts'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>editpolicies</b></td>
+        <td><b>EditPolicies</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Edit policies'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>forcepush</b></td>
+        <td><b>ForcePush</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Force push (rewrite history, delete branches and tags)'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>genericcontribute</b></td>
+        <td><b>GenericContribute</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Contribute'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>genericread</b></td>
+        <td><b>GenericRead</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Read'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>manageadvsecscanning</b></td>
+        <td><b>ManageAdvSecScanning</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: manage settings'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>managenote</b></td>
+        <td><b>ManageNote</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Manage notes'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>managepermissions</b></td>
+        <td><b>ManagePermissions</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Manage permissions'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>policyexempt</b></td>
+        <td><b>PolicyExempt</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Bypass policies when pushing'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>pullrequestbypasspolicy</b></td>
+        <td><b>PullRequestBypassPolicy</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Bypass policies when completing pull requests'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>pullrequestcontribute</b></td>
+        <td><b>PullRequestContribute</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Contribute to pull requests'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>removeotherslocks</b></td>
+        <td><b>RemoveOthersLocks</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Remove others' locks'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>renamerepository</b></td>
+        <td><b>RenameRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Rename repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>viewadvsecalerts</b></td>
+        <td><b>ViewAdvSecAlerts</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: view alerts'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
@@ -405,172 +405,172 @@ A reference to the Configuration CR that holds all the needed configuration for 
         </tr>
     </thead>
     <tbody><tr>
-        <td><b>administerpermission</b></td>
+        <td><b>Administer</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Administer'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createbranch</b></td>
+        <td><b>CreateBranch</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create branch'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createrepository</b></td>
+        <td><b>CreateRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createtag</b></td>
+        <td><b>CreateTag</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create tag'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>deleterepository</b></td>
+        <td><b>DeleteRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Delete or disable repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>dismissadvsecalerts</b></td>
+        <td><b>DismissAdvSecAlerts</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: manage and dismiss alerts'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>editpolicies</b></td>
+        <td><b>EditPolicies</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Edit policies'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>forcepush</b></td>
+        <td><b>ForcePush</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Force push (rewrite history, delete branches and tags)'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>genericcontribute</b></td>
+        <td><b>GenericContribute</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Contribute'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>genericread</b></td>
+        <td><b>GenericRead</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Read'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>manageadvsecscanning</b></td>
+        <td><b>ManageAdvSecScanning</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: manage settings'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>managenote</b></td>
+        <td><b>ManageNote</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Manage notes'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>managepermissions</b></td>
+        <td><b>ManagePermissions</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Manage permissions'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>policyexempt</b></td>
+        <td><b>PolicyExempt</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Bypass policies when pushing'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>pullrequestbypasspolicy</b></td>
+        <td><b>PullRequestBypassPolicy</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Bypass policies when completing pull requests'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>pullrequestcontribute</b></td>
+        <td><b>PullRequestContribute</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Contribute to pull requests'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>removeotherslocks</b></td>
+        <td><b>RemoveOthersLocks</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Remove others' locks'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>renamerepository</b></td>
+        <td><b>RenameRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Rename repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>viewadvsecalerts</b></td>
+        <td><b>ViewAdvSecAlerts</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: view alerts'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
@@ -772,172 +772,172 @@ one status to another, if any.<br/>
         </tr>
     </thead>
     <tbody><tr>
-        <td><b>administerpermission</b></td>
+        <td><b>Administer</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Administer'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createbranch</b></td>
+        <td><b>CreateBranch</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create branch'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createrepository</b></td>
+        <td><b>CreateRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createtag</b></td>
+        <td><b>CreateTag</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create tag'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>deleterepository</b></td>
+        <td><b>DeleteRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Delete or disable repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>dismissadvsecalerts</b></td>
+        <td><b>DismissAdvSecAlerts</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: manage and dismiss alerts'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>editpolicies</b></td>
+        <td><b>EditPolicies</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Edit policies'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>forcepush</b></td>
+        <td><b>ForcePush</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Force push (rewrite history, delete branches and tags)'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>genericcontribute</b></td>
+        <td><b>GenericContribute</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Contribute'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>genericread</b></td>
+        <td><b>GenericRead</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Read'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>manageadvsecscanning</b></td>
+        <td><b>ManageAdvSecScanning</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: manage settings'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>managenote</b></td>
+        <td><b>ManageNote</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Manage notes'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>managepermissions</b></td>
+        <td><b>ManagePermissions</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Manage permissions'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>policyexempt</b></td>
+        <td><b>PolicyExempt</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Bypass policies when pushing'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>pullrequestbypasspolicy</b></td>
+        <td><b>PullRequestBypassPolicy</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Bypass policies when completing pull requests'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>pullrequestcontribute</b></td>
+        <td><b>PullRequestContribute</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Contribute to pull requests'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>removeotherslocks</b></td>
+        <td><b>RemoveOthersLocks</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Remove others' locks'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>renamerepository</b></td>
+        <td><b>RenameRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Rename repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>viewadvsecalerts</b></td>
+        <td><b>ViewAdvSecAlerts</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: view alerts'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
@@ -963,172 +963,172 @@ one status to another, if any.<br/>
         </tr>
     </thead>
     <tbody><tr>
-        <td><b>administerpermission</b></td>
+        <td><b>Administer</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Administer'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createbranch</b></td>
+        <td><b>CreateBranch</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create branch'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createrepository</b></td>
+        <td><b>CreateRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>createtag</b></td>
+        <td><b>CreateTag</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Create tag'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>deleterepository</b></td>
+        <td><b>DeleteRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Delete or disable repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>dismissadvsecalerts</b></td>
+        <td><b>DismissAdvSecAlerts</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: manage and dismiss alerts'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>editpolicies</b></td>
+        <td><b>EditPolicies</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Edit policies'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>forcepush</b></td>
+        <td><b>ForcePush</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Force push (rewrite history, delete branches and tags)'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>genericcontribute</b></td>
+        <td><b>GenericContribute</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Contribute'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>genericread</b></td>
+        <td><b>GenericRead</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Read'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>manageadvsecscanning</b></td>
+        <td><b>ManageAdvSecScanning</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: manage settings'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>managenote</b></td>
+        <td><b>ManageNote</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Manage notes'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>managepermissions</b></td>
+        <td><b>ManagePermissions</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Manage permissions'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>policyexempt</b></td>
+        <td><b>PolicyExempt</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Bypass policies when pushing'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>pullrequestbypasspolicy</b></td>
+        <td><b>PullRequestBypassPolicy</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Bypass policies when completing pull requests'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>pullrequestcontribute</b></td>
+        <td><b>PullRequestContribute</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Contribute to pull requests'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>removeotherslocks</b></td>
+        <td><b>RemoveOthersLocks</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Remove others' locks'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>renamerepository</b></td>
+        <td><b>RenameRepository</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Rename repository'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>viewadvsecalerts</b></td>
+        <td><b>ViewAdvSecAlerts</b></td>
         <td>boolean</td>
         <td>
-          <br/>
+          displayName: 'Advanced Security: view alerts'<br/>
           <br/>
             <i>Default</i>: false<br/>
         </td>

@@ -1,0 +1,73 @@
+kind: RestDefinition
+apiVersion: ogen.krateo.io/v1alpha1
+metadata:
+  name: {{ .Release.Name }}-team
+spec:
+  oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-team/team.yaml
+  resourceGroup: azuredevops.ogen.krateo.io
+  resource:
+    kind: Team
+    identifiers:
+    - name # within the same project the name must be unique
+    additionalStatusFields:
+    - id
+    excludedSpecFields:
+    - teamId
+    - id
+    - identity
+    - identityUrl
+    - projectName
+    - url
+    verbsDescription:
+    - action: findby
+      method: GET
+      path: /{organization}/_apis/projects/{projectId}/teams
+    - action: get
+      method: GET
+      path: /{organization}/_apis/projects/{projectId}/teams/{teamId}
+      requestFieldMapping:
+        - inPath: teamId
+          inCustomResource: status.id
+    - action: create
+      method: POST
+      path: /{organization}/_apis/projects/{projectId}/teams
+    - action: update
+      method: PATCH
+      path: /{organization}/_apis/projects/{projectId}/teams/{teamId}
+      requestFieldMapping:
+        - inPath: teamId
+          inCustomResource: status.id
+    - action: delete
+      method: DELETE
+      path: /{organization}/_apis/projects/{projectId}/teams/{teamId}
+      requestFieldMapping:
+        - inPath: teamId
+          inCustomResource: status.id
+    configurationFields:
+    # Common among all actions
+    - fromOpenAPI:
+        name: api-version
+        in: query
+      fromRestDefinition:
+        actions: ["*"]
+    - fromOpenAPI:
+        name: $expandIdentity
+        in: query
+      fromRestDefinition:
+        actions: ["findby", "get"]
+    - fromOpenAPI:
+        name: $mine
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]
+    - fromOpenAPI:
+        name: $skip
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]
+    - fromOpenAPI:
+        name: $top
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]
+

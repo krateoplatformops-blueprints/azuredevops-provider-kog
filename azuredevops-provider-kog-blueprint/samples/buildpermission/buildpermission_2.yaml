@@ -1,35 +1,31 @@
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
-kind: RepositoryPermission
+kind: BuildPermission
 metadata:
-  name: rp-1
+  name: bp-2
   namespace: default
   annotations:
     krateo.io/connector-verbose: "true"
 spec:
   # required: reference to a Configuration CR in the cluster
   configurationRef:
-    name: my-repositorypermission-config
+    name: my-buildpermission-config
     namespace: default
 
   organization: krateo-kog                            # required
   projectId: 99837031-4e4e-4753-9a47-73fcc4cba766     # required
-  repositoryId: c2f8d804-7c2f-4f3f-bd69-70c3169cfb8c  # required
+  buildDefinitionId: "82"
 
   permissions:
     identity:
-      type: azure-group
-      name: Contributors # not used if type is `build-service` or if descriptor is provided
+      type: build-service
+      #name: Contributors # not used if type is `build-service` or if descriptor is provided
       #descriptor: Microsoft.TeamFoundation.Identity;abcdef12-3456-7890-abcd-ef1234567890 # has priority over name or type+name
     allow:
       # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
       # If you want to explicitly allow a permission, set it to true
-      CreateBranch: true
-      RenameRepository: false # "Not set"
-
+      CreateBuildDefinition: true
     deny:
       # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
       # If you want to explicitly deny a permission, set it to true
-      CreateTag: true
-      ForcePush: true
-      EditPolicies: true
-      ViewAdvSecAlerts: true
+      EditPipelineQueueConfigurationPermission: true
+      ViewBuilds: true # "Not set"
