@@ -35,6 +35,8 @@ definitions:
         $ref: '#/definitions/repositorypermission.PermissionsInfo'
       projectId:
         type: string
+      projectLevel:
+        type: boolean
       repositoryId:
         type: string
     type: object
@@ -54,7 +56,7 @@ info:
     (KOG)
   version: "1.0"
 paths:
-  /plugin/repositorypermission/{organization}/{projectId}/{repositoryId}:
+  /plugin/repositorypermission/{organization}/{projectId}:
     get:
       description: Retrieve the permissions for a specific repository in Azure DevOps
       operationId: get-repositorypermission
@@ -70,9 +72,8 @@ paths:
         required: true
         type: string
       - description: Repository ID
-        in: path
+        in: query
         name: repositoryId
-        required: true
         type: string
       - description: Type of identity (e.g., 'azure-group', 'build-service')
         in: query
@@ -88,6 +89,12 @@ paths:
         in: query
         name: identityDescriptor
         type: string
+      - default: false
+        description: Whether to manage permissions at the project level (true) or
+          repository level (false). Default is false.
+        in: query
+        name: projectLevel
+        type: boolean
       - description: API version (e.g., 7.2-preview.2)
         in: query
         name: api-version
@@ -142,10 +149,15 @@ paths:
         required: true
         type: string
       - description: Repository ID
-        in: path
+        in: query
         name: repositoryId
-        required: true
         type: string
+      - default: false
+        description: Whether to manage permissions at the project level (true) or
+          repository level (false). Default is false.
+        in: query
+        name: projectLevel
+        type: boolean
       - description: API version (e.g., 7.2-preview.2)
         in: query
         name: api-version

@@ -138,14 +138,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResourcePipelinePermissions'
-      security:
-      - oauth2:
-        - vso.pipelineresources_manage
-      x-ms-docs-override-version: 7.2-preview.1
-      x-ms-vss-resource: pipelinePermissions
-      x-ms-vss-method: UpdatePipelinePermisionsForResource
-      x-ms-preview: true
-      x-codegen-request-body-name: body
+      #security:
+      #- oauth2:
+      #  - vso.pipelineresources_manage
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: pipelinePermissions
+      #x-ms-vss-method: UpdatePipelinePermisionsForResource
+      #x-ms-preview: true
+      #x-codegen-request-body-name: body
 components:
   schemas:
     GraphSubjectBase:
@@ -326,15 +326,15 @@ components:
         #resource:
         #  $ref: '#/components/schemas/Resource'
       description: ""
-  parameters:
-    api-Version-preview.1:
-      name: api-version
-      in: query
-      description: Version of the API to use.  This should be set to '7.2-preview.1'
-        to use this version of the api.
-      required: true
-      schema:
-        type: string
+  #parameters:
+  #  api-Version-preview.1:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.1'
+  #      to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
   securitySchemes:
     accessToken:
       type: http

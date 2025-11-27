@@ -22,6 +22,7 @@ spec:
         api-version: "7.2-preview.1"
       findby:
         api-version: "7.2-preview.1"
+        $top: 1
       get:
         api-version: "7.2-preview.1"
       update:

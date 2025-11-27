@@ -12,26 +12,49 @@ spec:
     - settings
     additionalStatusFields:
     - id
+    - createdBy
+    - createdDate
+    - url
+    - type.displayName
     excludedSpecFields:
-    - id
-    - scope # legacy, deprecated field. `scope` in `settings` should be used instead
+    - configurationId
+    - scope # Legacy, deprecated field. `scope` in `settings` should be used instead
+    - continuationToken # This will be managed by the pagination section below
     verbsDescription:
     - action: findby
       method: GET
       path: /{organization}/{project}/_apis/policy/configurations
-      identifiersMatchPolicy: AND
+      identifiersMatchPolicy: AND # In order to match both type.id and settings identifiers when finding by
+      pagination:
+        type: continuationToken
+        continuationToken:
+          request:
+            tokenIn: query
+            tokenPath: "continuationToken"
+          response:
+            tokenIn: header
+            tokenPath: "X-Ms-Continuationtoken"
     - action: get
       method: GET
-      path: /{organization}/{project}/_apis/policy/configurations/{id}
+      path: /{organization}/{project}/_apis/policy/configurations/{configurationId}
+      requestFieldMapping:
+        - inPath: configurationId
+          inCustomResource: status.id
     - action: create
       method: POST
       path: /{organization}/{project}/_apis/policy/configurations
     - action: update
       method: PUT
-      path: /{organization}/{project}/_apis/policy/configurations/{id}
+      path: /{organization}/{project}/_apis/policy/configurations/{configurationId}
+      requestFieldMapping:
+        - inPath: configurationId
+          inCustomResource: status.id
     - action: delete
       method: DELETE
-      path: /{organization}/{project}/_apis/policy/configurations/{id}
+      path: /{organization}/{project}/_apis/policy/configurations/{configurationId}
+      requestFieldMapping:
+        - inPath: configurationId
+          inCustomResource: status.id
     configurationFields:
     # Common among all actions
     - fromOpenAPI:
@@ -42,12 +65,6 @@ spec:
     # FindBy
     - fromOpenAPI:
         name: $top
-        in: query
-      fromRestDefinition:
-        actions:
-          - findby
-    - fromOpenAPI:
-        name: continuationToken
         in: query
       fromRestDefinition:
         actions:

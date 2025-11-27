@@ -14,7 +14,7 @@ info:
 servers:
   - url: {{ include "repositorypermission.webServiceUrl" . }}
 paths:
-  /plugin/repositorypermission/{organization}/{projectId}/{repositoryId}:
+  /plugin/repositorypermission/{organization}/{projectId}:
     get:
       tags:
         - Repository Permissions
@@ -35,9 +35,8 @@ paths:
           schema:
             type: string
         - name: repositoryId
-          in: path
+          in: query
           description: Repository ID
-          required: true
           schema:
             type: string
         - name: identityType
@@ -55,6 +54,12 @@ paths:
           description: Descriptor of the identity, has priority over identityType and identityName
           schema:
             type: string
+        - name: projectLevel
+          in: query
+          description: Whether to manage permissions at the project level (true) or repository level (false). Default is false.
+          schema:
+            type: boolean
+            default: false
         - name: api-version
           in: query
           description: API version (e.g., 7.2-preview.2)
@@ -118,11 +123,16 @@ paths:
           schema:
             type: string
         - name: repositoryId
-          in: path
+          in: query
           description: Repository ID
-          required: true
           schema:
             type: string
+        - name: projectLevel
+          in: query
+          description: Whether to manage permissions at the project level (true) or repository level (false). Default is false.
+          schema:
+            type: boolean
+            default: false
         - name: api-version
           in: query
           description: API version (e.g., 7.2-preview.2)
@@ -368,6 +378,8 @@ components:
           $ref: '#/components/schemas/repositorypermission.PermissionsInfo'
         projectId:
           type: string
+        projectLevel:
+          type: boolean
         repositoryId:
           type: string
   securitySchemes:

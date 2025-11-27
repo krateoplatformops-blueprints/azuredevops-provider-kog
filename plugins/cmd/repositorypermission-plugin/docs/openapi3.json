@@ -21,7 +21,7 @@
     }
   ],
   "paths": {
-    "/plugin/repositorypermission/{organization}/{projectId}/{repositoryId}": {
+    "/plugin/repositorypermission/{organization}/{projectId}": {
       "get": {
         "tags": [
           "Repository Permissions"
@@ -50,9 +50,8 @@
           },
           {
             "name": "repositoryId",
-            "in": "path",
+            "in": "query",
             "description": "Repository ID",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -79,6 +78,15 @@
             "description": "Descriptor of the identity, has priority over identityType and identityName",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "projectLevel",
+            "in": "query",
+            "description": "Whether to manage permissions at the project level (true) or repository level (false). Default is false.",
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           },
           {
@@ -181,11 +189,19 @@
           },
           {
             "name": "repositoryId",
-            "in": "path",
+            "in": "query",
             "description": "Repository ID",
-            "required": true,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "projectLevel",
+            "in": "query",
+            "description": "Whether to manage permissions at the project level (true) or repository level (false). Default is false.",
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           },
           {
@@ -329,6 +345,9 @@
           },
           "projectId": {
             "type": "string"
+          },
+          "projectLevel": {
+            "type": "boolean"
           },
           "repositoryId": {
             "type": "string"

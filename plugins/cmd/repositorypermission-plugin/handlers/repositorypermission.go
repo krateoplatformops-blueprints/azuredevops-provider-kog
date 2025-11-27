@@ -58,6 +58,7 @@ type requestParams struct {
 	IdentityDescriptor string
 	IdentityType       string
 	IdentityName       string
+	ProjectLevel       bool
 	APIVersion         string
 	AuthHeader         string
 }
@@ -67,10 +68,11 @@ func (h *getHandler) extractRequestParamsGET(r *http.Request) (*requestParams, e
 	params := &requestParams{
 		Organization:       r.PathValue("organization"),
 		ProjectID:          r.PathValue("projectId"),
-		RepositoryID:       r.PathValue("repositoryId"),
+		RepositoryID:       r.URL.Query().Get("repositoryId"),
 		IdentityDescriptor: r.URL.Query().Get("identityDescriptor"),
 		IdentityType:       r.URL.Query().Get("identityType"),
 		IdentityName:       r.URL.Query().Get("identityName"),
+		ProjectLevel:       r.URL.Query().Get("projectLevel") == "true", // to cast to bool from string, if malformed will be false
 		APIVersion:         r.URL.Query().Get("api-version"),
 		AuthHeader:         r.Header.Get("Authorization"),
 	}
@@ -87,10 +89,11 @@ func (h *postHandler) extractRequestParamsPOST(r *http.Request, permReq *Reposit
 	params := &requestParams{
 		Organization:       r.PathValue("organization"),
 		ProjectID:          r.PathValue("projectId"),
-		RepositoryID:       r.PathValue("repositoryId"),
+		RepositoryID:       r.URL.Query().Get("repositoryId"),
 		IdentityDescriptor: permReq.Permissions.Identity.Descriptor,
 		IdentityType:       permReq.Permissions.Identity.Type,
 		IdentityName:       permReq.Permissions.Identity.Name,
+		ProjectLevel:       r.URL.Query().Get("projectLevel") == "true", // to cast to bool from string, if malformed will be false
 		APIVersion:         r.URL.Query().Get("api-version"),
 		AuthHeader:         r.Header.Get("Authorization"),
 	}
@@ -110,8 +113,8 @@ func (p *requestParams) validate() error {
 	if p.ProjectID == "" {
 		return fmt.Errorf("projectId parameter is required")
 	}
-	if p.RepositoryID == "" {
-		return fmt.Errorf("repositoryId parameter is required")
+	if !p.ProjectLevel && p.RepositoryID == "" {
+		return fmt.Errorf("repositoryId parameter is required when projectLevel is false")
 	}
 	if p.APIVersion == "" {
 		return fmt.Errorf("api-version is required")
@@ -310,7 +313,7 @@ func (h *baseHandler) resolveIdentityDescriptor(ctx context.Context, params *req
 }
 
 // getRepositoryPermissions retrieves repository permissions by making a POST request with empty permissions bitmask
-func (h *getHandler) getRepositoryPermissions(ctx context.Context, organization, apiVersion, authHeader, projectID, repositoryID, descriptor string) (*PermissionResponse, error) {
+func (h *getHandler) getRepositoryPermissions(ctx context.Context, organization, apiVersion, authHeader, projectID, repositoryID, descriptor string, projectLevel bool) (*PermissionResponse, error) {
 	baseURL := fmt.Sprintf("https://dev.azure.com/%s/_apis/accesscontrolentries/%s", organization, securityNamespaceID)
 
 	u, err := url.Parse(baseURL)
@@ -322,7 +325,12 @@ func (h *getHandler) getRepositoryPermissions(ctx context.Context, organization,
 	q.Set("api-version", apiVersion)
 	u.RawQuery = q.Encode()
 
-	token := CreateToken(projectID, repositoryID)
+	token := ""
+	if projectLevel {
+		token = CreateTokenProjectLevel(projectID)
+	} else {
+		token = CreateTokenObjectLevel(projectID, repositoryID)
+	}
 
 	// Create AccessControlUpdate with empty allow/deny to fetch current permissions
 	accessControlUpdate := AccessControlUpdate{
@@ -371,7 +379,7 @@ func (h *getHandler) getRepositoryPermissions(ctx context.Context, organization,
 }
 
 // setRepositoryPermissions sets repository permissions by making a POST request
-func (h *postHandler) setRepositoryPermissions(ctx context.Context, organization, apiVersion, authHeader, projectID, repositoryID, descriptor string, allow, deny int) (*PermissionResponse, error) {
+func (h *postHandler) setRepositoryPermissions(ctx context.Context, organization, apiVersion, authHeader, projectID, repositoryID, descriptor string, projectLevel bool, allow, deny int) (*PermissionResponse, error) {
 	baseURL := fmt.Sprintf("https://dev.azure.com/%s/_apis/accesscontrolentries/%s", organization, securityNamespaceID)
 
 	u, err := url.Parse(baseURL)
@@ -383,7 +391,12 @@ func (h *postHandler) setRepositoryPermissions(ctx context.Context, organization
 	q.Set("api-version", apiVersion)
 	u.RawQuery = q.Encode()
 
-	token := CreateToken(projectID, repositoryID)
+	token := ""
+	if projectLevel {
+		token = CreateTokenProjectLevel(projectID)
+	} else {
+		token = CreateTokenObjectLevel(projectID, repositoryID)
+	}
 
 	accessControlUpdate := AccessControlUpdate{
 		Merge: false, // Don't merge, replace the permissions
@@ -456,6 +469,7 @@ func (h *baseHandler) buildResponseFromPermissions(params *requestParams, descri
 		Organization: params.Organization,
 		ProjectID:    params.ProjectID,
 		RepositoryID: params.RepositoryID,
+		ProjectLevel: params.ProjectLevel,
 		PermissionsInfo: PermissionsInfo{
 			Identity: RepositoryPermissionIdentity{
 				Descriptor: descriptor,
@@ -475,10 +489,11 @@ func (h *baseHandler) buildResponseFromPermissions(params *requestParams, descri
 // @Tags Repository Permissions
 // @Param organization path string true "Organization name"
 // @Param projectId path string true "Project ID"
-// @Param repositoryId path string true "Repository ID"
+// @Param repositoryId query string false "Repository ID"
 // @Param identityType query string false "Type of identity (e.g., 'azure-group', 'build-service')"
 // @Param identityName query string false "Name of the identity (e.g., Contributors), not used if identityType is 'build-service' or if identityDescriptor is provided"
 // @Param identityDescriptor query string false "Descriptor of the identity, has priority over identityType and identityName"
+// @Param projectLevel query bool false "Whether to manage permissions at the project level (true) or repository level (false). Default is false." Default(false)
 // @Param api-version query string true "API version (e.g., 7.2-preview.2)"
 // @Param Authorization header string true "Basic Auth header"
 // @Produce json
@@ -487,7 +502,7 @@ func (h *baseHandler) buildResponseFromPermissions(params *requestParams, descri
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Not Found"
 // @Failure 500 {string} string "Internal Server Error"
-// @Router /plugin/repositorypermission/{organization}/{projectId}/{repositoryId} [get]
+// @Router /plugin/repositorypermission/{organization}/{projectId} [get]
 func (h *getHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), requestTimeout)
 	defer cancel()
@@ -518,7 +533,7 @@ func (h *getHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get repository permissions
-	permissionResp, err := h.getRepositoryPermissions(ctx, params.Organization, params.APIVersion, params.AuthHeader, params.ProjectID, params.RepositoryID, descriptor)
+	permissionResp, err := h.getRepositoryPermissions(ctx, params.Organization, params.APIVersion, params.AuthHeader, params.ProjectID, params.RepositoryID, descriptor, params.ProjectLevel)
 	if err != nil {
 		h.writeErrorResponse(w, http.StatusInternalServerError, fmt.Sprintf("error getting repository permissions: %s", err.Error()))
 		return
@@ -549,7 +564,8 @@ func (h *getHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param organization path string true "Organization name"
 // @Param projectId path string true "Project ID"
-// @Param repositoryId path string true "Repository ID"
+// @Param repositoryId query string false "Repository ID"
+// @Param projectLevel query bool false "Whether to manage permissions at the project level (true) or repository level (false). Default is false." Default(false)
 // @Param api-version query string true "API version (e.g., 7.2-preview.2)"
 // @Param Authorization header string true "Basic Auth header"
 // @Param body body RepositoryPermissionRequest true "Permission settings to apply. Identity info (type, name, descriptor) is specified in permissions.identity."
@@ -558,7 +574,7 @@ func (h *getHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Not Found"
 // @Failure 500 {string} string "Internal Server Error"
-// @Router /plugin/repositorypermission/{organization}/{projectId}/{repositoryId} [post]
+// @Router /plugin/repositorypermission/{organization}/{projectId} [post]
 func (h *postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), requestTimeout)
 	defer cancel()
@@ -616,7 +632,7 @@ func (h *postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.Log.Printf("[POST] Setting permissions - Deny flags: %+v (bitmask: %d)", denyFlags, denyBitmask)
 
 	// Set repository permissions
-	permissionResp, err := h.setRepositoryPermissions(ctx, params.Organization, params.APIVersion, params.AuthHeader, params.ProjectID, params.RepositoryID, descriptor, allowBitmask, denyBitmask)
+	permissionResp, err := h.setRepositoryPermissions(ctx, params.Organization, params.APIVersion, params.AuthHeader, params.ProjectID, params.RepositoryID, descriptor, params.ProjectLevel, allowBitmask, denyBitmask)
 	if err != nil {
 		h.writeErrorResponse(w, http.StatusInternalServerError, fmt.Sprintf("error setting repository permissions: %s", err.Error()))
 		return

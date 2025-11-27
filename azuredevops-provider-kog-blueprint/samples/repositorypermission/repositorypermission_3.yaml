@@ -1,7 +1,7 @@
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: RepositoryPermission
 metadata:
-  name: rp-1
+  name: rp-3
   namespace: default
   annotations:
     krateo.io/connector-verbose: "true"
@@ -13,7 +13,7 @@ spec:
 
   organization: krateo-kog                            # required
   projectId: 99837031-4e4e-4753-9a47-73fcc4cba766     # required
-  repositoryId: c2f8d804-7c2f-4f3f-bd69-70c3169cfb8c  # required
+  projectLevel: true
 
   permissions:
     identity:

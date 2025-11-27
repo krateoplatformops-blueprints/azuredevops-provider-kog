@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/plugin/repositorypermission/{organization}/{projectId}/{repositoryId}": {
+        "/plugin/repositorypermission/{organization}/{projectId}": {
             "get": {
                 "description": "Retrieve the permissions for a specific repository in Azure DevOps",
                 "produces": [
@@ -54,8 +54,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Repository ID",
                         "name": "repositoryId",
-                        "in": "path",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
@@ -73,6 +72,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Descriptor of the identity, has priority over identityType and identityName",
                         "name": "identityDescriptor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Whether to manage permissions at the project level (true) or repository level (false). Default is false.",
+                        "name": "projectLevel",
                         "in": "query"
                     },
                     {
@@ -155,8 +161,14 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Repository ID",
                         "name": "repositoryId",
-                        "in": "path",
-                        "required": true
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Whether to manage permissions at the project level (true) or repository level (false). Default is false.",
+                        "name": "projectLevel",
+                        "in": "query"
                     },
                     {
                         "type": "string",
@@ -271,6 +283,9 @@ const docTemplate = `{
                 },
                 "projectId": {
                     "type": "string"
+                },
+                "projectLevel": {
+                    "type": "boolean"
                 },
                 "repositoryId": {
                     "type": "string"

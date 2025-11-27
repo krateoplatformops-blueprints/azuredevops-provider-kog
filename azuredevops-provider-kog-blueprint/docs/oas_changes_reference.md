@@ -29,8 +29,11 @@ Otherwise there would be a potential clash between `project` field in path and `
 Note that `projectId` could be either a project name or a project ID even if the field is named `projectId`.
 - The path parameter `repositoryId` has been changed to `id` on every endpoint that requires it. This is done to be aligned with the naming convention used in response bodies by the Azure DevOps REST API.
 - In the `delete` endpoint the response status code has been changed from `200` to `204` as the Azure DevOps REST API actually returns a `204 No Content` status code when a repository is deleted successfully.
-- Some addtional schemas are added, such as `GitRepositoryUpdateOptions`. 
-This schema is used in the `update` operation to allow updating only the name and default branch of a GitRepository.
+- Commented out the query parameters: `includeLinks`, `includeAllUrls`, `includeHidden`.
+- Some addtional schemas are added, such as `GitRepositoryUpdateOptions`. This schema is used in the `update` operation to allow updating only the name and default branch of a GitRepository.
+- Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
+- Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
+- Commented out the `components.parameters` section at root level as it just to inform about api versions.
 
 ## `Pipeline`
 
@@ -46,6 +49,10 @@ This schema is used in the `update` operation to allow updating only the name an
 **List of change made to the OpenAPI Specification (OAS)**:
 - The schema for the request body of the `create` operation has been modified to include additional fields not documented in the original OpenAPI Specification (OAS) but required for a successful operation (`configuration.repository` and `configuration.path`).
 - Note: Build Definitions APIs are used, via a plugin, in order to perform `update` and `delete` operations which are not available for Pipelines. Build Definitions use version 7.2-preview.7.
+- Commented out `name` field in the `BuildRepository` schema to allow only setting the `id` field when specifying the repository of a Pipeline.
+- Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
+- Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
+- Commented out the `components.parameters` section at root level as it just to inform about api versions.
 
 ## `PipelinePermission`
 
@@ -65,6 +72,9 @@ Therefore, the OpenAPI Specification (OAS) of the `PipelinePermission` resource 
 This is done to address the PATCH operation defined in the OAS (reducing the fields of the request body).
 The PATCH operation is used in the RestDefinition `pipelinepermission` for the `create` and `update` operations.
 - An `enum` has been added to the `resourceType` field for both the GET and PATCH operations, to restrict its possible values to the supported resource types (repository, environment, queue, teamproject, endpoint, variablegroup, securefile).
+- Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
+- Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
+- Commented out the `components.parameters` section at root level as it just to inform about api versions.
 
 ## `PullRequest`
 
@@ -142,7 +152,10 @@ For example, part of the the modified `PermissionInfo` schema is as follows:
             ...
 ```
 
-## Project
+## `Project`
+
+NOT YET AVAILABLE
+WORK IN PROGRESS
 
 "7.2-preview.4"
 https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/core/7.2/core.json
@@ -152,13 +165,12 @@ https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc42439
 
 200 to 202 in create (it is actually returning 202)
 
-
 - Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
 - Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
 - Commented out the `components.parameters` section at root level as it just to inform about api versions.
 
 
-## Team
+## `Team`
 
 **Version**: `7.2-preview.3`
 **Original specification file**:

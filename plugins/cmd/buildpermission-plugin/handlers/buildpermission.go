@@ -371,9 +371,9 @@ func (h *getHandler) getBuildPermissions(ctx context.Context, organization, apiV
 	}
 
 	// Log retrieved permissions for debugging
-	for _, perm := range permissionResp.Value {
-		h.Log.Printf("Descriptor: %s, Allow: %d, Deny: %d", perm.Descriptor, perm.Allow, perm.Deny)
-	}
+	//for _, perm := range permissionResp.Value {
+	//	h.Log.Printf("Descriptor: %s, Allow: %d, Deny: %d", perm.Descriptor, perm.Allow, perm.Deny)
+	//}
 
 	return &permissionResp, nil
 }
@@ -415,7 +415,7 @@ func (h *postHandler) setBuildPermissions(ctx context.Context, organization, api
 		return nil, fmt.Errorf("failed to marshal access control update: %w", err)
 	}
 
-	h.Log.Printf("Setting permissions - Allow bitmask: %d, Deny bitmask: %d", allow, deny)
+	//h.Log.Printf("Setting permissions - Allow bitmask: %d, Deny bitmask: %d", allow, deny)
 
 	resp, err := h.makeAzureDevOpsRequest(ctx, http.MethodPost, u.String(), authHeader, bodyBytes)
 	if err != nil {
@@ -448,22 +448,22 @@ func (h *baseHandler) buildResponseFromPermissions(params *requestParams, descri
 
 	allowBits := permissionResp.Value[0].Allow
 	denyBits := permissionResp.Value[0].Deny
-	h.Log.Printf("Retrieved permission bitmask - Allow: %d, Deny: %d", allowBits, denyBits)
+	//h.Log.Printf("Retrieved permission bitmask - Allow: %d, Deny: %d", allowBits, denyBits)
 
 	// Decode bitmask to PermissionFlags structs
 	allowFlags := bitmaskToPermissionFlags(allowBits)
 	denyFlags := bitmaskToPermissionFlags(denyBits)
 
-	h.Log.Printf("Decoded allowed permissions: %+v", allowFlags)
-	h.Log.Printf("Decoded denied permissions: %+v", denyFlags)
+	//h.Log.Printf("Decoded allowed permissions: %+v", allowFlags)
+	//h.Log.Printf("Decoded denied permissions: %+v", denyFlags)
 
 	//allow := filterTrueFlags(allowFlags)
 	//deny := filterTrueFlags(denyFlags)
 	allow := permissionFlagsToMap(allowFlags)
 	deny := permissionFlagsToMap(denyFlags)
 
-	h.Log.Printf("Allowed permissions map: %+v", allow)
-	h.Log.Printf("Denied permissions map: %+v", deny)
+	//h.Log.Printf("Allowed permissions map: %+v", allow)
+	//h.Log.Printf("Denied permissions map: %+v", deny)
 
 	return &BuildPermissionResponse{
 		Organization:      params.Organization,
@@ -594,7 +594,7 @@ func (h *postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// log the received permission request for debugging
-	h.Log.Printf("Received permission request: %+v", permReq)
+	//h.Log.Printf("Received permission request: %+v", permReq)
 
 	// Extract and validate request parameters (identity info comes from body)
 	params, err := h.extractRequestParamsPOST(r, &permReq)
@@ -628,8 +628,8 @@ func (h *postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	allowBitmask := permissionFlagsToBitmask(allowFlags)
 	denyBitmask := permissionFlagsToBitmask(denyFlags)
 
-	h.Log.Printf("[POST] Setting permissions - Allow flags: %+v (bitmask: %d)", allowFlags, allowBitmask)
-	h.Log.Printf("[POST] Setting permissions - Deny flags: %+v (bitmask: %d)", denyFlags, denyBitmask)
+	//h.Log.Printf("[POST] Setting permissions - Allow flags: %+v (bitmask: %d)", allowFlags, allowBitmask)
+	//h.Log.Printf("[POST] Setting permissions - Deny flags: %+v (bitmask: %d)", denyFlags, denyBitmask)
 
 	// Set build permissions
 	permissionResp, err := h.setBuildPermissions(ctx, params.Organization, params.APIVersion, params.AuthHeader, params.ProjectID, params.BuildDefinitionID, descriptor, params.ProjectLevel, allowBitmask, denyBitmask)

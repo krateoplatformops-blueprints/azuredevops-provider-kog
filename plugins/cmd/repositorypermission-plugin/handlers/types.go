@@ -37,10 +37,16 @@ type AccessControlUpdate struct {
 	AccessControlEntries []AccessControlEntry `json:"accessControlEntries"`
 }
 
-// CreateToken creates a security token for repository permissions
+// CreateTokenObjectLevel creates a security token for repository permissions
 // The token format is: repoV2/{projectId}/{repositoryId}
-func CreateToken(projectID, repoID string) string {
+func CreateTokenObjectLevel(projectID, repoID string) string {
 	return path.Join("repoV2/", projectID, repoID)
+}
+
+// CreateTokenProjectLevel creates a security token for project-level permissions
+// The token format is: repoV2/{projectId}
+func CreateTokenProjectLevel(projectID string) string {
+	return path.Join("repoV2/", projectID)
 }
 
 // PermissionBit represents individual permission bits in Azure DevOps
@@ -308,6 +314,7 @@ type RepositoryPermissionResponse struct {
 	Organization    string          `json:"organization" yaml:"organization"`
 	ProjectID       string          `json:"projectId" yaml:"projectId"`
 	RepositoryID    string          `json:"repositoryId" yaml:"repositoryId"`
+	ProjectLevel    bool            `json:"projectLevel" yaml:"projectLevel"`
 	PermissionsInfo PermissionsInfo `json:"permissions" yaml:"permissions"`
 }
 

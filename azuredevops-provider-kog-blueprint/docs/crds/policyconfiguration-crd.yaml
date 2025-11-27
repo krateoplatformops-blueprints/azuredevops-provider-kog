@@ -3,6 +3,11 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
+  creationTimestamp: "2025-11-27T22:51:19Z"
+  generation: 1
+  name: policyconfigurations.azuredevops.ogen.krateo.io
+  resourceVersion: "3162407"
+  uid: de1822bc-b7d6-4631-b95d-9052e2c76df9
 spec:
   conversion:
     strategy: None
@@ -191,6 +196,71 @@ spec:
                   - type
                   type: object
                 type: array
+              createdBy:
+                properties:
+                  _links:
+                    description: The class to represent a collection of REST reference
+                      links.
+                    properties:
+                      links:
+                        description: The readonly view of the links.  Because Reference
+                          links are readonly, we only want to expose them as read
+                          only.
+                        type: object
+                        x-kubernetes-preserve-unknown-fields: true
+                    type: object
+                  descriptor:
+                    description: The descriptor is the primary way to reference the
+                      graph subject while the system is running. This field will uniquely
+                      identify the same graph subject across both Accounts and Organizations.
+                    type: string
+                  directoryAlias:
+                    description: Deprecated - Can be retrieved by querying the Graph
+                      user referenced in the "self" entry of the IdentityRef "_links"
+                      dictionary
+                    type: string
+                  displayName:
+                    description: This is the non-unique display name of the graph
+                      subject. To change this field, you must alter its value in the
+                      source provider.
+                    type: string
+                  id:
+                    type: string
+                  imageUrl:
+                    description: Deprecated - Available in the "avatar" entry of the
+                      IdentityRef "_links" dictionary
+                    type: string
+                  inactive:
+                    description: Deprecated - Can be retrieved by querying the Graph
+                      membership state referenced in the "membershipState" entry of
+                      the GraphUser "_links" dictionary
+                    type: boolean
+                  isAadIdentity:
+                    description: Deprecated - Can be inferred from the subject type
+                      of the descriptor (Descriptor.IsAadUserType/Descriptor.IsAadGroupType)
+                    type: boolean
+                  isContainer:
+                    description: Deprecated - Can be inferred from the subject type
+                      of the descriptor (Descriptor.IsGroupType)
+                    type: boolean
+                  isDeletedInOrigin:
+                    type: boolean
+                  profileUrl:
+                    description: Deprecated - not in use in most preexisting implementations
+                      of ToIdentityRef
+                    type: string
+                  uniqueName:
+                    description: Deprecated - use Domain+PrincipalName instead
+                    type: string
+                  url:
+                    description: This url is the full route to the source resource
+                      of this graph subject.
+                    type: string
+                type: object
+              createdDate:
+                description: 'The date and time when the policy was created. (format:
+                  date-time)'
+                type: string
               id:
                 description: 'The policy configuration ID. (format: int32)'
                 format: int32
@@ -254,13 +324,42 @@ spec:
                 type: object
               type:
                 properties:
+                  displayName:
+                    description: Display name of the policy type.
+                    type: string
                   id:
                     description: 'The policy type ID. (format: uuid)'
                     type: string
                 type: object
+              url:
+                description: The URL where the policy configuration can be retrieved.
+                type: string
             type: object
         type: object
     served: true
     storage: true
     subresources:
       status: {}
+status:
+  acceptedNames:
+    categories:
+    - policyconfiguration
+    - restresources
+    - rr
+    kind: PolicyConfiguration
+    listKind: PolicyConfigurationList
+    plural: policyconfigurations
+    singular: policyconfiguration
+  conditions:
+  - lastTransitionTime: "2025-11-27T22:51:19Z"
+    message: no conflicts found
+    reason: NoConflicts
+    status: "True"
+    type: NamesAccepted
+  - lastTransitionTime: "2025-11-27T22:51:19Z"
+    message: the initial names have been accepted
+    reason: InitialNamesAccepted
+    status: "True"
+    type: Established
+  storedVersions:
+  - v1alpha1

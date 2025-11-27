@@ -3,11 +3,6 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: "2025-11-24T12:34:31Z"
-  generation: 1
-  name: repositorypermissions.azuredevops.ogen.krateo.io
-  resourceVersion: "2566500"
-  uid: 0e15502e-a1a0-4b84-a354-46ed3989c563
 spec:
   conversion:
     strategy: None
@@ -249,14 +244,19 @@ spec:
               projectId:
                 description: 'PARAMETER: path - Project ID'
                 type: string
+              projectLevel:
+                default: false
+                description: 'PARAMETER: query - Whether to manage permissions at
+                  the project level (true) or repository level (false). Default is
+                  false.'
+                type: boolean
               repositoryId:
-                description: 'PARAMETER: path - Repository ID'
+                description: 'PARAMETER: query - Repository ID'
                 type: string
             required:
             - configurationRef
             - organization
             - projectId
-            - repositoryId
             type: object
           status:
             properties:
@@ -478,26 +478,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    categories:
-    - repositorypermission
-    - restresources
-    - rr
-    kind: RepositoryPermission
-    listKind: RepositoryPermissionList
-    plural: repositorypermissions
-    singular: repositorypermission
-  conditions:
-  - lastTransitionTime: "2025-11-24T12:34:31Z"
-    message: no conflicts found
-    reason: NoConflicts
-    status: "True"
-    type: NamesAccepted
-  - lastTransitionTime: "2025-11-24T12:34:31Z"
-    message: the initial names have been accepted
-    reason: InitialNamesAccepted
-    status: "True"
-    type: Established
-  storedVersions:
-  - v1alpha1

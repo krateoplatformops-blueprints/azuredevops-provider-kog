@@ -105,17 +105,26 @@ Resource Types:
         </td>
         <td>true</td>
       </tr><tr>
-        <td><b>repositoryId</b></td>
-        <td>string</td>
-        <td>
-          PARAMETER: path - Repository ID<br/>
-        </td>
-        <td>true</td>
-      </tr><tr>
         <td><b><a href="#repositorypermissionspecpermissions">permissions</a></b></td>
         <td>object</td>
         <td>
           <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>projectLevel</b></td>
+        <td>boolean</td>
+        <td>
+          PARAMETER: query - Whether to manage permissions at the project level (true) or repository level (false). Default is false.<br/>
+          <br/>
+            <i>Default</i>: false<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>repositoryId</b></td>
+        <td>string</td>
+        <td>
+          PARAMETER: query - Repository ID<br/>
         </td>
         <td>false</td>
       </tr></tbody>

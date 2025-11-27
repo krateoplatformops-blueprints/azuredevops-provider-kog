@@ -32,8 +32,8 @@ func main() {
 	}
 
 	// RepositoryPermission
-	srv.Mux().Handle("GET /plugin/repositorypermission/{organization}/{projectId}/{repositoryId}", repositorypermission.GetRepositoryPermission(opts))
-	srv.Mux().Handle("POST /plugin/repositorypermission/{organization}/{projectId}/{repositoryId}", repositorypermission.PostRepositoryPermission(opts))
+	srv.Mux().Handle("GET /plugin/repositorypermission/{organization}/{projectId}", repositorypermission.GetRepositoryPermission(opts))
+	srv.Mux().Handle("POST /plugin/repositorypermission/{organization}/{projectId}", repositorypermission.PostRepositoryPermission(opts))
 
 	// Swagger UI
 	srv.Mux().Handle("/swagger/", httpSwagger.WrapHandler)

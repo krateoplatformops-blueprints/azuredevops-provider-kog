@@ -1,7 +1,7 @@
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: RepositoryPermission
 metadata:
-  name: rp-1
+  name: rp-4
   namespace: default
   annotations:
     krateo.io/connector-verbose: "true"
@@ -13,12 +13,12 @@ spec:
 
   organization: krateo-kog                            # required
   projectId: 99837031-4e4e-4753-9a47-73fcc4cba766     # required
-  repositoryId: c2f8d804-7c2f-4f3f-bd69-70c3169cfb8c  # required
+  projectLevel: true
 
   permissions:
     identity:
-      type: azure-group
-      name: Contributors # not used if type is `build-service` or if descriptor is provided
+      type: build-service
+      #name: Contributors # not used if type is `build-service` or if descriptor is provided
       #descriptor: Microsoft.TeamFoundation.Identity;abcdef12-3456-7890-abcd-ef1234567890 # has priority over name or type+name
     allow:
       # NOTE: by default all permissions are false which means "Not set" in Azure DevOps

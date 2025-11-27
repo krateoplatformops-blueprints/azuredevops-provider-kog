@@ -107,8 +107,6 @@ spec:
                             type: integer
                           api-version:
                             type: string
-                          continuationToken:
-                            type: string
                           policyType:
                             description: '(format: uuid)'
                             type: string
@@ -136,3 +134,4 @@ spec:
     served: true
     storage: true
     subresources: {}
+

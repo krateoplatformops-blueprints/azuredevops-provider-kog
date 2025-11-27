@@ -21,7 +21,7 @@ Resource Types:
 
 
 
-Parameters to create a pipeline.
+
 
 <table>
     <thead>
@@ -266,17 +266,12 @@ A reference to the Configuration CR that holds all the needed configuration for 
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b><a href="#pipelinestatusfailedobjectref">failedObjectRef</a></b></td>
-        <td>object</td>
-        <td>
-          <br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
         <td><b>id</b></td>
         <td>integer</td>
         <td>
           <br/>
+          <br/>
+            <i>Format</i>: int32<br/>
         </td>
         <td>false</td>
       </tr><tr>
@@ -291,6 +286,8 @@ A reference to the Configuration CR that holds all the needed configuration for 
         <td>integer</td>
         <td>
           <br/>
+          <br/>
+            <i>Format</i>: int32<br/>
         </td>
         <td>false</td>
       </tr><tr>
@@ -358,54 +355,6 @@ a resource at any point in time.<br/>
         <td>
           A Message containing details about this condition's last transition from
 one status to another, if any.<br/>
-        </td>
-        <td>false</td>
-      </tr></tbody>
-</table>
-
-
-### Pipeline.status.failedObjectRef
-<sup><sup>[↩ Parent](#pipelinestatus)</sup></sup>
-
-
-
-
-
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Required</th>
-        </tr>
-    </thead>
-    <tbody><tr>
-        <td><b>apiVersion</b></td>
-        <td>string</td>
-        <td>
-          API version of the object.<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>kind</b></td>
-        <td>string</td>
-        <td>
-          Kind of the object.<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>name</b></td>
-        <td>string</td>
-        <td>
-          Name of the object.<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>namespace</b></td>
-        <td>string</td>
-        <td>
-          Namespace of the object.<br/>
         </td>
         <td>false</td>
       </tr></tbody>

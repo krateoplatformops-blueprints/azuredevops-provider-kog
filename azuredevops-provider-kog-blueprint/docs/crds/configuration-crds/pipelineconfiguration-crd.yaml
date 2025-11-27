@@ -2,8 +2,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.16.1
-  name: pipelineconfigurations.azuredevops.ogen.krateo.io
+    controller-gen.kubebuilder.io/version: v0.18.0
 spec:
   conversion:
     strategy: None
@@ -19,7 +18,11 @@ spec:
     singular: pipelineconfiguration
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         properties:
@@ -38,6 +41,8 @@ spec:
               In CamelCase.
               More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             type: string
+          metadata:
+            type: object
           spec:
             properties:
               authentication:
@@ -96,7 +101,13 @@ spec:
                         type: object
                       findby:
                         properties:
+                          $top:
+                            description: '(format: int32)'
+                            format: int32
+                            type: integer
                           api-version:
+                            type: string
+                          orderBy:
                             type: string
                         required:
                         - api-version
@@ -121,3 +132,4 @@ spec:
         type: object
     served: true
     storage: true
+    subresources: {}

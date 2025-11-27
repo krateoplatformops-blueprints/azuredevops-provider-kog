@@ -18,11 +18,7 @@ servers:
 security:
 - accessToken: []
 tags:
-- name: Artifacts
-- name: Logs
 - name: Pipelines
-- name: Preview
-- name: Runs
 paths:
   /{organization}/{project}/_apis/pipelines:
     get:
@@ -43,23 +39,23 @@ paths:
         required: true
         schema:
           type: string
-      #- name: orderBy
-      #  in: query
-      #  description: A sort expression. Defaults to "name asc"
-      #  schema:
-      #    type: string
-      #- name: $top
-      #  in: query
-      #  description: The maximum number of pipelines to return
-      #  schema:
-      #    type: integer
-      #    format: int32
-      #- name: continuationToken
-      #  in: query
-      #  description: "A continuation token from a previous request, to retrieve the\
-      #    \ next page of results"
-      #  schema:
-      #    type: string
+      - name: orderBy
+        in: query
+        description: A sort expression. Defaults to "name asc"
+        schema:
+          type: string
+      - name: $top
+        in: query
+        description: The maximum number of pipelines to return
+        schema:
+          type: integer
+          format: int32
+      - name: continuationToken
+        in: query
+        description: "A continuation token from a previous request, to retrieve the\
+          \ next page of results"
+        schema:
+          type: string
       - name: api-version
         in: query
         description: Version of the API to use.  This should be set to '7.2-preview.1'
@@ -76,13 +72,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Pipeline'
-      security:
-      - oauth2:
-        - vso.build
-      x-ms-docs-override-version: 7.2-preview.1
-      x-ms-vss-resource: pipelines
-      x-ms-vss-method: ListPipelines
-      x-ms-preview: true
+      #security:
+      #- oauth2:
+      #  - vso.build
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: pipelines
+      #x-ms-vss-method: ListPipelines
+      #x-ms-preview: true
     post:
       tags:
       - Pipelines
@@ -122,14 +118,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pipeline'
-      security:
-      - oauth2:
-        - vso.build_execute
-      x-ms-docs-override-version: 7.2-preview.1
-      x-ms-vss-resource: pipelines
-      x-ms-vss-method: CreatePipeline
-      x-ms-preview: true
-      x-codegen-request-body-name: body 
+      #security:
+      #- oauth2:
+      #  - vso.build_execute
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: pipelines
+      #x-ms-vss-method: CreatePipeline
+      #x-ms-preview: true
+      #x-codegen-request-body-name: body 
   /api/{organization}/{project}/pipelines/{id}:
     get:
       servers:
@@ -326,6 +322,7 @@ components:
         id:
           type: string
           description: The ID of the repository.
+        # FIXED
         #name:
         #  type: string
         #  description: The friendly name of the repository.
@@ -962,15 +959,15 @@ components:
           type: integer
         url:
           type: string
-  parameters:
-    api-Version-preview.1:
-      name: api-version
-      in: query
-      description: Version of the API to use.  This should be set to '7.2-preview.1'
-        to use this version of the api.
-      required: true
-      schema:
-        type: string
+  #parameters:
+  #  api-Version-preview.1:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.1'
+  #      to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
   securitySchemes:
     accessToken:
       type: http

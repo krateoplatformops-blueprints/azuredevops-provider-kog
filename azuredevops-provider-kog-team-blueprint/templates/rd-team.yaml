@@ -8,12 +8,12 @@ spec:
   resource:
     kind: Team
     identifiers:
-    - name # within the same project the name must be unique
+    - name # Within the same project the name of a team must be unique therefore we can use it as identifier
     additionalStatusFields:
     - id
     excludedSpecFields:
     - teamId
-    - id
+    - id # TODO: to be evaluated if needed
     - identity
     - identityUrl
     - projectName
@@ -44,12 +44,11 @@ spec:
         - inPath: teamId
           inCustomResource: status.id
     configurationFields:
-    # Common among all actions
     - fromOpenAPI:
         name: api-version
         in: query
       fromRestDefinition:
-        actions: ["*"]
+        actions: ["*"] # Common among all actions
     - fromOpenAPI:
         name: $expandIdentity
         in: query
@@ -70,4 +69,3 @@ spec:
         in: query
       fromRestDefinition:
         actions: ["findby"]
-

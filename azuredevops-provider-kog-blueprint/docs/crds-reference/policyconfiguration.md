@@ -409,6 +409,20 @@ The policy type.
         </td>
         <td>false</td>
       </tr><tr>
+        <td><b><a href="#policyconfigurationstatuscreatedby">createdBy</a></b></td>
+        <td>object</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>createdDate</b></td>
+        <td>string</td>
+        <td>
+          The date and time when the policy was created. (format: date-time)<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
         <td><b>id</b></td>
         <td>integer</td>
         <td>
@@ -429,6 +443,13 @@ The policy type.
         <td>object</td>
         <td>
           <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>url</b></td>
+        <td>string</td>
+        <td>
+          The URL where the policy configuration can be retrieved.<br/>
         </td>
         <td>false</td>
       </tr></tbody>
@@ -489,6 +510,144 @@ a resource at any point in time.<br/>
         <td>
           A Message containing details about this condition's last transition from
 one status to another, if any.<br/>
+        </td>
+        <td>false</td>
+      </tr></tbody>
+</table>
+
+
+### PolicyConfiguration.status.createdBy
+<sup><sup>[↩ Parent](#policyconfigurationstatus)</sup></sup>
+
+
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody><tr>
+        <td><b><a href="#policyconfigurationstatuscreatedby_links">_links</a></b></td>
+        <td>object</td>
+        <td>
+          The class to represent a collection of REST reference links.<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>descriptor</b></td>
+        <td>string</td>
+        <td>
+          The descriptor is the primary way to reference the graph subject while the system is running. This field will uniquely identify the same graph subject across both Accounts and Organizations.<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>directoryAlias</b></td>
+        <td>string</td>
+        <td>
+          Deprecated - Can be retrieved by querying the Graph user referenced in the "self" entry of the IdentityRef "_links" dictionary<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>displayName</b></td>
+        <td>string</td>
+        <td>
+          This is the non-unique display name of the graph subject. To change this field, you must alter its value in the source provider.<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>id</b></td>
+        <td>string</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>imageUrl</b></td>
+        <td>string</td>
+        <td>
+          Deprecated - Available in the "avatar" entry of the IdentityRef "_links" dictionary<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>inactive</b></td>
+        <td>boolean</td>
+        <td>
+          Deprecated - Can be retrieved by querying the Graph membership state referenced in the "membershipState" entry of the GraphUser "_links" dictionary<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>isAadIdentity</b></td>
+        <td>boolean</td>
+        <td>
+          Deprecated - Can be inferred from the subject type of the descriptor (Descriptor.IsAadUserType/Descriptor.IsAadGroupType)<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>isContainer</b></td>
+        <td>boolean</td>
+        <td>
+          Deprecated - Can be inferred from the subject type of the descriptor (Descriptor.IsGroupType)<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>isDeletedInOrigin</b></td>
+        <td>boolean</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>profileUrl</b></td>
+        <td>string</td>
+        <td>
+          Deprecated - not in use in most preexisting implementations of ToIdentityRef<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>uniqueName</b></td>
+        <td>string</td>
+        <td>
+          Deprecated - use Domain+PrincipalName instead<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>url</b></td>
+        <td>string</td>
+        <td>
+          This url is the full route to the source resource of this graph subject.<br/>
+        </td>
+        <td>false</td>
+      </tr></tbody>
+</table>
+
+
+### PolicyConfiguration.status.createdBy._links
+<sup><sup>[↩ Parent](#policyconfigurationstatuscreatedby)</sup></sup>
+
+
+
+The class to represent a collection of REST reference links.
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody><tr>
+        <td><b>links</b></td>
+        <td>object</td>
+        <td>
+          The readonly view of the links.  Because Reference links are readonly, we only want to expose them as read only.<br/>
         </td>
         <td>false</td>
       </tr></tbody>
@@ -686,6 +845,13 @@ The settings for a particular policy configuration.
         </tr>
     </thead>
     <tbody><tr>
+        <td><b>displayName</b></td>
+        <td>string</td>
+        <td>
+          Display name of the policy type.<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
         <td><b>id</b></td>
         <td>string</td>
         <td>
