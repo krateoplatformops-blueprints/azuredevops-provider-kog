@@ -3,6 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
+  name: policyconfigurationconfigurations.azuredevops.ogen.krateo.io
 spec:
   conversion:
     strategy: None
@@ -134,4 +135,3 @@ spec:
     served: true
     storage: true
     subresources: {}
-

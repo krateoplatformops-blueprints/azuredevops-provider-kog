@@ -7,6 +7,7 @@ spec:
   resourceGroup: azuredevops.ogen.krateo.io
   resource: 
     kind: PipelinePermission
+    #additionalStatusFields:
     verbsDescription:
     - action: create
       method: PATCH

@@ -21,10 +21,7 @@ They are designed to work as a middleware between the [Rest Dynamic Controller](
 - [Azure DevOps API Reference](#azuredevops-api-reference)
 - [Authentication](#authentication)
 - [API documentation](#api-documentation)
-- [Testing guide](#testing-guide)
-- [Build Instructions](#build-instructions)
-  - [Building with ko](#building-with-ko)
-  - [Building with Docker](#building-with-docker)
+- [Development and Testing Guide](#development-and-testing-guide)
 
 ## Project structure
 

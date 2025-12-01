@@ -3,11 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: "2025-11-27T22:51:19Z"
-  generation: 1
   name: policyconfigurations.azuredevops.ogen.krateo.io
-  resourceVersion: "3162407"
-  uid: de1822bc-b7d6-4631-b95d-9052e2c76df9
 spec:
   conversion:
     strategy: None
@@ -340,26 +336,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    categories:
-    - policyconfiguration
-    - restresources
-    - rr
-    kind: PolicyConfiguration
-    listKind: PolicyConfigurationList
-    plural: policyconfigurations
-    singular: policyconfiguration
-  conditions:
-  - lastTransitionTime: "2025-11-27T22:51:19Z"
-    message: no conflicts found
-    reason: NoConflicts
-    status: "True"
-    type: NamesAccepted
-  - lastTransitionTime: "2025-11-27T22:51:19Z"
-    message: the initial names have been accepted
-    reason: InitialNamesAccepted
-    status: "True"
-    type: Established
-  storedVersions:
-  - v1alpha1

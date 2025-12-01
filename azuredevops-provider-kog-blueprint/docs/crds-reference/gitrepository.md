@@ -303,17 +303,10 @@ A reference to the Configuration CR that holds all the needed configuration for 
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b><a href="#gitrepositorystatusfailedobjectref">failedObjectRef</a></b></td>
-        <td>object</td>
-        <td>
-          <br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
         <td><b>id</b></td>
         <td>string</td>
         <td>
-           (format: uuid)<br/>
+          (format: uuid)<br/>
         </td>
         <td>false</td>
       </tr><tr>
@@ -402,54 +395,6 @@ a resource at any point in time.<br/>
         <td>
           A Message containing details about this condition's last transition from
 one status to another, if any.<br/>
-        </td>
-        <td>false</td>
-      </tr></tbody>
-</table>
-
-
-### GitRepository.status.failedObjectRef
-<sup><sup>[↩ Parent](#gitrepositorystatus)</sup></sup>
-
-
-
-
-
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Required</th>
-        </tr>
-    </thead>
-    <tbody><tr>
-        <td><b>apiVersion</b></td>
-        <td>string</td>
-        <td>
-          API version of the object.<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>kind</b></td>
-        <td>string</td>
-        <td>
-          Kind of the object.<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>name</b></td>
-        <td>string</td>
-        <td>
-          Name of the object.<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>namespace</b></td>
-        <td>string</td>
-        <td>
-          Namespace of the object.<br/>
         </td>
         <td>false</td>
       </tr></tbody>

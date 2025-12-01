@@ -112,7 +112,6 @@ The PATCH operation is used in the RestDefinition `pipelinepermission` for the `
 **List of change made to the OpenAPI Specification (OAS)**:
 - Created the following schemas required for proper functioning of the PolicyConfiguration resource and Rest Dynamic Controller operations: `PolicyReq`, `PolicyConfigurationSettings`, `PolicyScope`. These schemas were inferred from the examples provided at: https://github.com/MicrosoftDocs/vsts-rest-api-specs/tree/master/specification/policy/7.2/httpExamples.
 `PolicyReq` is used as request body schema for `create` and `update` operations instead of the original `PolicyConfiguration` schema which contains read-only fields that should not be part of the request body but are included in the response body.
-- Changed `configurationId` to `id` in path parameters to conform with the response bodies of the Azure DevOps REST API.
 - Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
 - Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
 - Commented out the `components.parameters` section at root level as it just to inform about api versions.

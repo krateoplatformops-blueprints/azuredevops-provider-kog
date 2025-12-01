@@ -585,15 +585,16 @@ spec:
     allow:
       # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
       # If you want to explicitly allow a permission, set it to true
-      createbranch: true
-      renamerepository: false # "Not set"
+      CreateBranch: true
+      RenameRepository: true # "Not set"
 
     deny:
       # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
       # If you want to explicitly deny a permission, set it to true
-      createtag: true
-      forcepush: true
-      editpolicies: true
+      CreateTag: true
+      ForcePush: true
+      EditPolicies: true
+      ViewAdvSecAlerts: true
 ```
 
 ## Authentication

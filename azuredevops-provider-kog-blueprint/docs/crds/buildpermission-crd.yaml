@@ -3,11 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: "2025-11-24T23:24:01Z"
-  generation: 1
   name: buildpermissions.azuredevops.ogen.krateo.io
-  resourceVersion: "2683358"
-  uid: 791f1544-e8c7-48f4-a3f7-1fc8f4f46a2c
 spec:
   conversion:
     strategy: None
@@ -475,26 +471,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    categories:
-    - buildpermission
-    - restresources
-    - rr
-    kind: BuildPermission
-    listKind: BuildPermissionList
-    plural: buildpermissions
-    singular: buildpermission
-  conditions:
-  - lastTransitionTime: "2025-11-24T23:24:01Z"
-    message: no conflicts found
-    reason: NoConflicts
-    status: "True"
-    type: NamesAccepted
-  - lastTransitionTime: "2025-11-24T23:24:01Z"
-    message: the initial names have been accepted
-    reason: InitialNamesAccepted
-    status: "True"
-    type: Established
-  storedVersions:
-  - v1alpha1

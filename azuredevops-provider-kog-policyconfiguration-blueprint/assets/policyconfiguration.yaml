@@ -158,7 +158,6 @@ paths:
         schema:
           type: string
       - name: configurationId
-      #- name: id
         in: path
         description: ID of the policy configuration
         required: true
@@ -204,7 +203,6 @@ paths:
         schema:
           type: string
       - name: configurationId
-      #- name: id
         in: path
         description: ID of the existing policy configuration to be updated.
         required: true
@@ -259,7 +257,6 @@ paths:
         schema:
           type: string
       - name: configurationId
-      #- name: id
         in: path
         description: ID of the policy configuration to delete.
         required: true
