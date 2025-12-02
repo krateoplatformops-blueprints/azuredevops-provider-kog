@@ -15,7 +15,7 @@ pipelines                                        azuredevops.ogen.krateo.io/v1al
 pipelines                                        azuredevops.krateo.io/v1alpha1        false        Pipeline
 ```
 
-The **starting point** for this migration is the following example of a `Pipeline` resource managed by the Krateo Azure DevOps Provider "classic":
+The **starting point** for this migration is the following example of a `Pipeline` resource managed by the Azure DevOps Provider "classic":
 ```yaml
 apiVersion: azuredevops.krateo.io/v1alpha1
 kind: Pipeline
@@ -39,7 +39,7 @@ spec:
 
 Note that the `Pipeline` resource is referecing a `ConnectorConfig` resource, a `Project` resource, and a `GitRepository` resource, which are managed by the Azure DevOps Provider "classic".
 Note that the `GitRepository` referenced in the example above is a `GitRepository` resource managed by the Azure DevOps Provider "classic". 
-However, the `Pipeline` resource managed by the Azure DevOps Provider KOG will work with both `GitRepository` resources managed by the Krateo Azure DevOps Provider "classic" and the Azure DevOps Provider KOG since it use the `id` of the repository as the reference.
+However, the `Pipeline` resource managed by the Azure DevOps Provider KOG will work with both `GitRepository` resources managed by the Azure DevOps Provider "classic" and the Azure DevOps Provider KOG since it use the `id` of the repository as the reference.
 
 To ensure that the old version of the resource is not reconciled while you are migrating to the new version, you should set the `krateo.io/paused: true` annotation.
 You can do this by running the following commands:
@@ -92,7 +92,7 @@ status:
   url: https://dev.azure.com/krateo-kog/82575162-69b2-4a88-8fd7-bda0d05c0284/_apis/pipelines/65?revision=1
 ```
 
-Now, you can create a new `Pipeline` resource using the Krateo Azure DevOps Provider KOG following the new schema.
+Now, you can create a new `Pipeline` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../README.md#pipeline-schema) file of this chart.
 You can apply the following example:
 ```sh
@@ -124,50 +124,11 @@ spec:
 EOF
 ```
 
-The following snippet shows the differences between the old and new `Pipeline` resources:
-```diff
-- apiVersion: azuredevops.krateo.io/v1alpha1
-+ apiVersion: azuredevops.ogen.krateo.io/v1alpha1
-kind: Pipeline
-metadata:
-  name: pipeline-1
-+ namespace: azuredevops-system                   # Replace with your namespace, Pipeline is a namespaced resource in the Azure DevOps Provider KOG
-+ annotations:
-+   krateo.io/connector-verbose: "true"           # Optional: to enable verbose logging
-+   krateo.io/deletion-policy: orphan             # Optional: to ensure the external resource is not deleted when the resource is deleted
-spec:
-  name: pipeline-1
-- configurationType: yaml
-- definitionPath: azure-pipelines.yml
-- repositoryType: azureReposGit
-- repositoryRef:
--   name: repo-1
--   namespace: default
-- projectRef:
--   name: project-1-classic
--   namespace: default
-- connectorConfigRef:
--  namespace: default
--   name: connectorconfig-sample
-+ configurationRef:                               # Reference to a PipelineConfiguration CR that contains the authentication information.
-+   name: my-pipeline-config
-+   namespace: default
+Note that:
+- the `projectRef` field has been replaced with `project`, which can be either the `ID` or the `name` of the project in the case of the spec of the `Pipeline` resource.
+- the `repositoryRef` field has been replaced with `configuration.repository.id`, which is the ID of the repository where the pipeline is defined.
 
-+ organization: krateo-kog                         # Name of the Azure DevOps organization
-+ project: "project-1-classic"                     # ID or name of the project
-  
-+ configuration:
-+   path: azure-pipelines.yml                      # Path to the pipeline configuration file within the repository
-+   repository: 
-+     id: "58877fa0-7bd2-4f23-959a-7e276d0ee87c"   # ID of the repository where the pipeline is defined
-+     type: azureReposGit                          # Type of the repository, e.g., gitHub, azureReposGit, etc.
-+   type: yaml                                     # Type of the pipeline configuration, e.g., yaml, designer, etc.
-```
-
-Note that the `projectRef` field has been replaced with `project`, which can be either the `ID` or the `name` of the project in the case of the spec of the `Pipeline` resource.
-In order to dynamically retrieve the project ID, you can use a Helm `lookup` function.
-
-Note that the `repositoryRef` field has been replaced with `configuration.repository.id`, which is the ID of the repository where the pipeline is defined and it is aligned with the way the `Pipeline` resource is defined in Azure DevOps REST API.
+In order to dynamically retrieve the IDs, you can use a Helm `lookup` function.
 
 An example of how to use the `lookup` function to retrieve the project ID and repository ID dynamically is shown below.
 In this case the context is a Helm chart, so the `lookup` function is used to retrieve the `TeamProject` and `GitRepository` resources by their names and namespace, and then the project ID and repository ID are accessed from the status of those resources.
@@ -204,7 +165,7 @@ pipeline-1   86s   True
 
 At this point, you can proceed to delete the old `Pipeline` resource managed by Azure DevOps Provide "classic" (note the different API group).
 
-First, you can delete the old `Pipeline` resource managed by Krateo Azure DevOps Provider "classic":
+First, you can delete the old `Pipeline` resource managed by Azure DevOps Provider "classic":
 ```sh
 kubectl delete pipelines.azuredevops.krateo.io pipeline-1
 ```

@@ -130,7 +130,7 @@ apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: PolicyConfiguration
 metadata:
   name: policy-1
-  namespace: default
+  namespace: azuredevops-system
   annotations:
     krateo.io/connector-verbose: "true"
     krateo.io/deletion-policy: orphan             # Optional: to ensure the external resource is not deleted when the resource is deleted
@@ -159,23 +159,32 @@ spec:
 EOF
 ```
 
-Note that the Kubernetes references to other resources (like `projectRef` for `Project` and `repositoryRef` for `GitRepository`) have been replaced with direct references to the corresponding fields (`project` and `repositoryId`) using their names or IDs.
-For example, in order to dynamically retrieve the value to use for the `repositoryId`, you can use a Helm `lookup` function.
+Note that:
+- the `projectRef` field has been replaced with `project`, which can be either the `ID` or the `name` of the project in the case of the spec of the `PolicyConfiguration` resource.
+- the `repositoryRef` field has been replaced with `repositoryId`, which is the ID of the repository in the case of the spec of the `PolicyConfiguration` resource.
+
+In order to dynamically retrieve the IDs, you can use a Helm `lookup` function.
 
 An example of how to use a Helm `lookup` function to retrieve the GitRepository ID dynamically is shown below.
-In this case the context is a Helm chart, so the `lookup` function is used to retrieve the Azure DevOps KOG `GitRepository` resource by its name and namespace, and then the ID is accessed from the status of that resource.
+In this case the context is a Helm chart, so the `lookup` function is used to retrieve the Azure DevOps KOG `GitRepository` and `TeamProject` resources by their names and namespace, and then the repository ID and project ID are accessed from the status of those resources.
 
 ```yaml
+{{- $project := lookup "azuredevops.krateo.io/v1alpha1" "TeamProject" .Release.Namespace (.Values.project.name | lower) }}
+{{- if and $project $project.status $project.status.id }}
+
 {{- $repository := lookup "azuredevops.ogen.krateo.io/v1alpha1" "GitRepository" .Release.Namespace (.Values.repository.name | lower) }}
 {{- if and $repository $repository.status $repository.status.id }}
+
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: PolicyConfiguration
 spec:
 ...
+  project: "{{ $project.status.id }}"                # Dynamically retrieve the project ID
   settings:
     scope:
       - repositoryId: "{{ $repository.status.id }}"  # Dynamically retrieve the repository ID
 ...
+
 {{- end }}
 ```
 

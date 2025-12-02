@@ -102,8 +102,8 @@ status:
 +   type: Synced
 ```
 
-Now, you can create a new `PipelinePermission` resource using the Krateo Azure DevOps Provider KOG following the new schema.
-You can find the schema in the specific section of the [README](../../README.md#pipelinepermission-schema) file of this chart.
+Now, you can create a new `PipelinePermission` resource using the Azure DevOps Provider KOG following the new schema.
+You can find the schema in the specific section of the [README](../../../README.md#pipelinepermission-schema) file of this chart.
 You can apply the following example:
 ```sh
 kubectl apply -f - <<EOF
@@ -114,6 +114,7 @@ metadata:
   namespace: azuredevops-system                   # Replace with your namespace
   annotations:
     krateo.io/connector-verbose: "true"           # Optional: to enable verbose logging
+    krateo.io/deletion-policy: orphan             # Optional: to ensure the external resource is not deleted when the resource is deleted
 spec:
   configurationRef:                               # Reference to a PipelinePermissionConfiguration CR that contains the authentication information.
     name: my-pipelinepermission-config
@@ -130,64 +131,16 @@ spec:
 
   pipelines:
     - id: 66                                      # ID of the pipeline to authorize for the resource  
-      # authorized: true is not required, since it is the default value (authorized: false is not allowed)
+      authorized: true
 EOF
 ```
 
-The following snippet shows the differences between the old and new `PipelinePermission` resources:
-```diff
-- apiVersion: azuredevops.krateo.io/v1alpha2
-+ apiVersion: azuredevops.ogen.krateo.io/v1alpha1
-kind: PipelinePermission
-metadata:
-  name: pipeline-permission-1
-  namespace: azuredevops-system                   # Replace with your namespace
-  annotations:
-    krateo.io/connector-verbose: "true"           # Optional: to enable verbose logging
-spec:
-  
-- authorizeAll: false
-- projectRef: 
--   name: project-1-classic
--   namespace: default
-- pipelines:
--   - pipelineRef:
--       name: pipeline-1
--       namespace: default
--     authorized: true
-- resource:
--   type: environment
--   resourceRef:
--     name: enviroment-1-classic
--     namespace: default
-- connectorConfigRef:
--   namespace: default
--   name: connectorconfig-sample
-  
-+ configurationRef:                               # Reference to a PipelinePermissionConfiguration CR that contains the authentication information.
-+   name: my-pipelinepermission-config
-+   namespace: default.
-  
-+ organization: krateo-kog                        # Name of the Azure DevOps organization
-+ project: "project-1-classic"                    # ID or name of the project
-  
-+ resourceType: "environment"                     # Type of the resource
-+ resourceId: "35"                                # ID of the resource
+Note that:
+- the `projectRef` field has been replaced with `project`, which can be either the `ID` or the `name` of the project in the case of the spec of the `PipelinePermission` resource.
+- the `resource` field has been replaced with `resourceType` and `resourceId`, which are the type and ID of the resource to authorize for the pipelines.
+- the `pipelineRef` fields have been replaced with `id`, which are the ID of the pipelines to authorize for the resource.
 
-+ allPipelines:
-+   authorized: false                             # Whether to authorize all pipelines for the resource
-
-+ pipelines:
-+   - id: 66                                      # ID of the pipeline to authorize for the resource  
-+     # authorized: true is not required, since it is the default value (authorized: false is not allowed)
-```
-
-Note that the `projectRef` field has been replaced with `project`, which can be either the `ID` or the `name` of the project in the case of the spec of the `PipelinePermission` resource.
-In order to dynamically retrieve the project ID, you can use a Helm `lookup` function.
-
-Note that the `resource` field has been replaced with `resourceType` and `resourceId`, which are the type and ID of the resource to authorize for the pipelines. The ID of the resource can be dynamically retrieved using a Helm `lookup` function as well.
-
-Note that the `pipelineRef` fields have been replaced with `id`, which are the ID of the pipelines to authorize for the resource.
+In order to dynamically retrieve the IDs, you can use a Helm `lookup` function.
 
 An example of how to use the Helm `lookup` function to retrieve the project ID, environment ID and pipeline ID dynamically is shown below.
 In this case the context is a Helm chart, so the `lookup` function is used to retrieve the `TeamProject`, `Environment` and `Pipeline` resources by their names and namespace, and then the project ID, environment ID, and pipeline ID are accessed from the status of those resources.
@@ -227,9 +180,9 @@ NAME                    AGE   READY
 pipeline-permission-1   61s   True
 ```
 
-At this point, you can proceed to delete the old `PipelinePermission` resource managed by Krateo Azure DevOps Provide "classic" (note the different API group).
+At this point, you can proceed to delete the old `PipelinePermission` resource managed by Azure DevOps Provider "classic" (note the different API group).
 
-First, you can delete the old `Pipeline` resource managed by Krateo Azure DevOps Provider "classic":
+First, you can delete the old `Pipeline` resource managed by Azure DevOps Provider "classic":
 ```sh
 kubectl delete pipelinepermissions.azuredevops.krateo.io pipeline-permission-1
 ```
