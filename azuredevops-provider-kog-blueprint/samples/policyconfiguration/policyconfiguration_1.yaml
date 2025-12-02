@@ -46,7 +46,7 @@ spec:
     scope:
       - repositoryId: "5605b0ba-e2fa-4aab-af0b-0888321b3a08"
         #refName: "refs/heads/main"
-        #matchKind: exact
+        #matchKind: Exact
       #- repositoryId: "repo-0002"
       #  refName: "refs/heads/release/*"
-      #  matchKind: prefix
+      #  matchKind: Prefix
