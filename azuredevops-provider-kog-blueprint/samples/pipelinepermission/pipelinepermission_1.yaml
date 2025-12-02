@@ -16,9 +16,10 @@ spec:
   resourceId: "39"
 
   allPipelines:
-    authorized: true
+    authorized: false
 
   pipelines:
-    - id: 81
-      # authorized: true is not required to be set here, since it is already the default value (and `authorized: false` is not allowed)
     - id: 82
+      authorized: true
+    - id: 85
+      authorized: false

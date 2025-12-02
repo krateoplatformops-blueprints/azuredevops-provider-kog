@@ -29,8 +29,6 @@ This provider allows you to manage [Azure DevOps resources](https://azure.micros
   - [PipelinePermission](#pipelinepermission)
     - [PipelinePermission operations](#pipelinepermission-operations)
     - [PipelinePermission schema](#pipelinepermission-schema)
-    - [PipelinePermission example CR](#pipelinepermission-example-cr)
-    - [How to revoke permissions](#how-to-revoke-permissions)
 - [Authentication](#authentication)
 - [Configuration](#configuration)
   - [Configuration resources](#configuration-resources)
@@ -381,9 +379,8 @@ Reference to the official [Azure DevOps REST API documentation](https://learn.mi
 #### PipelinePermission operations
 
 - **Create**: You can create a `PipelinePermission` resource to grant permissions for specific pipelines to use a specific resource, such as `environment`, `queue`, etc.
-- **Update**: Updating is only partially supported, meaning that you cannot directly revoke permissions (change the `authorized` field to `false`) for existing authorized pipelines (see the [section below](#how-to-revoke-permissions) on how to revoke permissions for pipelines). You can only **add new authorized pipelines** in the `pipelines` array. You can also change permissions for all pipelines in the project by setting the `allPipelines` field to `authorized: true` or `authorized: false`.
-- **Delete**: Deleting a `PipelinePermission` resource on the Kubernetes cluster will not revoke permissions for the pipelines on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The Azure DevOps pipelines will still have the permissions granted by the `PipelinePermission` resource until you manually revoke them in the Azure DevOps UI (see the [section below](#how-to-revoke-permissions) on how to revoke permissions for pipelines).
-The choice is driven by the fact that Azure DevOps REST API allows to retrieve only the pipelines that are authorized, therefore the management of both authorized and unauthorized pipelines is not possible.
+- **Update**: You can update the list of pipelines that have permissions to use the resource by updating the `pipelines` array in the `PipelinePermission` resource, or by changing the `allPipelines.authorized` field to `true` or `false`.
+- **Delete**: Deleting a `PipelinePermission` resource on the Kubernetes cluster will not revoke permissions for the pipelines on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The Azure DevOps pipelines will still have the permissions granted by the `PipelinePermission` resource. Before deleting a `PipelinePermission` resource, you should manually revoke the permissions for the pipelines in the Azure DevOps UI or by updating the `PipelinePermission` resource to remove all pipelines from the `pipelines` array and set `allPipelines.authorized` to `false`.
 
 #### PipelinePermission schema
 
@@ -394,9 +391,9 @@ The `PipelinePermission` CRD file can found [here](./azuredevops-provider-kog-bl
 
 Note: in the case of managing a `PipelinePermission` for an Agent Pool, the `resourceType` should be set to `queue`.
 
-Note: if you set `allPipelines.authorized` to `true`, and also specify individual pipelines in the `pipelines` array, there will be the following behavior:
+Note: if you set `allPipelines.authorized` to `true`, and also specify individual pipelines in the `pipelines` array, there will be the following behavior on Azure DevOps:
 - All pipelines in the project will be authorized to use the resource.
-- If you manually remove the newly added permission named "No restrictions - Any pipeline may use this resource" in the Azure DevOps UI, then only the pipelines specified in the `pipelines` array will remain authorized.
+- If you manually remove the newly added "global" permission named "No restrictions - Any pipeline may use this resource" in the Azure DevOps UI, then only the pipelines specified in the `pipelines` array will remain authorized.
 
 An example of a `PipelinePermission` resource is:
 ```yaml
@@ -418,20 +415,14 @@ spec:
   resourceId: "39"
 
   allPipelines:
-    authorized: true
+    authorized: false
 
   pipelines:
     - id: 79
-      # authorized: true is not required to be set here, since it is already the default value (and `authorized: false` is not allowed)
+      authorized: true
     - id: 80
+      authorized: false
 ```
-
-#### How to revoke permissions
-
-To revoke permissions for a pipeline, you need to:
-1. Manually remove the specific `Pipeline` in the Azure DevOps UI under the `Pipeline permission` section of the resource you want to manage (e.g., `Environment`, `Queue`, etc.). Note that the location of the `Pipeline permission` section may vary depending on the type of resource you are managing.
-2. Update the `PipelinePermission` resource on Kubernetes by removing the specific pipeline `id` from the `pipelines` array in the `PipelinePermission` resource.
-3. Apply the updated `PipelinePermission` resource to the cluster and let the controller reconcile the state.
 
 ### PullRequest
 

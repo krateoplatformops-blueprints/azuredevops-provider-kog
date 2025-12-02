@@ -32,7 +32,8 @@ func main() {
 	}
 
 	// PipelinePermission
-	srv.Mux().Handle("GET /api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{resourceId}", pipelinepermission.GetPipelinePermission(opts))
+	//srv.Mux().Handle("GET /api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{resourceId}", pipelinepermission.GetPipelinePermission(opts))
+	srv.Mux().Handle("POST /api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{resourceId}", pipelinepermission.PostPipelinePermission(opts))
 
 	// Swagger UI
 	srv.Mux().Handle("/swagger/", httpSwagger.WrapHandler)
