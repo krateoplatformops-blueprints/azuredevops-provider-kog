@@ -58,20 +58,17 @@ graph TD
     GitRepository -- "Supports defaultBranch,<br>initialization, fork validation" --> ADO_API
 
     subgraph Krateo Ecosystem
-        KOG[azuredevops-provider-kog]
+        KOG[azuredevops-provider-kog <br> Helm Chart]
         RDC1[rest-dynamic-controller-1 <br> Pipeline]
         RDC2[rest-dynamic-controller-2 <br> PipelinePermission]
         RDC3[rest-dynamic-controller-3 <br> GitRepository]
 
     end
 
-    subgraph "Plugin (This project)"
-        direction LR
-        Pipeline[Pipeline<br>Endpoints]
-        PipelinePermission[PipelinePermission<br>Endpoint]
-        GitRepository[GitRepository<br>Endpoint]
-    end
-
+    Pipeline[Pipeline<br>Plugin]
+    PipelinePermission[PipelinePermission<br>Plugin]
+    GitRepository[GitRepository<br>Plugin]
+    
     subgraph Azure DevOps
         ADO_API[Azure DevOps REST API]
     end
