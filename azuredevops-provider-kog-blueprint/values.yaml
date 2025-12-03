@@ -64,3 +64,25 @@ azuredevops-provider-kog-repositorypermission-blueprint:
   # default: true
   # @schema
   enabled: true
+# @schema
+# type: object
+# description: Configuration for the BuildPermission Blueprint dependency.
+# @schema
+azuredevops-provider-kog-buildpermission-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the BuildPermission Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
+# description: Configuration for the Team Blueprint dependency.
+# @schema
+azuredevops-provider-kog-team-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the Team Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true

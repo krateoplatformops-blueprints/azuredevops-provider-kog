@@ -255,5 +255,4 @@ curl -X GET "https://dev.azure.com/<ORG>/<PROJECT>/_apis/policy/types?api-versio
 ## Team
 
 Unlike other Azure DevOps resources, the field `projectId` in the Team resource can only accept the **Project ID** (a UUID) and not the Project Name.
-
-
+This is due to the fact that the Azure DevOps REST API for Teams returns always the Project ID in the response, even if the Team was created using the Project Name. This difference would lead to infinite reconciliation loops in the controller if the Project Name was used.

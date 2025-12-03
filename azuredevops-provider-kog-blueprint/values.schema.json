@@ -2,6 +2,20 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "additionalProperties": true,
   "properties": {
+    "azuredevops-provider-kog-buildpermission-blueprint": {
+      "additionalProperties": false,
+      "description": "Configuration for the BuildPermission Blueprint dependency.",
+      "properties": {
+        "enabled": {
+          "default": true,
+          "description": "Enable the BuildPermission Blueprint dependency.",
+          "title": "enabled",
+          "type": "boolean"
+        }
+      },
+      "title": "azuredevops-provider-kog-buildpermission-blueprint",
+      "type": "object"
+    },
     "azuredevops-provider-kog-gitrepository-blueprint": {
       "additionalProperties": false,
       "description": "Configuration for the GitRepository Blueprint dependency.",
@@ -84,6 +98,20 @@
         }
       },
       "title": "azuredevops-provider-kog-repositorypermission-blueprint",
+      "type": "object"
+    },
+    "azuredevops-provider-kog-team-blueprint": {
+      "additionalProperties": false,
+      "description": "Configuration for the Team Blueprint dependency.",
+      "properties": {
+        "enabled": {
+          "default": true,
+          "description": "Enable the Team Blueprint dependency.",
+          "title": "enabled",
+          "type": "boolean"
+        }
+      },
+      "title": "azuredevops-provider-kog-team-blueprint",
       "type": "object"
     }
   },
