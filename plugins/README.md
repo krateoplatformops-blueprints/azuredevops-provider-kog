@@ -232,6 +232,8 @@ POST /api/{organization}/{projectId}/git/repositories
 
 </details>
 
+---
+
 ## Pipeline plugin
 
 ### GET Pipeline
@@ -717,6 +719,276 @@ PATCH /api/{organization}/{project}/git/repositories/{repositoryId}/pullrequests
   },
   "supportsIterations": true,
   "artifactId": "<REDACTED>"
+}
+```
+
+</details>
+
+---
+
+## RepositoryPermission plugin
+
+### GET RepositoryPermission
+
+**Description**:
+This endpoint get the permissions of a repository.
+
+<details>
+<summary><b>Why This Endpoint Exists</b></summary>
+<br/>
+
+- Repository permissions is an abstraction that does not have a direct counterpart in the Azure DevOps REST API.
+- This endpoint implements the necessary logic to map the Kubernetes Custom Resource specifications to the appropriate Azure DevOps API calls.
+
+</details>
+
+<details>
+<summary><b>Request</b></summary>
+<br/>
+
+```http
+GET /plugin/repositorypermission/{organization}/{projectId}
+```
+
+**Path parameters**:
+- `organization` (string, required): The name of the Azure DevOps organization.
+- `projectId` (string, required): The ID of the Azure DevOps project.
+
+**Query parameters**:
+- `repositoryId` (string, optional): The ID of the repository.
+- `identityType` (string, optional): Type of identity (e.g., 'azure-group', 'build-service').
+- `identityName` (string, optional): Name of the identity (e.g., Contributors), not used if identityType is 'build-service' or if identityDescriptor is provided.
+- `identityDescriptor` (string, optional): Descriptor of the identity, has priority over identityType and identityName.
+- `projectLevel` (boolean, optional): Whether to manage permissions at the project level (true) or repository level (false). Default is false.
+- `api-version` (string, required): The version of the Azure DevOps REST API to use. For example, `7.2-preview.1`.
+
+</details>
+
+<details>
+<summary><b>Response</b></summary>
+<br/>
+
+**Response status codes**:
+- `200 OK`: The request was successful.
+- `400 Bad Request`: The request is invalid. Ensure that the parameters are correct.
+- `401 Unauthorized`: The request is not authorized. Ensure that the `Authorization` header is set correctly.
+- `404 Not Found`: The specified repository or identity does not exist.
+- `500 Internal Server Error`: An unexpected error occurred while processing the request.
+
+
+**Response body example**:
+```json
+{
+  "organization": "krateo-kog",
+  "projectId": "99837031-4e4e-4753-9a47-73fcc4cba766",
+  "repositoryId": "c2f8d804-7c2f-4f3f-bd69-70c3169cfb8c",
+  "projectLevel": false,
+  "permissions": {
+    "identity": {
+      "type": "azure-group",
+      "name": "Contributors",
+      "descriptor": "Microsoft.TeamFoundation.Identity;<REDACTED>"
+    },
+    "allow": {
+      "Administer": false,
+      "CreateBranch": true,
+      "CreateRepository": false,
+      "CreateTag": false,
+      "DeleteRepository": false,
+      "DismissAdvSecAlerts": false,
+      "EditPolicies": false,
+      "ForcePush": false,
+      "GenericContribute": false,
+      "GenericRead": false,
+      "ManageAdvSecScanning": false,
+      "ManageNote": false,
+      "ManagePermissions": false,
+      "PolicyExempt": false,
+      "PullRequestBypassPolicy": false,
+      "PullRequestContribute": false,
+      "RemoveOthersLocks": false,
+      "RenameRepository": true,
+      "ViewAdvSecAlerts": false
+    },
+    "deny": {
+      "Administer": false,
+      "CreateBranch": false,
+      "CreateRepository": false,
+      "CreateTag": true,
+      "DeleteRepository": false,
+      "DismissAdvSecAlerts": false,
+      "EditPolicies": true,
+      "ForcePush": true,
+      "GenericContribute": false,
+      "GenericRead": false,
+      "ManageAdvSecScanning": false,
+      "ManageNote": false,
+      "ManagePermissions": false,
+      "PolicyExempt": false,
+      "PullRequestBypassPolicy": false,
+      "PullRequestContribute": false,
+      "RemoveOthersLocks": false,
+      "RenameRepository": false,
+      "ViewAdvSecAlerts": true
+    }
+  }
+}
+```
+
+</details>
+
+### POST RepositoryPermission
+
+**Description**:
+This endpoint updates the permissions of a repository.
+
+<details>
+<summary><b>Why This Endpoint Exists</b></summary>
+<br/>
+
+- Repository permissions is an abstraction that does not have a direct counterpart in the Azure DevOps REST API.
+- This endpoint implements the necessary logic to map the Kubernetes Custom Resource specifications to the appropriate Azure DevOps API calls.
+
+</details>
+
+<details><summary><b>Request</b></summary>
+<br/>
+
+```http
+POST /plugin/repositorypermission/{organization}/{projectId}
+```
+
+**Path parameters**:
+- `organization` (string, required): The name of the Azure DevOps organization.
+- `projectId` (string, required): The ID of the Azure DevOps project.
+
+**Query parameters**:
+- `repositoryId` (string, optional): The ID of the repository.
+- `projectLevel` (boolean, optional): Whether to manage permissions at the project level (true) or repository level (false). Default is false.
+- `api-version` (string, required): The version of the Azure DevOps REST API to use. For example, `7.2-preview.1`.
+
+**Request body example**:
+```json
+{
+  "permissions": {
+    "allow": {
+      "Administer": false,
+      "CreateBranch": true,
+      "CreateRepository": false,
+      "CreateTag": false,
+      "DeleteRepository": false,
+      "DismissAdvSecAlerts": false,
+      "EditPolicies": false,
+      "ForcePush": false,
+      "GenericContribute": false,
+      "GenericRead": false,
+      "ManageAdvSecScanning": false,
+      "ManageNote": false,
+      "ManagePermissions": false,
+      "PolicyExempt": false,
+      "PullRequestBypassPolicy": false,
+      "PullRequestContribute": false,
+      "RemoveOthersLocks": false,
+      "RenameRepository": false,
+      "ViewAdvSecAlerts": false
+    },
+    "deny": {
+      "Administer": false,
+      "CreateBranch": false,
+      "CreateRepository": false,
+      "CreateTag": true,
+      "DeleteRepository": false,
+      "DismissAdvSecAlerts": false,
+      "EditPolicies": true,
+      "ForcePush": true,
+      "GenericContribute": false,
+      "GenericRead": false,
+      "ManageAdvSecScanning": false,
+      "ManageNote": false,
+      "ManagePermissions": false,
+      "PolicyExempt": false,
+      "PullRequestBypassPolicy": false,
+      "PullRequestContribute": false,
+      "RemoveOthersLocks": false,
+      "RenameRepository": false,
+      "ViewAdvSecAlerts": true
+    },
+    "identity": {
+      "name": "Contributors",
+      "type": "azure-group"
+    }
+  }
+}
+```
+
+</details>
+
+<details><summary><b>Response</b></summary>
+<br/>
+
+**Response status codes**:
+- `200 OK`: The request was successful.
+- `400 Bad Request`: The request body is invalid. Ensure that the parameters are correct.
+- `401 Unauthorized`: The request is not authorized. Ensure that the `Authorization` header is set correctly.
+- `404 Not Found`: The specified repository or identity does not exist. 
+- `500 Internal Server Error`: An unexpected error occurred while processing the request.
+
+**Response body example**:
+```json
+{
+  "organization": "krateo-kog",
+  "projectId": "99837031-4e4e-4753-9a47-73fcc4cba766",
+  "repositoryId": "c2f8d804-7c2f-4f3f-bd69-70c3169cfb8c",
+  "projectLevel": false,
+  "permissions": {
+    "identity": {
+      "type": "azure-group",
+      "name": "Contributors",
+      "descriptor": "Microsoft.TeamFoundation.Identity;<REDACTED>"
+    },
+    "allow": {
+      "Administer": false,
+      "CreateBranch": true,
+      "CreateRepository": false,
+      "CreateTag": false,
+      "DeleteRepository": false,
+      "DismissAdvSecAlerts": false,
+      "EditPolicies": false,
+      "ForcePush": false,
+      "GenericContribute": false,
+      "GenericRead": false,
+      "ManageAdvSecScanning": false,
+      "ManageNote": false,
+      "ManagePermissions": false,
+      "PolicyExempt": false,
+      "PullRequestBypassPolicy": false,
+      "PullRequestContribute": false,
+      "RemoveOthersLocks": false,
+      "RenameRepository": false,
+      "ViewAdvSecAlerts": false
+    },
+    "deny": {
+      "Administer": false,
+      "CreateBranch": false,
+      "CreateRepository": false,
+      "CreateTag": true,
+      "DeleteRepository": false,
+      "DismissAdvSecAlerts": false,
+      "EditPolicies": true,
+      "ForcePush": true,
+      "GenericContribute": false,
+      "GenericRead": false,
+      "ManageAdvSecScanning": false,
+      "ManageNote": false,
+      "ManagePermissions": false,
+      "PolicyExempt": false,
+      "PullRequestBypassPolicy": false,
+      "PullRequestContribute": false,
+      "RemoveOthersLocks": false,
+      "RenameRepository": false,
+      "ViewAdvSecAlerts": true
+    }
+  }
 }
 ```
 
