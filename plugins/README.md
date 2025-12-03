@@ -6,6 +6,8 @@ This repository contains the source code of a set of plugins written in Go for t
 
 These plugins are specialized web services that address some inconsistencies in the Azure DevOps REST API or provide a way to use Azure DevOps API seamlessly within KOG (Krateo Operator Generator). This may be due differences in request/response schemas, missing fields, or additional validations needed when managing Azure DevOps resources. Sometimes, since the REST API is not originally designed to be used by a Kubernetes operator, these plugins fill the gap by providing the necessary functionality to manage Azure DevOps resources effectively through KOG.
 On the other hand, some missing features of Krateo Operator Generator are addressed by these plugins as well.
+In addition, some resources managed by Azure DevOps Provider KOG are **abstractions** (e.g, `RepositoryPermission`, `BuildPermission`) that do not have a direct counterpart in the Azure DevOps REST API. In these cases, the plugins implement the necessary logic to map the Kubernetes Custom Resource specifications to the appropriate Azure DevOps API calls.
+
 They are designed to work as a middleware between the [Rest Dynamic Controller](https://github.com/krateoplatformops/rest-dynamic-controller/) and the Azure DevOps REST API.
 
 ## Summary
@@ -20,6 +22,8 @@ They are designed to work as a middleware between the [Rest Dynamic Controller](
   - [DELETE Pipeline](#delete-pipeline)
 - [PipelinePermission plugin](#pipelinepermission-plugin)
   - [GET PipelinePermission](#get-pipelinepermission)
+- [PullRequest plugin](#pullrequest-plugin)
+  - [PATCH PullRequest](#patch-pullrequest)
 - [Azure DevOps API Reference](#azuredevops-api-reference)
 - [Authentication](#authentication)
 - [API documentation](#api-documentation)
@@ -518,6 +522,202 @@ GET /api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{
 </details>
 
 ---
+
+## PullRequest plugin
+
+### PATCH PullRequest
+
+**Description**:
+This endpoint updates an existing pull request in the specified Azure DevOps project.
+
+<details>
+<summary><b>Why This Endpoint Exists</b></summary>
+<br/>
+
+- The endpoint calculates only the modified fields between the current state of the pull request in Azure DevOps and the desired state specified in the request body (coming from the Kubernetes CR), and it sends only those modified fields in the `PATCH` request to the Azure DevOps REST API. Indeed, Azure DevOps throws an error if you try to set a field to its current value, for instance in the case of `TargetRefName` field.
+- In addition, it manages `LastMergeSourceCommit` field which is required only when updating status to "completed": if not set, Azure DevOps returns an error. If set in other cases, Azure DevOps returns an error.
+- It also performs additional validations related to pull request state transitions: an already completed pull request cannot be updated.
+
+</details>
+
+<details>
+<summary><b>Request</b></summary>
+<br/>
+
+```http
+PATCH /api/{organization}/{project}/git/repositories/{repositoryId}/pullrequests/{pullRequestId}
+```
+
+**Path parameters**:
+- `organization` (string, required):T he name of the Azure DevOps organization.
+- `project` (string, required): Project ID or project name.
+- `repositoryId` (string, required):  The repository ID of the pull request's target branch.
+- `pullRequestId` (string, required): The ID of the pull request to update
+
+**Query parameters**:
+- `api-version` (string, required): The version of the Azure DevOps REST API to use. For example, `7.2-preview.2`.
+
+**Request body example**:
+```json
+{
+  "completionOptions": {
+    "deleteSourceBranch": false,
+    "mergeCommitMessage": "Squash merge for feature X, test from Krateo",
+    "mergeStrategy": "squash",
+    "transitionWorkItems": true
+  },
+  "description": "Test PR description from Krateo",
+  "lastMergeSourceCommit": {
+    "commitId": "<REDACTED>",
+    "url": "<REDACTED>"
+  },
+  "mergeOptions": {
+    "conflictAuthorshipCommits": true,
+    "detectRenameFalsePositives": false,
+    "disableRenames": false
+  },
+  "status": "active",
+  "targetRefName": "refs/heads/main",
+  "title": "Test PR from Krateo test-branch"
+}
+```
+
+</details>
+
+<details>
+<summary><b>Response</b></summary>
+<br/>
+
+**Response status codes**:
+- `200 OK`: The pull request was successfully updated.
+- `400 Bad Request`: The request body is invalid or the pull request ID does not exist.
+- `401 Unauthorized`: The request is not authorized. Ensure that the `Authorization` header is set correctly.
+- `404 Not Found`: The specified pull request does not exist in the repository.
+- `409 Conflict`: The pull request cannot be updated due to a conflict (e.g., trying to update a completed pull request).
+- `500 Internal Server Error`: An unexpected error occurred while processing the request.
+
+**Response body example**:
+```json
+{
+  "repository": {
+    "id": "5605b0ba-e2fa-4aab-af0b-0888321b3a08",
+    "name": "repo-1-classic",
+    "url": "<REDACTED>",
+    "project": {
+      "id": "99837031-4e4e-4753-9a47-73fcc4cba766",
+      "name": "project-1-classic",
+      "description": "test",
+      "url": "<REDACTED>",
+      "state": "wellFormed",
+      "revision": 626,
+      "visibility": "private",
+      "lastUpdateTime": "2025-12-03T08:38:51.013Z"
+    },
+    "size": 10828,
+    "remoteUrl": "<REDACTED>",
+    "sshUrl": "<REDACTED>",
+    "webUrl": "<REDACTED>",
+    "isDisabled": false,
+    "isInMaintenance": false
+  },
+  "pullRequestId": 402,
+  "codeReviewId": 402,
+  "status": "active",
+  "createdBy": {
+    "displayName": "Leonardo Vicentini",
+    "url": "<REDACTED>",
+    "_links": {
+      "avatar": {
+        "href": "<REDACTED>"
+      }
+    },
+    "id": "<REDACTED>",
+    "uniqueName": "leonardo.vicentini@krateo.io",
+    "imageUrl": "<REDACTED>",
+    "descriptor": "<REDACTED>"
+  },
+  "creationDate": "2025-12-03T14:44:56.2184364Z",
+  "title": "Test PR from Krateo test-branch",
+  "description": "Test PR description from Krateo",
+  "sourceRefName": "refs/heads/test-3-12-25",
+  "targetRefName": "refs/heads/main",
+  "mergeStatus": "succeeded",
+  "isDraft": false,
+  "mergeId": "<REDACTED>",
+  "lastMergeSourceCommit": {
+    "commitId": "<REDACTED>",
+    "url": "<REDACTED>"
+  },
+  "lastMergeTargetCommit": {
+    "commitId": "<REDACTED>",
+    "url": "<REDACTED>"
+  },
+  "lastMergeCommit": {
+    "commitId": "<REDACTED>",
+    "author": {
+      "name": "Leonardo Vicentini",
+      "email": "leonardo.vicentini@krateo.io",
+      "date": "2025-11-17T15:08:26Z"
+    },
+    "committer": {
+      "name": "Leonardo Vicentini",
+      "email": "leonardo.vicentini@krateo.io",
+      "date": "2025-11-17T15:08:26Z"
+    },
+    "comment": "Squash merge for feature X, test from Krateo",
+    "url": "<REDACTED>"
+  },
+  "reviewers": [],
+  "url": "<REDACTED>",
+  "_links": {
+    "self": {
+      "href": "<REDACTED>"
+    },
+    "repository": {
+      "href": "<REDACTED>"
+    },
+    "workItems": {
+      "href": "<REDACTED>"
+    },
+    "sourceBranch": {
+      "href": "<REDACTED>"
+    },
+    "targetBranch": {
+      "href": "<REDACTED>"
+    },
+    "statuses": {
+      "href": "<REDACTED>"
+    },
+    "sourceCommit": {
+      "href": "<REDACTED>"
+    },
+    "targetCommit": {
+      "href": "<REDACTED>"
+    },
+    "createdBy": {
+      "href": "<REDACTED>"
+    },
+    "iterations": {
+      "href": "<REDACTED>"
+    }
+  },
+  "completionOptions": {
+    "mergeCommitMessage": "Squash merge for feature X, test from Krateo",
+    "squashMerge": true,
+    "mergeStrategy": "squash",
+    "transitionWorkItems": true
+  },
+  "mergeOptions": {
+    "disableRenames": false,
+    "detectRenameFalsePositives": false,
+    "conflictAuthorshipCommits": true
+  },
+  "supportsIterations": true,
+  "artifactId": "<REDACTED>"
+}
+```
+
+</details>
 
 ## Azure DevOps API Reference
 
