@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: leovice/repositorypermission-plugin
-  pullPolicy: Always
+  repository: ghcr.io/krateoplatformops-blueprints/azuredevops-provider-kog/repositorypermission-plugin
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: ""
 
 imagePullSecrets: []
 nameOverride: ""

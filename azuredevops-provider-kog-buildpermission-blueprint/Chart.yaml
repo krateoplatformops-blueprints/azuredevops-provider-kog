@@ -2,8 +2,8 @@ apiVersion: v2
 name: azuredevops-provider-kog-buildpermission
 description: A Helm chart for deploying the Azure DevOps KOG Repository Permission.
 type: application
-version: 1.0.0
-appVersion: "latest"
+version: BUILDPERMISSION_CHART_VERSION
+appVersion: BUILDPERMISSION_APP_VERSION
 
 home: https://krateo.io
 icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
@@ -12,4 +12,4 @@ keywords:
 sources:
   - https://github.com/krateoplatformops-blueprints/azuredevops-provider-kog/tree/main/azuredevops-provider-kog-buildpermission-blueprint
 annotations:
-  krateoSupportedVersion: ">= 2.6.0"
+  krateoSupportedVersion: ">= 2.7.0"

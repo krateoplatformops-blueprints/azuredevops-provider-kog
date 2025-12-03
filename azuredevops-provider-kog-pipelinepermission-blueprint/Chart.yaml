@@ -2,8 +2,8 @@ apiVersion: v2
 name: azuredevops-provider-kog-pipelinepermission
 description: A Helm chart for deploying the Azure DevOps KOG PipelinePermission.
 type: application
-version: 1.0.0
-appVersion: 1.0.0
+version: PIPELINEPERMISSION_CHART_VERSION
+appVersion: PIPELINEPERMISSION_APP_VERSION
 
 home: https://krateo.io
 icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
