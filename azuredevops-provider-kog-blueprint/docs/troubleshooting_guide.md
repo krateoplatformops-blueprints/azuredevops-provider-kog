@@ -21,6 +21,7 @@ This document serves as a troubleshooting guide for the Krateo Azure DevOps Prov
     - [Case 3.3: Fork With Nonexistent Default Branch](#case-33-fork-with-nonexistent-default-branch)
 - [PolicyConfiguration](#policyconfiguration)
 
+
 ## GitRepository 
 
 This section outlines the expected behaviors of GitRepositories under different configurations during creation and forking.
@@ -249,4 +250,10 @@ curl -X GET "https://dev.azure.com/<ORG>/<PROJECT>/_apis/policy/types?api-versio
     }
   ]
 }
+```
+
+## Team
+
+Unlike other Azure DevOps resources, the field `projectId` in the Team resource can only accept the **Project ID** (a UUID) and not the Project Name.
+
 

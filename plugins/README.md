@@ -1,9 +1,11 @@
-# Plugins for Azure DevOps Provider KOG
+# Azure DevOps Provider KOG - Plugins
+
+This README is only related to the plugins contained in this repository. For more information about the Azure DevOps Provider KOG (Krateo Operator Generator), please refer to the [main README](../README.md).
 
 This repository contains the source code of a set of plugins written in Go for the Azure DevOps Provider KOG.
 
-These plugins are specialized web services that address some inconsistencies in the Azure DevOps REST API or provide a way to use Azure DevOps API seamlessly within KOG (Krateo Operator Generator). This may be due differences in request/response schemas, missing fields, or additional validations needed when managing Azure DevOps resources. 
-On the other hand, some missing features of Krateo Operator Generator (KOG) are addressed by these plugins as well.
+These plugins are specialized web services that address some inconsistencies in the Azure DevOps REST API or provide a way to use Azure DevOps API seamlessly within KOG (Krateo Operator Generator). This may be due differences in request/response schemas, missing fields, or additional validations needed when managing Azure DevOps resources. Sometimes, since the REST API is not originally designed to be used by a Kubernetes operator, these plugins fill the gap by providing the necessary functionality to manage Azure DevOps resources effectively through KOG.
+On the other hand, some missing features of Krateo Operator Generator are addressed by these plugins as well.
 They are designed to work as a middleware between the [Rest Dynamic Controller](https://github.com/krateoplatformops/rest-dynamic-controller/) and the Azure DevOps REST API.
 
 ## Summary
@@ -32,7 +34,7 @@ Therefore, each plugin can be built into its own container image. Please refer t
 ## Architecture
 
 The diagram below illustrates how the Azure DevOps Plugin interacts within the Krateo ecosystem, including the `rest-dynamic-controller` and the `azuredevops-provider-kog` as well as the Azure DevOps REST API.
-Note that this is only a partial representation showing only 3 managed resources as an example (`Pipeline`, `PipelinePermission`, and `GitRepository`).
+Note that this is only a **partial representation** showing only 3 managed resources as an example (`Pipeline`, `PipelinePermission`, and `GitRepository`).
 
 ```mermaid
 graph TD

@@ -172,7 +172,7 @@ For example, part of the the modified `PermissionInfo` schema is as follows:
 
 ## `Project`
 
-NOT YET AVAILABLE
+NOT YET AVAILABLE ON THE CHART
 WORK IN PROGRESS
 
 "7.2-preview.4"

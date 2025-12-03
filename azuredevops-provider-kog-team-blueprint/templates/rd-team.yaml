@@ -13,7 +13,7 @@ spec:
     - id
     excludedSpecFields:
     - teamId
-    - id # TODO: to be evaluated if needed
+    - id
     - identity
     - identityUrl
     - projectName

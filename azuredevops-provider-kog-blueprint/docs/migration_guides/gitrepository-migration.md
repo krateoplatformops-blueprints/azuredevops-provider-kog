@@ -62,6 +62,7 @@ metadata:
   annotations:
 +   krateo.io/paused: "true"
 spec:
++ deletionPolicy: Orphan  
   connectorConfigRef:
     name: connectorconfig-sample
     namespace: default
@@ -70,7 +71,6 @@ spec:
     namespace: default
   name: gitrepository-1
   initialize: true
-+ deletionPolicy: Orphan  
 status:
   conditions:
 +  - lastTransitionTime: "2025-07-14T15:35:05Z"

@@ -76,11 +76,11 @@ metadata:
     krateo.io/connector-verbose: "true"
 +   krateo.io/paused: "true"
 spec:
++ deletionPolicy: Orphan
   authorizeAll: false
   connectorConfigRef:
     name: connectorconfig-sample
     namespace: default
-+ deletionPolicy: Orphan
   pipelines:
   - authorized: true
     pipelineRef:

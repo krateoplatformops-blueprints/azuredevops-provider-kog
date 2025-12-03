@@ -11,6 +11,6 @@ spec:
     name: my-team-config
     namespace: default
   organization: krateo-kog
-  projectId: 99837031-4e4e-4753-9a47-73fcc4cba766 # Note: this must be a projectId, not a project name
+  projectId: 99837031-4e4e-4753-9a47-73fcc4cba766 # Note: this must be a projectId, not a project name since the API returns id in the response
   description: "Team created via KOG, test 00001"
   name: Team-KOG-00001

@@ -68,12 +68,12 @@ metadata:
   annotations:
 +   krateo.io/paused: "true"
 spec:
++ deletionPolicy: Orphan
   configurationType: yaml
   connectorConfigRef:
     name: connectorconfig-sample
     namespace: default
   definitionPath: azure-pipelines.yml
-+ deletionPolicy: Orphan
   name: pipeline-1
   projectRef:
     name: project-1-classic

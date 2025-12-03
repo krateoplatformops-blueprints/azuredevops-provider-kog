@@ -91,10 +91,10 @@ metadata:
     krateo.io/connector-verbose: "true"
 +   krateo.io/paused: "true"
 spec:
++ deletionPolicy: Orphan
   connectorConfigRef:
     name: connectorconfig-sample
     namespace: default
-+ deletionPolicy: Orphan
   policyBody:
     isBlocking: false
     isDeleted: false

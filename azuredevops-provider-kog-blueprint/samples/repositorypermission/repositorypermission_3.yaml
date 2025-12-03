@@ -24,7 +24,7 @@ spec:
       # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
       # If you want to explicitly allow a permission, set it to true
       CreateBranch: true
-      RenameRepository: true # "Not set"
+      RenameRepository: false # "Not set"
 
     deny:
       # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
