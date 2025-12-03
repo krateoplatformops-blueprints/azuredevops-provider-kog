@@ -170,6 +170,9 @@ spec:
 {{- end }}
 ```
 
+Note that you need to have already created a `PipelinePermissionConfiguration` resource that contains the authentication and configuration information for the `PipelinePermission` resource.
+See the main [README](../../../README.md#configuration) for more details about configuration resources.
+
 You can check the new `PipelinePermission` resource managed by Azure DevOps Provider KOG by running the following command:
 ```sh
 kubectl get pipelinepermissions.azuredevops.ogen.krateo.io pipeline-permission-1 -n azuredevops-system

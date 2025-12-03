@@ -188,6 +188,9 @@ spec:
 {{- end }}
 ```
 
+Note that you need to have already created a `PolicyConfigurationConfiguration` resource that contains the authentication and configuration information for the `PolicyConfiguration` resource.
+See the main [README](../../../README.md#configuration) for more details about configuration resources.
+
 You can check the new `PolicyConfiguration` resource managed by Azure DevOps Provider KOG by running the following command:
 ```sh
 kubectl get policyconfigurations.azuredevops.ogen.krateo.io repo-1 -n azuredevops-system

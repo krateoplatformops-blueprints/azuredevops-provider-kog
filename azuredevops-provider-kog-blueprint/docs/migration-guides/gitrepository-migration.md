@@ -126,6 +126,9 @@ spec:
 {{- end }}
 ```
 
+Note that you need to have already created a `GitRepositoryConfiguration` resource that contains the authentication and configuration information for the `GitRepository` resource.
+See the main [README](../../../README.md#configuration) for more details about configuration resources.
+
 You can check the new `GitRepository` resource managed by Azure DevOps Provider KOG by running the following command:
 ```sh
 kubectl get gitrepositories.azuredevops.ogen.krateo.io gitrepository-1 -n azuredevops-system

@@ -164,6 +164,9 @@ spec:
 {{- end }}
 ```
 
+Note that you need to have already created a `RepositoryPermissionConfiguration` resource that contains the authentication and configuration information for the `RepositoryPermission` resource.
+See the main [README](../../../README.md#configuration) for more details about configuration resources.
+
 You can check the new `RepositoryPermission` resource managed by Azure DevOps Provider KOG by running the following command:
 ```sh
 kubectl get repositorypermissions.azuredevops.ogen.krateo.io repository-permission-1 -n azuredevops-system

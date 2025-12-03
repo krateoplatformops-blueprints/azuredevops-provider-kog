@@ -135,6 +135,9 @@ spec:
 {{- end }}
 ```
 
+Note that you need to have already created a `TeamConfiguration` resource that contains the authentication and configuration information for the `Team` resource.
+See the main [README](../../../README.md#configuration) for more details about configuration resources.
+
 You can check the new `Team` resource managed by Azure DevOps Provider KOG by running the following command:
 ```sh
 kubectl get teams.azuredevops.ogen.krateo.io team-1 -n azuredevops-system

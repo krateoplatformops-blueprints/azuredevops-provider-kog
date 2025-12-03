@@ -157,6 +157,9 @@ spec:
 {{- end }}
 ```
 
+Note that you need to have already created a `PullRequestConfiguration` resource that contains the authentication and configuration information for the `PullRequest` resource.
+See the main [README](../../../README.md#configuration) for more details about configuration resources.
+
 You can check the new `PullRequest` resource managed by Azure DevOps Provider KOG by running the following command:
 ```sh
 kubectl get pullrequests.azuredevops.ogen.krateo.io pullrequest-1 -n azuredevops-system

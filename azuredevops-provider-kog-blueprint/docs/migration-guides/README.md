@@ -30,4 +30,7 @@ Therefore, currently, Azure DevOps Provider KOG **is not a drop-in replacement**
 - [GitRepository migration example](gitrepository-migration.md)
 - [Pipeline migration example](pipeline-migration.md)
 - [PipelinePermission migration example](pipelinepermission-migration.md)
-
+- [PullRequest migration example](pullrequest-migration.md)
+- [PolicyConfiguration migration example](policyconfiguration-migration.md)
+- [RepositoryPermission migration example](repositorypermission-migration.md)
+- [Team migration example](team-migration.md)
