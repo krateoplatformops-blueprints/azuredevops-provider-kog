@@ -92,7 +92,7 @@
           {
             "name": "api-version",
             "in": "query",
-            "description": "API version (e.g., 7.2-preview.2)",
+            "description": "API version (e.g., 7.2-preview.1)",
             "required": true,
             "schema": {
               "type": "string"
@@ -207,7 +207,7 @@
           {
             "name": "api-version",
             "in": "query",
-            "description": "API version (e.g., 7.2-preview.2)",
+            "description": "API version (e.g., 7.2-preview.1)",
             "required": true,
             "schema": {
               "type": "string"

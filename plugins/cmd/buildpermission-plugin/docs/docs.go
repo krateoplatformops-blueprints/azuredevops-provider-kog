@@ -83,7 +83,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "API version (e.g., 7.2-preview.2)",
+                        "description": "API version (e.g., 7.2-preview.1)",
                         "name": "api-version",
                         "in": "query",
                         "required": true
@@ -172,7 +172,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "API version (e.g., 7.2-preview.2)",
+                        "description": "API version (e.g., 7.2-preview.1)",
                         "name": "api-version",
                         "in": "query",
                         "required": true
