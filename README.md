@@ -24,7 +24,6 @@ The resources in Kubernetes are the **source of truth** for the corresponding Az
     - [GitRepository operations](#gitrepository-operations)
     - [GitRepository schema](#gitrepository-schema)
     - [GitRepository example CR](#gitrepository-example-cr)
-    - [Fork-related fields](#fork-related-fields)
   - [Pipeline](#pipeline)
     - [Pipeline operations](#pipeline-operations)
     - [Pipeline schema](#pipeline-schema)
@@ -32,6 +31,27 @@ The resources in Kubernetes are the **source of truth** for the corresponding Az
   - [PipelinePermission](#pipelinepermission)
     - [PipelinePermission operations](#pipelinepermission-operations)
     - [PipelinePermission schema](#pipelinepermission-schema)
+    - [PipelinePermission example CR](#pipelinepermission-example-cr)
+  - [PullRequest](#pullrequest)
+    - [PullRequest operations](#pullrequest-operations)
+    - [PullRequest schema](#pullrequest-schema)
+    - [PullRequest example CR](#pullrequest-example-cr)
+  - [PolicyConfiguration](#policyconfiguration)
+    - [PolicyConfiguration operations](#policyconfiguration-operations)
+    - [PolicyConfiguration schema](#policyconfiguration-schema)
+    - [PolicyConfiguration example CR](#policyconfiguration-example-cr)
+  - [RepositoryPermission](#repositorypermission)
+    - [RepositoryPermission operations](#repositorypermission-operations)
+    - [RepositoryPermission schema](#repositorypermission-schema)
+    - [RepositoryPermission example CR](#repositorypermission-example-cr)
+  - [BuildPermission](#buildpermission)
+    - [BuildPermission operations](#buildpermission-operations)
+    - [BuildPermission schema](#buildpermission-schema)
+    - [BuildPermission example CR](#buildpermission-example-cr)
+  - [Team](#team)
+    - [Team operations](#team-operations)
+    - [Team schema](#team-schema)
+    - [Team example CR](#team-example-cr)
 - [Authentication](#authentication)
 - [Configuration](#configuration)
   - [Configuration resources](#configuration-resources)
@@ -272,6 +292,7 @@ The `GitRepository` resource is used to manage Azure DevOps GitRepositories.
 #### GitRepository operations
 
 - **Create**: You can create a new GitRepository in Azure DevOps. You can specify the name, project and organization, and other optional fields such as default branch, and whether the repository should be a fork of another repository.
+- **Get**: You can retrieve information about an existing GitRepository in Azure DevOps.
 - **Update**: You can update the name and default branch of an existing GitRepository. Note that you cannot change the project or organization of an existing repository.
 - **Delete**: You can delete an existing GitRepository. This will remove the repository from Azure DevOps.
 
@@ -326,7 +347,7 @@ spec:
 
 </details>
 
-#### Fork-related fields
+##### Fork-related fields
 
 You can learn more about the fork-related fields in the [Azure DevOps documentation](https://learn.microsoft.com/en-us/rest/api/azure/devops/git/repositories/create#create-a-fork-of-a-parent-repository).
 
@@ -337,6 +358,7 @@ The `Pipeline` resource is used to manage Azure DevOps pipelines.
 #### Pipeline operations
 
 - **Create**: You can create a `Pipeline` resource to create a new pipeline in Azure DevOps. You can specify the name, project, organization, and the fields related to the pipeline configuration, such as the repository and path.
+- **Get**: You can retrieve information about an existing pipeline in Azure DevOps.
 - **Update**: You can update the name and configuration of an existing pipeline.
 - **Delete**: You can delete an existing pipeline. This will remove the pipeline from Azure DevOps.
 
@@ -398,11 +420,10 @@ Reference to the official [Azure DevOps REST API documentation](https://learn.mi
 
 - **Create**: You can create a `PipelinePermission` resource to grant permissions for specific pipelines to use a specific resource, such as `environment`, `queue`, etc.
 - **Update**: You can update the list of pipelines that have permissions to use the resource by updating the `pipelines` array in the `PipelinePermission` resource, or by changing the `allPipelines.authorized` field to `true` or `false`.
-- **Delete**: Deleting a `PipelinePermission` resource on the Kubernetes cluster will not revoke permissions for the pipelines on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The Azure DevOps pipelines will still have the permissions granted by the `PipelinePermission` resource. Before deleting a `PipelinePermission` resource, you should manually revoke the permissions for the pipelines in the Azure DevOps UI or by updating the `PipelinePermission` resource to remove all pipelines from the `pipelines` array and set `allPipelines.authorized` to `false`.
+- **Get**: You can retrieve information about an existing `PipelinePermission` resource in Azure DevOps.
+- **Delete**: Deleting a `PipelinePermission` resource on the Kubernetes cluster will not revoke permissions for the pipelines on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The Azure DevOps pipelines will still have the permissions granted by the `PipelinePermission` resource. Before deleting a `PipelinePermission` resource, you should manually revoke the permissions for the pipelines in the Azure DevOps UI or by updating the `PipelinePermission` resource to set all pipelines from the `pipelines` array to `authorized: false` and set `allPipelines.authorized` to `false`.
 
 #### PipelinePermission schema
-
-The `PipelinePermission` resource schema includes the following fields:
 
 The `PipelinePermission` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pipelinepermission.md).
 The `PipelinePermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pipelinepermission-crd.yaml).
@@ -414,6 +435,10 @@ Note: if you set `allPipelines.authorized` to `true`, and also specify individua
 - If you manually remove the newly added "global" permission named "No restrictions - Any pipeline may use this resource" in the Azure DevOps UI, then only the pipelines specified in the `pipelines` array will remain authorized.
 
 An example of a `PipelinePermission` resource is:
+<details>
+<summary><b> PipelinePermission Example</b></summary>
+<br/>
+
 ```yaml
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: PipelinePermission
@@ -442,12 +467,15 @@ spec:
       authorized: false
 ```
 
+</details>
+
 ### PullRequest
 
 The `PullRequest` resource is used to manage Azure DevOps pull requests.
 
 #### PullRequest operations
 - **Create**: You can create a `PullRequest` resource to create a new pull request in Azure DevOps. You can specify the source and target branches, title, description, and other optional fields.
+- **Get**: You can retrieve information about an existing pull request in Azure DevOps.
 - **Update**: You can update the title, description, and status of an existing pull request. Note that many fields of a pull request are not updatable.
 - **Delete**: Deleting a `PullRequest` CR on the Kubernetes cluster will not delete the pull request on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The concept of deleting pull requests is not supported by Azure DevOps REST API but you can close a pull request by updating its status to `abandoned`, which is supported by this CR.
 
@@ -457,6 +485,10 @@ The `PullRequest` CRD reference can found [here](./azuredevops-provider-kog-blue
 The `PullRequest` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pullrequest-crd.yaml).
 
 An example of a `PullRequest` resource is:
+<details>
+<summary><b> PullRequest Example</b></summary>
+<br/>
+
 ```yaml
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: PullRequest
@@ -493,12 +525,15 @@ spec:
   title: "Test PR from Krateo test-branch"
 ```
 
+</details>
+
 ### PolicyConfiguration
 
 The `PolicyConfiguration` resource is used to manage Azure DevOps policy configurations for repositories.
 
 #### PolicyConfiguration operations
 - **Create**: You can create a `PolicyConfiguration` resource to create a new policy configuration in Azure DevOps. You can specify the type of policy, settings, and other optional fields.
+- **Get**: You can retrieve information about an existing policy configuration in Azure DevOps.
 - **Update**: You can update the settings of an existing policy configuration.
 - **Delete**: You can delete an existing policy configuration. This will remove the policy configuration from Azure DevOps.
 
@@ -508,6 +543,10 @@ The `PolicyConfiguration` CRD reference can found [here](./azuredevops-provider-
 The `PolicyConfiguration` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/policyconfiguration-crd.yaml).
 
 An example of a `PolicyConfiguration` resource is:
+<details>
+<summary><b> PolicyConfiguration Example</b></summary>
+<br/>
+
 ```yaml
 # Example inspired by: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/03cce9dd0355aa5a5fa808dcc0bd15aadda383b9/specification/policy/7.2/httpExamples/configurations/POST__policy_configurations.json
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
@@ -551,6 +590,8 @@ spec:
         matchKind: Prefix
 ```
 
+</details>
+
 ### RepositoryPermission
 
 The `RepositoryPermission` resource is used to manage repository permissions in Azure DevOps. It is an abstaction over the underlying Access Control Entries (ACEs) used by Azure DevOps to manage permissions.
@@ -568,6 +609,10 @@ The `RepositoryPermission` CRD reference can found [here](./azuredevops-provider
 The `RepositoryPermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/repositorypermission-crd.yaml).
 
 An example of a `RepositoryPermission` resource is:
+<details>
+<summary><b> RepositoryPermission Example</b></summary>
+<br/>
+
 ```yaml
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: RepositoryPermission
@@ -606,9 +651,110 @@ spec:
       ViewAdvSecAlerts: true
 ```
 
+</details>
+
+### BuildPermission
+
+The `BuildPermission` resource is used to manage repository permissions in Azure DevOps. It is an abstaction over the underlying Access Control Entries (ACEs) used by Azure DevOps to manage permissions.
+
+#### BuildPermission operations
+
+- **Update**: You can update the permissions for a specific identity (user or group) on a specific build (pipeline). You can explicitly allow or deny specific permissions.
+- **Get**: You can retrieve the current permissions for a specific identity on a specific build (pipeline).
+- **Create**: Not applicable, as permissions are managed by updating existing entries. Note that the RestDefinition has the create operation defined, but it is not used by Rest Dynamic Controller but just by OASGen provider at CRD generation time.
+- **Delete**: Deleting a `BuildPermission` CR on the Kubernetes cluster will not delete the permissions on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. You need to properly update the permissions to revoke them.
+
+#### BuildPermission schema
+
+The `BuildPermission` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/buildpermission.md).
+The `BuildPermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/buildpermission-crd.yaml).
+
+An example of a `BuildPermission` resource is:
+<details>
+<summary><b> BuildPermission Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: BuildPermission
+metadata:
+  name: bp-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-buildpermission-config
+    namespace: default
+
+  organization: krateo-kog                            # required
+  projectId: 99837031-4e4e-4753-9a47-73fcc4cba766     # required
+  buildDefinitionId: "82"
+
+  permissions:
+    identity:
+      type: azure-group
+      name: Contributors # not used if type is `build-service` or if descriptor is provided
+      #descriptor: Microsoft.TeamFoundation.Identity;abcdef12-3456-7890-abcd-ef1234567890 # has priority over name or type+name
+    allow:
+      # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
+      # If you want to explicitly allow a permission, set it to true
+      CreateBuildDefinition: true
+    deny:
+      # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
+      # If you want to explicitly deny a permission, set it to true
+      EditPipelineQueueConfigurationPermission: true
+      ViewBuilds: false # "Not set"
+```
+
+</details>
+
+### Team
+
+The `Tean` resource is used to manage teams in Azure DevOps.
+
+#### Team operations
+
+- **Update**: You can update an existing team in Azure DevOps.
+- **Get**: You can retrieve information about an existing team in Azure DevOps.
+- **Create**: You can create a new team in Azure DevOps.
+- **Delete**: You can delete an existing team. This will remove the team from Azure DevOps.
+
+#### BuildPermission schema
+
+The `Team` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/team.md).
+The `Team` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/team-crd.yaml).
+
+An example of a `Team` resource is:
+<details>
+<summary><b> Team Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Team
+metadata:
+  name: team-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-team-config
+    namespace: default
+  organization: krateo-kog
+  projectId: 99837031-4e4e-4753-9a47-73fcc4cba766 # Note: this must be a projectId, not a project name since the API returns id in the response
+  description: "Team created via KOG, test 00001"
+  name: Team-KOG-00001
+```
+
+</details>
+
 ## Authentication
 
-The authentication to the Azure DevOps REST API is managed using 2 resources (both are required):
+The authentication to the Azure DevOps REST API is managed using **2 resources** (both are required):
 
 - **Kubernetes Secret**: This resource is used to store the Azure DevOps Personal Access Token (PAT) that is used to authenticate with the Azure DevOps REST API. The PAT should have the necessary permissions to manage the resources you want to create, update or delete.
 
@@ -702,16 +848,18 @@ Currently, the supported configuration resources are:
 - `PullRequestConfiguration`
 - `PolicyConfigurationConfiguration`
 - `RepositoryPermissionConfiguration`
+- `BuildPermissionConfiguration`
+- `TeamConfiguration`
 
 These configuration resources are used to store the authentication information (i.e., reference to the Kubernetes Secret containing the Azure DevOps PAT) and other configuration options for the resource type.
 
-You can find examples of these configuration resources in the `/samples/configs` folder of the chart.
+You can find examples of these configuration resources in the [`/samples/configs`](./azuredevops-provider-kog-blueprint/samples/configuration-crs/) folder of the chart.
 Note that in the case of this chart, the **configuration resources are not created automatically** during the installation of the chart, so you need to create them manually before creating any resources that reference them.
 
 Note that a single configuration resource can be used by multiple resources of the same type.
 For example, you can create a single `GitRepositoryConfiguration` resource and reference it in multiple `GitRepository` resources.
 
-As examplified in the examples in the folder `/samples/configs`, in the case of this provider, the configuration resources are used to specify the API versions to be used for each operation (create, update, delete, get, findby) for the specific resource type.
+As examplified in the examples in the folder [`/samples/configs`](./azuredevops-provider-kog-blueprint/samples/configuration-crs/), in the case of this provider, the configuration resources are used to specify the API versions to be used for each operation (create, update, delete, get, findby) for the specific resource type.
 
 ### Verbose logging
 
