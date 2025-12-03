@@ -494,7 +494,7 @@ func (h *baseHandler) buildResponseFromPermissions(params *requestParams, descri
 // @Param identityName query string false "Name of the identity (e.g., Contributors), not used if identityType is 'build-service' or if identityDescriptor is provided"
 // @Param identityDescriptor query string false "Descriptor of the identity, has priority over identityType and identityName"
 // @Param projectLevel query bool false "Whether to manage permissions at the project level (true) or build level (pipeline level) (false). Default is false." Default(false)
-// @Param api-version query string true "API version (e.g., 7.2-preview.2)"
+// @Param api-version query string true "API version (e.g., 7.2-preview.1)"
 // @Param Authorization header string true "Basic Auth header"
 // @Produce json
 // @Success 200 {object} BuildPermissionResponse "Retrieved build permission"
@@ -566,7 +566,7 @@ func (h *getHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // @Param projectId path string true "Project ID"
 // @Param buildDefinitionId query string false "Build Definition ID"
 // @Param projectLevel query bool false "Whether to manage permissions at the project level (true) or build level (pipeline level) (false). Default is false." Default(false)
-// @Param api-version query string true "API version (e.g., 7.2-preview.2)"
+// @Param api-version query string true "API version (e.g., 7.2-preview.1)"
 // @Param Authorization header string true "Basic Auth header"
 // @Param body body BuildPermissionRequest true "Permission settings to apply. Identity info (type, name, descriptor) is specified in permissions.identity."
 // @Success 200 {object} BuildPermissionResponse "Updated build permission"

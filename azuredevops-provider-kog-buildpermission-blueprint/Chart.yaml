@@ -2,8 +2,8 @@ apiVersion: v2
 name: azuredevops-provider-kog-buildpermission
 description: A Helm chart for deploying the Azure DevOps KOG Repository Permission.
 type: application
-version: 0.0.0-dev
-#appVersion: buildpermission_APP_VERSION
+version: 1.0.0
+appVersion: "latest"
 
 home: https://krateo.io
 icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
