@@ -299,6 +299,7 @@ The `GitRepository` resource is used to manage Azure DevOps GitRepositories.
 #### GitRepository schema
 
 The `GitRepository` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/gitrepository.md).
+
 The `GitRepository` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/gitrepository-crd.yaml).
 
 #### GitRepository example CR
@@ -350,6 +351,8 @@ spec:
 ##### Fork-related fields
 
 You can learn more about the fork-related fields in the [Azure DevOps documentation](https://learn.microsoft.com/en-us/rest/api/azure/devops/git/repositories/create#create-a-fork-of-a-parent-repository).
+
+---
 
 ### Pipeline
 
