@@ -1,0 +1,481 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.18.0
+  name: repositorypermissions.azuredevops.ogen.krateo.io
+spec:
+  conversion:
+    strategy: None
+  group: azuredevops.ogen.krateo.io
+  names:
+    categories:
+    - repositorypermission
+    - restresources
+    - rr
+    kind: RepositoryPermission
+    listKind: RepositoryPermissionList
+    plural: repositorypermissions
+    singular: repositorypermission
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              configurationRef:
+                description: A reference to the Configuration CR that holds all the
+                  needed configuration for this resource. OASGen Provider added this
+                  field automatically.
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    description: Namespace of the referenced Configuration CR. If
+                      not provided, the same namespace will be used.
+                    type: string
+                required:
+                - name
+                type: object
+              organization:
+                description: 'PARAMETER: path - Organization name'
+                type: string
+              permissions:
+                properties:
+                  allow:
+                    properties:
+                      Administer:
+                        default: false
+                        description: 'displayName: ''Administer'''
+                        type: boolean
+                      CreateBranch:
+                        default: false
+                        description: 'displayName: ''Create branch'''
+                        type: boolean
+                      CreateRepository:
+                        default: false
+                        description: 'displayName: ''Create repository'''
+                        type: boolean
+                      CreateTag:
+                        default: false
+                        description: 'displayName: ''Create tag'''
+                        type: boolean
+                      DeleteRepository:
+                        default: false
+                        description: 'displayName: ''Delete or disable repository'''
+                        type: boolean
+                      DismissAdvSecAlerts:
+                        default: false
+                        description: 'displayName: ''Advanced Security: manage and
+                          dismiss alerts'''
+                        type: boolean
+                      EditPolicies:
+                        default: false
+                        description: 'displayName: ''Edit policies'''
+                        type: boolean
+                      ForcePush:
+                        default: false
+                        description: 'displayName: ''Force push (rewrite history,
+                          delete branches and tags)'''
+                        type: boolean
+                      GenericContribute:
+                        default: false
+                        description: 'displayName: ''Contribute'''
+                        type: boolean
+                      GenericRead:
+                        default: false
+                        description: 'displayName: ''Read'''
+                        type: boolean
+                      ManageAdvSecScanning:
+                        default: false
+                        description: 'displayName: ''Advanced Security: manage settings'''
+                        type: boolean
+                      ManageNote:
+                        default: false
+                        description: 'displayName: ''Manage notes'''
+                        type: boolean
+                      ManagePermissions:
+                        default: false
+                        description: 'displayName: ''Manage permissions'''
+                        type: boolean
+                      PolicyExempt:
+                        default: false
+                        description: 'displayName: ''Bypass policies when pushing'''
+                        type: boolean
+                      PullRequestBypassPolicy:
+                        default: false
+                        description: 'displayName: ''Bypass policies when completing
+                          pull requests'''
+                        type: boolean
+                      PullRequestContribute:
+                        default: false
+                        description: 'displayName: ''Contribute to pull requests'''
+                        type: boolean
+                      RemoveOthersLocks:
+                        default: false
+                        description: 'displayName: ''Remove others'' locks'''
+                        type: boolean
+                      RenameRepository:
+                        default: false
+                        description: 'displayName: ''Rename repository'''
+                        type: boolean
+                      ViewAdvSecAlerts:
+                        default: false
+                        description: 'displayName: ''Advanced Security: view alerts'''
+                        type: boolean
+                    type: object
+                  deny:
+                    properties:
+                      Administer:
+                        default: false
+                        description: 'displayName: ''Administer'''
+                        type: boolean
+                      CreateBranch:
+                        default: false
+                        description: 'displayName: ''Create branch'''
+                        type: boolean
+                      CreateRepository:
+                        default: false
+                        description: 'displayName: ''Create repository'''
+                        type: boolean
+                      CreateTag:
+                        default: false
+                        description: 'displayName: ''Create tag'''
+                        type: boolean
+                      DeleteRepository:
+                        default: false
+                        description: 'displayName: ''Delete or disable repository'''
+                        type: boolean
+                      DismissAdvSecAlerts:
+                        default: false
+                        description: 'displayName: ''Advanced Security: manage and
+                          dismiss alerts'''
+                        type: boolean
+                      EditPolicies:
+                        default: false
+                        description: 'displayName: ''Edit policies'''
+                        type: boolean
+                      ForcePush:
+                        default: false
+                        description: 'displayName: ''Force push (rewrite history,
+                          delete branches and tags)'''
+                        type: boolean
+                      GenericContribute:
+                        default: false
+                        description: 'displayName: ''Contribute'''
+                        type: boolean
+                      GenericRead:
+                        default: false
+                        description: 'displayName: ''Read'''
+                        type: boolean
+                      ManageAdvSecScanning:
+                        default: false
+                        description: 'displayName: ''Advanced Security: manage settings'''
+                        type: boolean
+                      ManageNote:
+                        default: false
+                        description: 'displayName: ''Manage notes'''
+                        type: boolean
+                      ManagePermissions:
+                        default: false
+                        description: 'displayName: ''Manage permissions'''
+                        type: boolean
+                      PolicyExempt:
+                        default: false
+                        description: 'displayName: ''Bypass policies when pushing'''
+                        type: boolean
+                      PullRequestBypassPolicy:
+                        default: false
+                        description: 'displayName: ''Bypass policies when completing
+                          pull requests'''
+                        type: boolean
+                      PullRequestContribute:
+                        default: false
+                        description: 'displayName: ''Contribute to pull requests'''
+                        type: boolean
+                      RemoveOthersLocks:
+                        default: false
+                        description: 'displayName: ''Remove others'' locks'''
+                        type: boolean
+                      RenameRepository:
+                        default: false
+                        description: 'displayName: ''Rename repository'''
+                        type: boolean
+                      ViewAdvSecAlerts:
+                        default: false
+                        description: 'displayName: ''Advanced Security: view alerts'''
+                        type: boolean
+                    type: object
+                  identity:
+                    properties:
+                      descriptor:
+                        type: string
+                      name:
+                        type: string
+                      type:
+                        type: string
+                    type: object
+                type: object
+              projectId:
+                description: 'PARAMETER: path - Project ID'
+                type: string
+              projectLevel:
+                default: false
+                description: 'PARAMETER: query - Whether to manage permissions at
+                  the project level (true) or repository level (false). Default is
+                  false.'
+                type: boolean
+              repositoryId:
+                description: 'PARAMETER: query - Repository ID'
+                type: string
+            required:
+            - configurationRef
+            - organization
+            - projectId
+            type: object
+          status:
+            properties:
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  description: A Condition that may apply to a resource.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        LastTransitionTime is the last time this condition transitioned from one
+                        status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        A Message containing details about this condition's last transition from
+                        one status to another, if any.
+                      type: string
+                    reason:
+                      description: A Reason for this condition's last transition from
+                        one status to another.
+                      type: string
+                    status:
+                      description: Status of this condition; is it currently True,
+                        False, or Unknown?
+                      type: string
+                    type:
+                      description: |-
+                        Type of this condition. At most one of each condition type may apply to
+                        a resource at any point in time.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              permissions:
+                properties:
+                  allow:
+                    properties:
+                      Administer:
+                        default: false
+                        description: 'displayName: ''Administer'''
+                        type: boolean
+                      CreateBranch:
+                        default: false
+                        description: 'displayName: ''Create branch'''
+                        type: boolean
+                      CreateRepository:
+                        default: false
+                        description: 'displayName: ''Create repository'''
+                        type: boolean
+                      CreateTag:
+                        default: false
+                        description: 'displayName: ''Create tag'''
+                        type: boolean
+                      DeleteRepository:
+                        default: false
+                        description: 'displayName: ''Delete or disable repository'''
+                        type: boolean
+                      DismissAdvSecAlerts:
+                        default: false
+                        description: 'displayName: ''Advanced Security: manage and
+                          dismiss alerts'''
+                        type: boolean
+                      EditPolicies:
+                        default: false
+                        description: 'displayName: ''Edit policies'''
+                        type: boolean
+                      ForcePush:
+                        default: false
+                        description: 'displayName: ''Force push (rewrite history,
+                          delete branches and tags)'''
+                        type: boolean
+                      GenericContribute:
+                        default: false
+                        description: 'displayName: ''Contribute'''
+                        type: boolean
+                      GenericRead:
+                        default: false
+                        description: 'displayName: ''Read'''
+                        type: boolean
+                      ManageAdvSecScanning:
+                        default: false
+                        description: 'displayName: ''Advanced Security: manage settings'''
+                        type: boolean
+                      ManageNote:
+                        default: false
+                        description: 'displayName: ''Manage notes'''
+                        type: boolean
+                      ManagePermissions:
+                        default: false
+                        description: 'displayName: ''Manage permissions'''
+                        type: boolean
+                      PolicyExempt:
+                        default: false
+                        description: 'displayName: ''Bypass policies when pushing'''
+                        type: boolean
+                      PullRequestBypassPolicy:
+                        default: false
+                        description: 'displayName: ''Bypass policies when completing
+                          pull requests'''
+                        type: boolean
+                      PullRequestContribute:
+                        default: false
+                        description: 'displayName: ''Contribute to pull requests'''
+                        type: boolean
+                      RemoveOthersLocks:
+                        default: false
+                        description: 'displayName: ''Remove others'' locks'''
+                        type: boolean
+                      RenameRepository:
+                        default: false
+                        description: 'displayName: ''Rename repository'''
+                        type: boolean
+                      ViewAdvSecAlerts:
+                        default: false
+                        description: 'displayName: ''Advanced Security: view alerts'''
+                        type: boolean
+                    type: object
+                  deny:
+                    properties:
+                      Administer:
+                        default: false
+                        description: 'displayName: ''Administer'''
+                        type: boolean
+                      CreateBranch:
+                        default: false
+                        description: 'displayName: ''Create branch'''
+                        type: boolean
+                      CreateRepository:
+                        default: false
+                        description: 'displayName: ''Create repository'''
+                        type: boolean
+                      CreateTag:
+                        default: false
+                        description: 'displayName: ''Create tag'''
+                        type: boolean
+                      DeleteRepository:
+                        default: false
+                        description: 'displayName: ''Delete or disable repository'''
+                        type: boolean
+                      DismissAdvSecAlerts:
+                        default: false
+                        description: 'displayName: ''Advanced Security: manage and
+                          dismiss alerts'''
+                        type: boolean
+                      EditPolicies:
+                        default: false
+                        description: 'displayName: ''Edit policies'''
+                        type: boolean
+                      ForcePush:
+                        default: false
+                        description: 'displayName: ''Force push (rewrite history,
+                          delete branches and tags)'''
+                        type: boolean
+                      GenericContribute:
+                        default: false
+                        description: 'displayName: ''Contribute'''
+                        type: boolean
+                      GenericRead:
+                        default: false
+                        description: 'displayName: ''Read'''
+                        type: boolean
+                      ManageAdvSecScanning:
+                        default: false
+                        description: 'displayName: ''Advanced Security: manage settings'''
+                        type: boolean
+                      ManageNote:
+                        default: false
+                        description: 'displayName: ''Manage notes'''
+                        type: boolean
+                      ManagePermissions:
+                        default: false
+                        description: 'displayName: ''Manage permissions'''
+                        type: boolean
+                      PolicyExempt:
+                        default: false
+                        description: 'displayName: ''Bypass policies when pushing'''
+                        type: boolean
+                      PullRequestBypassPolicy:
+                        default: false
+                        description: 'displayName: ''Bypass policies when completing
+                          pull requests'''
+                        type: boolean
+                      PullRequestContribute:
+                        default: false
+                        description: 'displayName: ''Contribute to pull requests'''
+                        type: boolean
+                      RemoveOthersLocks:
+                        default: false
+                        description: 'displayName: ''Remove others'' locks'''
+                        type: boolean
+                      RenameRepository:
+                        default: false
+                        description: 'displayName: ''Rename repository'''
+                        type: boolean
+                      ViewAdvSecAlerts:
+                        default: false
+                        description: 'displayName: ''Advanced Security: view alerts'''
+                        type: boolean
+                    type: object
+                  identity:
+                    properties:
+                      descriptor:
+                        type: string
+                      name:
+                        type: string
+                      type:
+                        type: string
+                    type: object
+                type: object
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

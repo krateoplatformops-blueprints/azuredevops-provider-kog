@@ -1,7 +1,7 @@
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
-kind: PipelineConfiguration
+kind: TeamConfiguration
 metadata:
-  name: my-pipeline-config
+  name: my-team-config
   namespace: default
 spec:
   authentication:
@@ -17,12 +17,13 @@ spec:
   configuration:
     query:
       create:
-        api-version: "7.2-preview.1"
+        api-version: "7.2-preview.3"
       delete:
-        api-version: "7.2-preview.1"
+        api-version: "7.2-preview.3"
       findby:
-        api-version: "7.2-preview.1"
+        api-version: "7.2-preview.3"
       get:
-        api-version: "7.2-preview.1"
+        api-version: "7.2-preview.3"
       update:
-        api-version: "7.2-preview.1"
+        api-version: "7.2-preview.3"
+

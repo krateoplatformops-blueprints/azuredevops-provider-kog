@@ -76,13 +76,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/GitRepository'
-      security:
-      - oauth2:
-        - vso.code
-      x-ms-docs-override-version: 7.2-preview.2
-      x-ms-vss-resource: repositories
-      x-ms-vss-method: GetRepositories
-      x-ms-preview: true
+      #security:
+      #- oauth2:
+      #  - vso.code
+      #x-ms-docs-override-version: 7.2-preview.2
+      #x-ms-vss-resource: repositories
+      #x-ms-vss-method: GetRepositories
+      #x-ms-preview: true
     post:
       tags:
       - Repositories
@@ -132,14 +132,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitRepository'
-      security:
-      - oauth2:
-        - vso.code_manage
-      x-ms-docs-override-version: 7.2-preview.2
-      x-ms-vss-resource: repositories
-      x-ms-vss-method: CreateRepository
-      x-ms-preview: true
-      x-codegen-request-body-name: body
+      #security:
+      #- oauth2:
+      #  - vso.code_manage
+      #x-ms-docs-override-version: 7.2-preview.2
+      #x-ms-vss-resource: repositories
+      #x-ms-vss-method: CreateRepository
+      #x-ms-preview: true
+      #x-codegen-request-body-name: body
   /{organization}/{projectId}/_apis/git/repositories/{id}:
     get:
       tags:
@@ -181,13 +181,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitRepository'
-      security:
-      - oauth2:
-        - vso.code
-      x-ms-docs-override-version: 7.2-preview.2
-      x-ms-vss-resource: repositories
-      x-ms-vss-method: GetRepository
-      x-ms-preview: true
+      #security:
+      #- oauth2:
+      #  - vso.code
+      #x-ms-docs-override-version: 7.2-preview.2
+      #x-ms-vss-resource: repositories
+      #x-ms-vss-method: GetRepository
+      #x-ms-preview: true
     delete:
       tags:
       - Repositories
@@ -226,13 +226,13 @@ paths:
         "204":
           description: successful operation
           content: {}
-      security:
-      - oauth2:
-        - vso.code_manage
-      x-ms-docs-override-version: 7.2-preview.2
-      x-ms-vss-resource: repositories
-      x-ms-vss-method: DeleteRepository
-      x-ms-preview: true
+      #security:
+      #- oauth2:
+      #  - vso.code_manage
+      #x-ms-docs-override-version: 7.2-preview.2
+      #x-ms-vss-resource: repositories
+      #x-ms-vss-method: DeleteRepository
+      #x-ms-preview: true
     patch:
       tags:
       - Repositories
@@ -283,14 +283,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GitRepository'
-      security:
-      - oauth2:
-        - vso.code_manage
-      x-ms-docs-override-version: 7.2-preview.2
-      x-ms-vss-resource: repositories
-      x-ms-vss-method: UpdateRepository
-      x-ms-preview: true
-      x-codegen-request-body-name: body
+      #security:
+      #- oauth2:
+      #  - vso.code_manage
+      #x-ms-docs-override-version: 7.2-preview.2
+      #x-ms-vss-resource: repositories
+      #x-ms-vss-method: UpdateRepository
+      #x-ms-preview: true
+      #x-codegen-request-body-name: body
   /api/{organization}/{projectId}/git/repositories:
     post:
       servers:
@@ -728,39 +728,37 @@ components:
       properties:
         id:
           type: string
-    
-  parameters:
-    api-Version-preview.1:
-      name: api-version
-      in: query
-      description: Version of the API to use.  This should be set to '7.2-preview.1'
-        to use this version of the api.
-      required: true
-      schema:
-        type: string
-    api-Version-preview.2:
-      name: api-version
-      in: query
-      description: Version of the API to use.  This should be set to '7.2-preview.2'
-        to use this version of the api.
-      required: true
-      schema:
-        type: string
-    api-Version-preview.3:
-      name: api-version
-      in: query
-      description: Version of the API to use.  This should be set to '7.2-preview.3'
-        to use this version of the api.
-      required: true
-      schema:
-        type: string
+  #parameters:
+  #  api-Version-preview.1:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.1'
+  #      to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  #  api-Version-preview.2:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.2'
+  #      to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  #  api-Version-preview.3:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.3'
+  #      to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
   securitySchemes:
     accessToken:
       type: http
       description: Personal access token. Use any value for the user name and the
         token as the password.
       scheme: basic
-
 x-ms-vss-area: Git
 x-ms-vss-resource-area-id: 4e080c62-fa21-4fbc-8fef-2a10a2b38049
 x-original-swagger-version: "2.0"

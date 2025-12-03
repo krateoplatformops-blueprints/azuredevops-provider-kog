@@ -7,12 +7,14 @@ spec:
   resourceGroup: azuredevops.ogen.krateo.io
   resource: 
     kind: PipelinePermission
+    additionalStatusFields:
+    - resource.id
     verbsDescription:
     - action: create
       method: PATCH
       path: /{organization}/{project}/_apis/pipelines/pipelinepermissions/{resourceType}/{resourceId}
     - action: get
-      method: GET
+      method: POST # "Fake" POST to calulate unauthorized pipelines from desired state
       path: /api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{resourceId} # Plugin endpoint
     - action: update
       method: PATCH

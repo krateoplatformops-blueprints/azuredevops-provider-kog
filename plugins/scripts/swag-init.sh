@@ -34,13 +34,16 @@ echo "Generating OpenAPI documentation for ${PLUGIN_NAME}..."
 
 # Define paths relative to the plugin's directory
 MAIN_GO_PATH="${PLUGIN_DIR}/main.go"
+echo "Main Go file: ${MAIN_GO_PATH}"
 OUTPUT_DIR="${PLUGIN_DIR}/docs"
+echo "Output directory: ${OUTPUT_DIR}"
 
 # Generate the Swagger v2 JSON file
 # The --output flag sets the destination directory for the 'docs' folder
-swag init --parseDependency -g "${MAIN_GO_PATH}" --output "${OUTPUT_DIR}"
+swag init --dir "${PLUGIN_DIR}" -g "main.go" --output "${OUTPUT_DIR}"
 
 # Define the input and output paths for the conversion script
+OUTPUT_DIR="${PLUGIN_DIR}/docs"
 SWAGGER_V2_JSON="${OUTPUT_DIR}/swagger.json"
 OPENAPI_V3_OUTPUT="${OUTPUT_DIR}/openapi3"
 

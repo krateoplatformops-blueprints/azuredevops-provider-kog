@@ -9,7 +9,7 @@ require (
 	github.com/swaggo/http-swagger v1.3.4
 )
 
-require github.com/swaggo/swag v1.16.4 // indirect
+require github.com/swaggo/swag v1.16.4
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect

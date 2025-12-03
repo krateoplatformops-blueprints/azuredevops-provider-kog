@@ -9,7 +9,6 @@ azuredevops-provider-kog-gitrepository-blueprint:
   # default: true
   # @schema
   enabled: true
-
 # @schema
 # type: object
 # description: Configuration for the Pipeline Blueprint dependency.
@@ -21,7 +20,6 @@ azuredevops-provider-kog-pipeline-blueprint:
   # default: true
   # @schema
   enabled: true
-
 # @schema
 # type: object
 # description: Configuration for the PipelinePermission Blueprint dependency.
@@ -30,6 +28,61 @@ azuredevops-provider-kog-pipelinepermission-blueprint:
   # @schema
   # type: boolean
   # description: Enable the PipelinePermission Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
+# description: Configuration for the PullRequest Blueprint dependency.
+# @schema
+azuredevops-provider-kog-pullrequest-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the PullRequest Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
+# description: Configuration for the PolicyConfiguration Blueprint dependency.
+# @schema
+azuredevops-provider-kog-policyconfiguration-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the PolicyConfiguration Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
+# description: Configuration for the RepositoryPermission Blueprint dependency.
+# @schema
+azuredevops-provider-kog-repositorypermission-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the RepositoryPermission Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
+# description: Configuration for the BuildPermission Blueprint dependency.
+# @schema
+azuredevops-provider-kog-buildpermission-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the BuildPermission Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
+# description: Configuration for the Team Blueprint dependency.
+# @schema
+azuredevops-provider-kog-team-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the Team Blueprint dependency.
   # default: true
   # @schema
   enabled: true

@@ -15,6 +15,7 @@ spec:
     - revision
     excludedSpecFields:
     - id
+    - continuationToken # This will be managed by the pagination section below
     verbsDescription:
     - action: create
       method: POST
@@ -22,6 +23,15 @@ spec:
     - action: findby
       method: GET
       path: /{organization}/{project}/_apis/pipelines
+      pagination:
+        type: continuationToken
+        continuationToken:
+          request:
+            tokenIn: query
+            tokenPath: "continuationToken"
+          response:
+            tokenIn: header
+            tokenPath: "X-Ms-Continuationtoken"
     - action: get
       method: GET
       path: /api/{organization}/{project}/pipelines/{id} # plugin endpoint
@@ -37,3 +47,15 @@ spec:
         in: query
       fromRestDefinition:
         actions: ["*"] # star means all actions set in the verbsDescription above
+    - fromOpenAPI:
+        name: orderBy
+        in: query
+      fromRestDefinition:
+        actions: 
+        - findby
+    - fromOpenAPI:
+        name: $top
+        in: query
+      fromRestDefinition:
+        actions: 
+        - findby

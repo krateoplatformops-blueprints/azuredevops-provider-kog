@@ -1,9 +1,11 @@
-# Azure DevOps Provider KOG Blueprint
+# Azure DevOps Provider KOG
 
 ***KOG***: (*Krateo Operator Generator*)
 
-This is a Krateo Blueprint that deploys the Azure DevOps Provider KOG leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider).
-This provider allows you to manage [Azure DevOps resources](https://azure.microsoft.com/en-us/products/devops) such as `gitrepositories`, `pipelines`, and `pipelinepermissions` using the Krateo platform.
+This is a Helm chart that deploys the Azure DevOps Provider KOG leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider).
+This provider allows you to manage [Azure DevOps resources](https://azure.microsoft.com/en-us/products/devops) such as `GitRepository`, `Pipeline`, and `PipelinePermission` in a Kubernetes-native way using Custom Resources (CRs).
+The resources on Kubernetes will represent the corresponding resources on Azure DevOps, allowing you to create, update, and delete Azure DevOps resources using Kubernetes manifests. 
+The resources in Kubernetes are the **source of truth** for the corresponding Azure DevOps resources.
 
 ## Summary
 
@@ -12,6 +14,7 @@ This provider allows you to manage [Azure DevOps resources](https://azure.micros
 - [Project structure](#project-structure)
 - [How to install](#how-to-install)
   - [Full provider installation](#full-provider-installation)
+  - [Subset installation](#subset-installation)
   - [Single resource installation](#single-resource-installation)
 - [Use in parallel with Krateo Azure DevOps Provider (classic)](#use-in-parallel-with-krateo-azure-devops-provider-classic)
   - [One-way retro-compatibility](#one-way-retro-compatibility)
@@ -21,7 +24,6 @@ This provider allows you to manage [Azure DevOps resources](https://azure.micros
     - [GitRepository operations](#gitrepository-operations)
     - [GitRepository schema](#gitrepository-schema)
     - [GitRepository example CR](#gitrepository-example-cr)
-    - [Fork-related fields](#fork-related-fields)
   - [Pipeline](#pipeline)
     - [Pipeline operations](#pipeline-operations)
     - [Pipeline schema](#pipeline-schema)
@@ -30,7 +32,26 @@ This provider allows you to manage [Azure DevOps resources](https://azure.micros
     - [PipelinePermission operations](#pipelinepermission-operations)
     - [PipelinePermission schema](#pipelinepermission-schema)
     - [PipelinePermission example CR](#pipelinepermission-example-cr)
-    - [How to revoke permissions](#how-to-revoke-permissions)
+  - [PullRequest](#pullrequest)
+    - [PullRequest operations](#pullrequest-operations)
+    - [PullRequest schema](#pullrequest-schema)
+    - [PullRequest example CR](#pullrequest-example-cr)
+  - [PolicyConfiguration](#policyconfiguration)
+    - [PolicyConfiguration operations](#policyconfiguration-operations)
+    - [PolicyConfiguration schema](#policyconfiguration-schema)
+    - [PolicyConfiguration example CR](#policyconfiguration-example-cr)
+  - [RepositoryPermission](#repositorypermission)
+    - [RepositoryPermission operations](#repositorypermission-operations)
+    - [RepositoryPermission schema](#repositorypermission-schema)
+    - [RepositoryPermission example CR](#repositorypermission-example-cr)
+  - [BuildPermission](#buildpermission)
+    - [BuildPermission operations](#buildpermission-operations)
+    - [BuildPermission schema](#buildpermission-schema)
+    - [BuildPermission example CR](#buildpermission-example-cr)
+  - [Team](#team)
+    - [Team operations](#team-operations)
+    - [Team schema](#team-schema)
+    - [Team example CR](#team-example-cr)
 - [Authentication](#authentication)
 - [Configuration](#configuration)
   - [Configuration resources](#configuration-resources)
@@ -38,10 +59,11 @@ This provider allows you to manage [Azure DevOps resources](https://azure.micros
   - [Verbose logging](#verbose-logging)
 - [Chart structure](#chart-structure)
 - [Troubleshooting](#troubleshooting)
+- [Release process](#release-process)
 
 ## Architecture
 
-The diagram below illustrates the high-level architecture of the Krateo Azure DevOps Provider KOG and how it interacts with the Azure DevOps REST API.
+The diagram below illustrates the (partial) high-level architecture of the Azure DevOps Provider KOG and how it interacts with the Azure DevOps REST API.
 
 ```mermaid
 graph TD
@@ -49,40 +71,37 @@ graph TD
 
     APC -- Direct calls --> ADO_API
 
+    APC_KOG -- Uses --> KOG
+
     KOG -- Instanciates --> RDC1
     KOG -- Instanciates --> RDC2
     KOG -- Instanciates --> RDC3
 
-    
     RDC1 --> Pipeline
     RDC1 -- Direct calls --> ADO_API
 
     RDC2 --> PipelinePermission
     RDC2 -- Direct calls --> ADO_API
     
-    
     RDC3 -- Direct calls --> ADO_API
     RDC3 --> GitRepository
 
-    
     Pipeline -- "Fixes folder path,<br>consistent update/delete" --> ADO_API
     PipelinePermission -- "Ensures allPipelines<br>property is set" --> ADO_API
     GitRepository -- "Supports defaultBranch,<br>initialization, fork validation" --> ADO_API
 
     subgraph Krateo Ecosystem
         APC[azuredevops-provider <br> 'classic']
-        KOG[azuredevops-provider-kog]
+        APC_KOG[azuredevops-provider-kog <br> Helm Chart]
+        KOG[oasgen-provider]
         RDC1[rest-dynamic-controller-1 <br> Pipeline]
         RDC2[rest-dynamic-controller-2 <br> PipelinePermission]
         RDC3[rest-dynamic-controller-3 <br> GitRepository]
     end
 
-    subgraph "Plugin"
-        direction LR
-        Pipeline[Pipeline<br>Endpoints]
-        PipelinePermission[PipelinePermission<br>Endpoint]
-        GitRepository[GitRepository<br>Endpoint]
-    end
+    Pipeline[Pipeline<br>Plugin]
+    PipelinePermission[PipelinePermission<br>Plugin]
+    GitRepository[GitRepository<br>Plugin]
 
     subgraph Azure DevOps
         ADO_API[Azure DevOps REST API]
@@ -101,15 +120,15 @@ graph TD
 
 ## Requirements
 
-[Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) (0.6.0+) should be installed in your cluster. 
+[OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) (0.9.0+) should be installed in your Kubernetes cluster. 
 Follow the related Helm Chart [README](https://github.com/krateoplatformops/oasgen-provider-chart) for installation instructions.
-Note that a standard installation of Krateo contains the OASGen Provider.
+Note that a standard installation of Krateo already has the OASGen Provider installed.
 
 ## Project structure
 
 This project is composed by the following folders:
 - **azuredevops-provider-kog-*-blueprint**: Helm charts that deploys single resources supported by this provider. These charts are useful if you want to deploy only one of the supported resources.
-- **azuredevops-provider-kog-blueprint**: a Helm chart that can deploy all resources supported by this provider. It is useful if you want to manage multiple of the supported resources.
+- **azuredevops-provider-kog-blueprint**: a Helm chart that can deploy all resources supported by this provider (umbrella chart). It is useful if you want to manage multiple of the supported resources.
 - **plugins**: a folder that is a monorepo containing multiple Go plugins. The plugins are used to resolve some inconsistencies of the Azure DevOps REST API. If needed, they are deployed as part of the Helm chart of the specific resource.
 
 ## How to install
@@ -117,7 +136,6 @@ This project is composed by the following folders:
 ### Full provider installation
 
 To install the **azuredevops-provider-kog-blueprint** Helm chart (full provider), use the following command:
-
 
 ```sh
 helm install azuredevops-provider-kog azuredevops-provider-kog \
@@ -129,7 +147,7 @@ helm install azuredevops-provider-kog azuredevops-provider-kog \
 ```
 
 > [!NOTE]
-> Due to the nature of the providers leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider), this chart will install a set of RestDefinitions that will in turn trigger the deployment of a number of controllers in the cluster. These controllers need to be up and running before you can create or manage resources using the Custom Resources (CRs) defined by this provider. This may take a few minutes after the chart is installed.
+> Due to the nature of the providers leveraging [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider), this chart will install a set of RestDefinitions that will in turn trigger the deployment of a number of controllers in the cluster. These controllers need to be up and running before you can create or manage resources using the Custom Resources (CRs) defined by this provider. This may take a few minutes after the chart is installed.
 
 You can check the status of the RestDefinitions with the following commands:
 
@@ -137,7 +155,7 @@ You can check the status of the RestDefinitions with the following commands:
 kubectl get restdefinitions.ogen.krateo.io --all-namespaces | awk 'NR==1 || /azuredevops/'
 ```
 
-You should see output similar to this:
+You should see output similar to this (partial output shown here):
 ```sh
 NAMESPACE       NAME                                          READY   AGE
 krateo-system   azuredevops-provider-kog-gitrepository        True    108s
@@ -152,10 +170,13 @@ kubectl wait restdefinitions.ogen.krateo.io azuredevops-provider-kog-gitreposito
 
 Note that the names of the RestDefinitions and the namespace where the RestDefinitions are installed may vary based on your configuration.
 
+### Subset installation
+
+If you want to install only a subset of the resources supported by this provider, you can leverage the `values.yaml` file of the **azuredevops-provider-kog-blueprint** chart to disable the installation of specific resources.
+
 ### Single resource installation
 
 To manage a single resource, you can install the specific Helm chart for that resource. For example, to install the `azuredevops-provider-kog-gitrepository` resource, you can use the following command:
-
 ```sh
 helm install azuredevops-provider-kog-gitrepository azuredevops-provider-kog-gitrepository \
   --repo https://marketplace.krateo.io \
@@ -165,39 +186,48 @@ helm install azuredevops-provider-kog-gitrepository azuredevops-provider-kog-git
   --wait
 ```
 
-## Use "in parallel" with Krateo Azure DevOps Provider (classic)
+## Use "in parallel" with Azure DevOps Provider (classic)
 
-This chart can be used in parallel with the [Krateo Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider).
+This chart can be used in parallel with the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider).
 As a matter of fact, currently, this chart allows you to manage the following resources:
 - `GitRepository`
 - `Pipeline`
 - `PipelinePermission`
+- `PullRequest`
+- `PolicyConfiguration`
+- `RepositoryPermission`
+- `BuildPermission`
+- `Team`
 
-Other resources (`TeamProject`, `Queue`, `Environment`, etc.) can be managed using the [Krateo Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
+Other resources (`TeamProject`, `Queue`, `Environment`, etc.) can be managed using the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
 For example, you can create a `PipelinePermission` resource that references an `Environment` resource created by the Azure DevOps Provider (classic).
 > [!NOTE]  
-> These references are "by id" or other Azure DevOps resource identifiers but not Kubernetes-native. Meaning that the `PipelinePermission` resource will reference the `Environment` by its `id`, not by a Kubernetes resource name and namespace. Said `id` can be found in the `status` field of the `Environment` resource created by the Krateo Azure DevOps Provider (classic). An example on how to reference resource in this way is available in the [Lookup functions example](#lookup-functions-example) section below.
+> The references used by these resources are "by id" or other Azure DevOps resource identifiers but not Kubernetes-native references. Meaning that the `PipelinePermission` resource will reference the `Environment` by its `id`, not by a Kubernetes resource name and namespace. Said `id` can be usually found in the `status` field of the `Environment` resource created by the Azure DevOps Provider (classic). An example on how to reference resource in this way is available in the [Lookup functions example](#lookup-functions-example) section below.
 
 Therefore the overall scenario is the following:
-- You should use the Krateo Azure DevOps Provider (classic) to manage resources that are not supported by this chart, such as `TeamProject`, `Queue`, `Environment`, etc.
-- You should use the Krateo Azure DevOps Provider KOG (this chart) to manage only resources that are supported: `GitRepository`, `Pipeline`, and `PipelinePermission`.
+- You should use the Azure DevOps Provider (classic) to manage resources that are not supported by this chart, such as `TeamProject`, `Queue`, `Environment`, etc.
+- You should use the Azure DevOps Provider KOG (this chart) to manage only resources that are supported, like `GitRepository`, `Pipeline`, `PipelinePermission`, etc.
 
 Note that the following resources: 
 - `GitRepository`
 - `Pipeline`
 - `PipelinePermission` 
+- `PullRequest`
+- `PolicyConfiguration`
+- `RepositoryPermission`
+- `Team`
 
-are supported by both the Krateo Azure DevOps Provider (classic) and the Krateo Azure DevOps Provider KOG and a migration guide is available in the [Migration guide](./azuredevops-provider-kog-blueprint/docs/migration_guide.md) section of the `/docs` folder of the main chart.
-The migration guide explains how to migrate from the Krateo Azure DevOps Provider (classic) resources to the Krateo Azure DevOps Provider KOG resources (for what concerns `GitRepository`, `Pipeline`, and `PipelinePermission`).
+are supported by both the Azure DevOps Provider (classic) and the Azure DevOps Provider KOG and migration guides are available in the [Migration guide](./azuredevops-provider-kog-blueprint/docs/migration-guides/) folder of the `/docs` folder of the main chart.
+The migration guide explains how to migrate from the Azure DevOps Provider (classic) resources to the Azure DevOps Provider KOG resources whenever possible.
 
 ### One-way retro-compatibility
 
-The Krateo Azure DevOps Provider KOG (this blueprint) resources can reference resources created by the Krateo Azure DevOps Provider (classic) but not vice-versa.
+The Azure DevOps Provider KOG (this project) resources can reference resources created by the Azure DevOps Provider (classic) but not vice-versa.
 
-For instance, a `PipelinePermission` resource created by this chart can reference an `Environment` resource created by the Krateo Azure DevOps Provider (classic) but a `PipelinePermission` resource created by the Krateo Azure DevOps Provider (classic) cannot reference a `Pipeline` resource created by this chart.
+For instance, a `PipelinePermission` resource created by this chart can reference an `Environment` resource created by the Azure DevOps Provider (classic) but a `PipelinePermission` resource created by the Azure DevOps Provider (classic) cannot reference a `Pipeline` resource created by this chart.
 
-This is due to the fact that the Krateo Azure DevOps Provider (classic) uses Kubernetes references (name and namespace) to reference other resources, while the Krateo Azure DevOps Provider KOG (this chart) uses Azure DevOps resource identifiers (e.g., `id`) to reference other resources.
-If you try to reference a resource created by this chart in a resource created by the Krateo Azure DevOps Provider (classic), the controller of the Krateo Azure DevOps Provider (classic) will not be able to find the referenced resource due to the different API group and version used by the Krateo Azure DevOps Provider KOG (this chart).
+This is due to the fact that the Azure DevOps Provider (classic) **uses Kubernetes references** (name and namespace) to reference other resources, while the Azure DevOps Provider KOG (this chart) **uses Azure DevOps resource identifiers** (e.g., `id`) to reference other Azure DevOps resources.
+If you try to reference a resource created by this chart in a resource created by the Azure DevOps Provider (classic), the controller of the Azure DevOps Provider (classic) will not be able to find the referenced resource due to the different API group and version used by the Azure DevOps Provider KOG (this chart).
 
 ### Helm Lookup functions example
 
@@ -229,7 +259,7 @@ spec:
 {{- end }}
 ```
 
-Note that in this example, we used a "short-circuit nil guard" / incremental nil-check chain to ensure that the resources exist and have a `status` field with an `id` before trying to access it. 
+Note that in this example, we used a "**short-circuit nil guard**" / incremental nil-check chain to ensure that the resources exist and have a `status` field with an `id` before trying to access it. 
 For example, `{{- if and $project $project.status $project.status.id }}` checks that `$project` is not nil, that it has a `status` field, and that the `status` field has an `id` field.
 Otherwise the template would fail with a nil pointer dereference error if any of the resources do not exist or do not have the expected fields.
 
@@ -237,17 +267,19 @@ Otherwise the template would fail with a nil pointer dereference error if any of
 
 This chart supports the following resources and operations:
 
-| Resource           | Get  | Create | Update | Delete |
-|--------------------|------|--------|--------|--------|
-| GitRepository      | ✅   | ✅     | ✅     | ✅     |
-| Pipeline           | ✅   | ✅     | ✅     | ✅     |
-| PipelinePermission | ✅   | ✅     | 🟡     | 🚫 Not supported    |
+| Resource            | Get  | Create              | Update | Delete |
+|---------------------|------|---------------------|--------|--------|
+| GitRepository       | ✅   | ✅                  | ✅     | ✅     |
+| Pipeline            | ✅   | ✅                  | ✅     | ✅     |
+| PipelinePermission  | ✅   | ✅                  | ✅     | 🚫 Not supported |
+| PullRequest         | ✅   | ✅                  | ✅     | 🚫 Not supported |
+| PolicyConfiguration | ✅   | ✅                  | ✅     | ✅     |
+| RepositoryPermission| ✅   | 🚫 Not supported    | ✅     | 🚫 Not supported |
+| BuildPermission     | ✅   | 🚫 Not supported    | ✅     | 🚫 Not supported |
+| Team                | ✅   | ✅                  | ✅     | ✅     |
 
 > [!NOTE]  
-> 🚫 *"Not supported"* means that the operation is not supported by the resource (e.g., the underlying REST API does not support it and therefore the controller does not implement it) while 🚫 *"Not applicable"* means that the operation does not apply to the resource.
-
-> [!NOTE]  
-> 🟡 *"Partial"* means that the operation is only partially supported — for example, only some fields are implemented.
+> 🚫 *"Not supported"* means that the operation is not supported by the resource (e.g., the underlying REST API does not support it and therefore the controller does not implement it) or the operation is not applicable to the resource due to the nature of the resource.
 
 The resources listed above are Custom Resources (CRs) defined in the `azuredevops.ogen.krateo.io` API group. They are used to manage Azure DevOps resources in a Kubernetes-native way, allowing you to create, update, and delete Azure DevOps resources using Kubernetes manifests.
 
@@ -258,31 +290,25 @@ You can find example resources for each supported resource type in the `/samples
 The `GitRepository` resource is used to manage Azure DevOps GitRepositories.
 
 #### GitRepository operations
+
 - **Create**: You can create a new GitRepository in Azure DevOps. You can specify the name, project and organization, and other optional fields such as default branch, and whether the repository should be a fork of another repository.
+- **Get**: You can retrieve information about an existing GitRepository in Azure DevOps.
 - **Update**: You can update the name and default branch of an existing GitRepository. Note that you cannot change the project or organization of an existing repository.
 - **Delete**: You can delete an existing GitRepository. This will remove the repository from Azure DevOps.
 
 #### GitRepository schema
 
-The `GitRepository` resource schema includes the following fields:
+The `GitRepository` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/gitrepository.md).
 
-| Field | Type | Description | Notes |
-| :--- | :--- | :--- | :--- |
-| `configurationRef.name` | `string` | Name of the GitRepositoryConfiguration resource to use. |
-| `configurationRef.namespace` | `string` | Namespace of the GitRepositoryConfiguration resource to use. |
-| `organization` | `string` | The name of the Azure DevOps organization. |
-| `projectId` | `string` | The ID or name of the project. |
-| `name` | `string` | The name of the repository to create or manage. |
-| `defaultBranch` | `string` | The default branch for the repository (e.g., `refs/heads/main`). |
-| `initialize` | `boolean` | If `true`, initializes the repository with a first commit (with README file) | Ignored when forking a repository. |
-| `parentRepository.id` | `string` | ID of the parent repository to fork. | Needed only when forking a repository. |
-| `parentRepository.project.id` | `string` | ID of the parent repository's project. | Needed only when forking a repository. |
-| `project.id` | `string` | ID of the project where the forked repository will be created (same project as `projectId`). | Needed only when forking a repository. |
-| `sourceRef` | `string` | The source ref to use when creating a fork. Omitting it copies all branches. | Needed only when forking a repository. |
+The `GitRepository` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/gitrepository-crd.yaml).
 
 #### GitRepository example CR
 
 An example of a `GitRepository` resource is:
+<details>
+<summary><b> GitRepository Example</b></summary>
+<br/>
+
 ```yaml
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: GitRepository
@@ -302,6 +328,7 @@ spec:
   name: "test-gitrepository-kog"                  # Name of the repository to create or manage  
   defaultBranch: "refs/heads/test-branch"         # Default branch for the repository, can be omitted if you want to use the default branch set by Azure DevOps or the default branch of the parent repository if you are forking a repository. 
   # Note that if you specify a default branch in a non-forked repository, the repository must be initialized with a first commit (and therefore `initialize` must be set to `true`), otherwise the repository will not be created successfully.
+  
   # When forking a repository, `initialize` is ignored.
   initialize: true                                # Whether to initialize the repository with a first commit. If set to true, the repository will be initialized with a first commit.
 
@@ -319,9 +346,13 @@ spec:
   # assigning a non-existing branch to sourceRef will result in an error
 ```
 
-#### Fork-related fields
+</details>
+
+##### Fork-related fields
 
 You can learn more about the fork-related fields in the [Azure DevOps documentation](https://learn.microsoft.com/en-us/rest/api/azure/devops/git/repositories/create#create-a-fork-of-a-parent-repository).
+
+---
 
 ### Pipeline
 
@@ -330,29 +361,23 @@ The `Pipeline` resource is used to manage Azure DevOps pipelines.
 #### Pipeline operations
 
 - **Create**: You can create a `Pipeline` resource to create a new pipeline in Azure DevOps. You can specify the name, project, organization, and the fields related to the pipeline configuration, such as the repository and path.
+- **Get**: You can retrieve information about an existing pipeline in Azure DevOps.
 - **Update**: You can update the name and configuration of an existing pipeline.
 - **Delete**: You can delete an existing pipeline. This will remove the pipeline from Azure DevOps.
 
 #### Pipeline schema
 
-The `Pipeline` resource schema includes the following fields:
+The `Pipeline` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pipeline.md).
 
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `configurationRef.name` | `string` | Name of the PipelineConfiguration resource to use. |
-| `configurationRef.namespace` | `string` | Namespace of the PipelineConfiguration resource to use. |
-| `organization` | `string` | The name of the Azure DevOps organization. |
-| `project` | `string` | The name or ID of the project. |
-| `name` | `string` | The name of the pipeline. |
-| `configuration.path` | `string` | Path to the pipeline configuration file within the repository. |
-| `configuration.repository.id` | `string` | ID of the repository where the pipeline is defined. |
-| `configuration.repository.type` | `string` | Type of the repository (e.g., `azureReposGit`). |
-| `configuration.type` | `string` | Type of the pipeline configuration (e.g., `yaml`). |
-
+The `Pipeline` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pipeline-crd.yaml).
 
 #### Pipeline example CR
 
 An example of a `Pipeline` resource is:
+<details>
+<summary><b> Pipeline Example</b></summary>
+<br/>
+
 ```yaml
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: Pipeline
@@ -379,6 +404,10 @@ spec:
   name: test-pipeline-kog-1                        # Name of the pipeline
 ```
 
+</details>
+
+---
+
 ### PipelinePermission
 
 The `PipelinePermission` resource is used to manage permissions for Azure DevOps pipelines to access resources.
@@ -396,34 +425,27 @@ Reference to the official [Azure DevOps REST API documentation](https://learn.mi
 #### PipelinePermission operations
 
 - **Create**: You can create a `PipelinePermission` resource to grant permissions for specific pipelines to use a specific resource, such as `environment`, `queue`, etc.
-- **Update**: Updating is only partially supported, meaning that you cannot directly revoke permissions (change the `authorized` field to `false`) for existing authorized pipelines (see the [section below](#how-to-revoke-permissions) on how to revoke permissions for pipelines). You can only add new authorized pipelines in the `pipelines` array. You can also change permissions for all pipelines in the project by setting the `allPipelines` field to `authorized: true` or `authorized: false`.
-- **Delete**: Deleting a `PipelinePermission` resource on the Kubernetes cluster will not revoke permissions for the pipelines on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The Azure DevOps pipelines will still have the permissions granted by the `PipelinePermission` resource until you manually revoke them in the Azure DevOps UI (see the [section below](#how-to-revoke-permissions) on how to revoke permissions for pipelines).
-The choice is driven by the fact that Azure DevOps REST API allows to retrieve only the pipelines that are authorized, therefore the management of both authorized and unauthorized pipelines is not possible.
+- **Update**: You can update the list of pipelines that have permissions to use the resource by updating the `pipelines` array in the `PipelinePermission` resource, or by changing the `allPipelines.authorized` field to `true` or `false`.
+- **Get**: You can retrieve information about an existing `PipelinePermission` resource in Azure DevOps.
+- **Delete**: Deleting a `PipelinePermission` resource on the Kubernetes cluster will not revoke permissions for the pipelines on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The Azure DevOps pipelines will still have the permissions granted by the `PipelinePermission` resource. Before deleting a `PipelinePermission` resource, you should manually revoke the permissions for the pipelines in the Azure DevOps UI or by updating the `PipelinePermission` resource to set all pipelines from the `pipelines` array to `authorized: false` and set `allPipelines.authorized` to `false`.
 
 #### PipelinePermission schema
 
-The `PipelinePermission` resource schema includes the following fields:
+The `PipelinePermission` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pipelinepermission.md).
 
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `configurationRef.name` | `string` | Name of the PipelineConfiguration resource to use. |
-| `configurationRef.namespace` | `string` | Namespace of the PipelineConfiguration resource to use. |
-| `organization` | `string` | The name of the Azure DevOps organization. |
-| `project` | `string` | The name or ID of the project. |
-| `resourceType` | `string` | The type of resource to authorize (e.g., `repository`, `environment`, `queue`, `teamproject`, `endpoint`, `variablegroup`, `securefile`). |
-| `resourceId` | `string` | The ID of the resource to authorize. |
-| `allPipelines.authorized` | `boolean` | Set to `true` to authorize all pipelines, `false` to specify permissions individually. |
-| `pipelines` | `array` | A list of pipeline objects to authorize. |
-| `pipelines.id` | `integer` | The ID of the pipeline to grant permission to. |
-| `pipelines.authorized` | `boolean` | Set to `true` to grant permission. Defaults to `true` (so you don't need to specify it explicitly in the CR). Setting to `false` is not allowed. |
+The `PipelinePermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pipelinepermission-crd.yaml).
 
 Note: in the case of managing a `PipelinePermission` for an Agent Pool, the `resourceType` should be set to `queue`.
 
-Note: if you set `allPipelines.authorized` to `true`, and also specify individual pipelines in the `pipelines` array, there will be the following behavior:
+Note: if you set `allPipelines.authorized` to `true`, and also specify individual pipelines in the `pipelines` array, there will be the following behavior on Azure DevOps:
 - All pipelines in the project will be authorized to use the resource.
-- If you manually remove the newly added permission named "No restrictions - Any pipeline may use this resource" in the Azure DevOps UI, then only the pipelines specified in the `pipelines` array will remain authorized.
+- If you manually remove the newly added "global" permission named "No restrictions - Any pipeline may use this resource" in the Azure DevOps UI, then only the pipelines specified in the `pipelines` array will remain authorized.
 
 An example of a `PipelinePermission` resource is:
+<details>
+<summary><b> PipelinePermission Example</b></summary>
+<br/>
+
 ```yaml
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: PipelinePermission
@@ -443,24 +465,318 @@ spec:
   resourceId: "39"
 
   allPipelines:
-    authorized: true
+    authorized: false
 
   pipelines:
     - id: 79
-      # authorized: true is not required to be set here, since it is already the default value (and `authorized: false` is not allowed)
+      authorized: true
     - id: 80
-
+      authorized: false
 ```
 
-#### How to revoke permissions
+</details>
 
-To revoke permissions for a pipeline, you need to:
-1. Manually remove the specific `Pipeline` in the Azure DevOps UI under the `Pipeline permission` section of the resource you want to manage (e.g., `Environment`, `Queue`, etc.). Note that the location of the `Pipeline permission` section may vary depending on the type of resource you are managing.
-2. Update the `PipelinePermission` resource on Kubernetes by removing the specific pipeline `id` from the `pipelines` array in the `PipelinePermission` resource. 
+---
+
+### PullRequest
+
+The `PullRequest` resource is used to manage Azure DevOps pull requests.
+
+#### PullRequest operations
+- **Create**: You can create a `PullRequest` resource to create a new pull request in Azure DevOps. You can specify the source and target branches, title, description, and other optional fields.
+- **Get**: You can retrieve information about an existing pull request in Azure DevOps.
+- **Update**: You can update the title, description, and status of an existing pull request. Note that many fields of a pull request are not updatable.
+- **Delete**: Deleting a `PullRequest` CR on the Kubernetes cluster will not delete the pull request on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. The concept of deleting pull requests is not supported by Azure DevOps REST API but you can close a pull request by updating its status to `abandoned`, which is supported by this CR.
+
+#### PullRequest schema
+
+The `PullRequest` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pullrequest.md).
+
+The `PullRequest` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pullrequest-crd.yaml).
+
+An example of a `PullRequest` resource is:
+<details>
+<summary><b> PullRequest Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: PullRequest
+metadata:
+  name: sample-pullrequest-test
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  configurationRef:
+    name: sample-pullrequest-config
+    namespace: default
+  completionOptions:
+    #autoCompleteIgnoreConfigIds: []
+    #bypassPolicy: false
+    #bypassReason: ""
+    deleteSourceBranch: false
+    mergeCommitMessage: "Squash merge for feature X, test from Krateo"
+    mergeStrategy: squash
+    transitionWorkItems: true
+  description: "Test PR description from Krateo"
+  isDraft: false # this field cannot be updated after creation of the CR as it is not among updatable fields allowed by the external API
+  mergeOptions:
+    conflictAuthorshipCommits: true
+    detectRenameFalsePositives: false
+    disableRenames: false
+  organization: krateo-kog
+  project: project-1-classic
+  repositoryId: 5605b0ba-e2fa-4aab-af0b-0888321b3a08 # repo-1-classic
+  sourceRefName: "refs/heads/test-branch"
+  status: active
+  supportsIterations: true
+  targetRefName: "refs/heads/main"
+  title: "Test PR from Krateo test-branch"
+```
+
+</details>
+
+---
+
+### PolicyConfiguration
+
+The `PolicyConfiguration` resource is used to manage Azure DevOps policy configurations for repositories.
+
+#### PolicyConfiguration operations
+- **Create**: You can create a `PolicyConfiguration` resource to create a new policy configuration in Azure DevOps. You can specify the type of policy, settings, and other optional fields.
+- **Get**: You can retrieve information about an existing policy configuration in Azure DevOps.
+- **Update**: You can update the settings of an existing policy configuration.
+- **Delete**: You can delete an existing policy configuration. This will remove the policy configuration from Azure DevOps.
+
+#### PolicyConfiguration schema
+
+The `PolicyConfiguration` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/policyconfiguration.md).
+
+The `PolicyConfiguration` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/policyconfiguration-crd.yaml).
+
+An example of a `PolicyConfiguration` resource is:
+<details>
+<summary><b> PolicyConfiguration Example</b></summary>
+<br/>
+
+```yaml
+# Example inspired by: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/03cce9dd0355aa5a5fa808dcc0bd15aadda383b9/specification/policy/7.2/httpExamples/configurations/POST__policy_configurations.json
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: PolicyConfiguration
+metadata:
+  name: pc-2
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  configurationRef:
+    name: my-policyconfiguration-config
+    namespace: default
+
+  isBlocking: true              # required                 
+  isEnabled: true               # required
+  
+  organization: krateo-kog      # required
+  project: project-1-classic    # required
+  
+  type:
+    id: "fd2167ab-b0be-447a-8ec8-39368250530e" # required. Policy type: "Required reviewers"
+
+  settings:
+    addedFilesOnly: true
+    creatorVoteCounts: true
+    minimumApproverCount: 1
+    filenamePatterns:
+      - "**/*.go"
+      - "**/*.md"
+      - "**/*.yaml"
+    requiredReviewerIds:
+      - "32915def-23aa-609f-b91d-9a8d94384aa2"
+      #- "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    scope:
+      - repositoryId: null
+        refName: "refs/heads/main"
+        matchKind: Exact
+      - repositoryId: null
+        refName: "refs/heads/release/*"
+        matchKind: Prefix
+```
+
+</details>
+
+---
+
+### RepositoryPermission
+
+The `RepositoryPermission` resource is used to manage repository permissions in Azure DevOps. It is an abstaction over the underlying Access Control Entries (ACEs) used by Azure DevOps to manage permissions.
+
+#### RepositoryPermission operations
+
+- **Update**: You can update the permissions for a specific identity (user or group) on a specific repository. You can explicitly allow or deny specific permissions.
+- **Get**: You can retrieve the current permissions for a specific identity on a specific repository
+- **Create**: Not applicable, as permissions are managed by updating existing entries. Note that the RestDefinition has the create operation defined, but it is not used by Rest Dynamic Controller but just by OASGen provider at CRD generation time.
+- **Delete**: Deleting a `RepositoryPermission` CR on the Kubernetes cluster will not delete the permissions on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. You need to properly update the permissions to revoke them.
+
+#### RepositoryPermission schema
+
+The `RepositoryPermission` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/repositorypermission.md).
+
+The `RepositoryPermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/repositorypermission-crd.yaml).
+
+An example of a `RepositoryPermission` resource is:
+<details>
+<summary><b> RepositoryPermission Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: RepositoryPermission
+metadata:
+  name: rp-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-repositorypermission-config
+    namespace: default
+
+  organization: krateo-kog                            # required
+  projectId: 99837031-4e4e-4753-9a47-73fcc4cba766     # required
+  repositoryId: c2f8d804-7c2f-4f3f-bd69-70c3169cfb8c  # required
+
+  permissions:
+    identity:
+      type: azure-group
+      name: Contributors # not used if type is `build-service` or if descriptor is provided
+      #descriptor: Microsoft.TeamFoundation.Identity;abcdef12-3456-7890-abcd-ef1234567890 # has priority over name or type+name
+    allow:
+      # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
+      # If you want to explicitly allow a permission, set it to true
+      CreateBranch: true
+      RenameRepository: true # "Not set"
+
+    deny:
+      # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
+      # If you want to explicitly deny a permission, set it to true
+      CreateTag: true
+      ForcePush: true
+      EditPolicies: true
+      ViewAdvSecAlerts: true
+```
+
+</details>
+
+---
+
+### BuildPermission
+
+The `BuildPermission` resource is used to manage repository permissions in Azure DevOps. It is an abstaction over the underlying Access Control Entries (ACEs) used by Azure DevOps to manage permissions.
+
+#### BuildPermission operations
+
+- **Update**: You can update the permissions for a specific identity (user or group) on a specific build (pipeline). You can explicitly allow or deny specific permissions.
+- **Get**: You can retrieve the current permissions for a specific identity on a specific build (pipeline).
+- **Create**: Not applicable, as permissions are managed by updating existing entries. Note that the RestDefinition has the create operation defined, but it is not used by Rest Dynamic Controller but just by OASGen provider at CRD generation time.
+- **Delete**: Deleting a `BuildPermission` CR on the Kubernetes cluster will not delete the permissions on Azure DevOps, it will only remove the resource from the cluster and the controller will stop managing it. You need to properly update the permissions to revoke them.
+
+#### BuildPermission schema
+
+The `BuildPermission` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/buildpermission.md).
+
+The `BuildPermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/buildpermission-crd.yaml).
+
+An example of a `BuildPermission` resource is:
+<details>
+<summary><b> BuildPermission Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: BuildPermission
+metadata:
+  name: bp-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-buildpermission-config
+    namespace: default
+
+  organization: krateo-kog                            # required
+  projectId: 99837031-4e4e-4753-9a47-73fcc4cba766     # required
+  buildDefinitionId: "82"
+
+  permissions:
+    identity:
+      type: azure-group
+      name: Contributors # not used if type is `build-service` or if descriptor is provided
+      #descriptor: Microsoft.TeamFoundation.Identity;abcdef12-3456-7890-abcd-ef1234567890 # has priority over name or type+name
+    allow:
+      # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
+      # If you want to explicitly allow a permission, set it to true
+      CreateBuildDefinition: true
+    deny:
+      # NOTE: by default all permissions are false which means "Not set" in Azure DevOps
+      # If you want to explicitly deny a permission, set it to true
+      EditPipelineQueueConfigurationPermission: true
+      ViewBuilds: false # "Not set"
+```
+
+</details>
+
+---
+
+### Team
+
+The `Team` resource is used to manage teams in Azure DevOps.
+
+#### Team operations
+
+- **Update**: You can update an existing team in Azure DevOps.
+- **Get**: You can retrieve information about an existing team in Azure DevOps.
+- **Create**: You can create a new team in Azure DevOps.
+- **Delete**: You can delete an existing team. This will remove the team from Azure DevOps.
+
+#### BuildPermission schema
+
+The `Team` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/team.md).
+
+The `Team` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/team-crd.yaml).
+
+An example of a `Team` resource is:
+<details>
+<summary><b> Team Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Team
+metadata:
+  name: team-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-team-config
+    namespace: default
+  organization: krateo-kog
+  projectId: 99837031-4e4e-4753-9a47-73fcc4cba766 # Note: this must be a projectId, not a project name since the API returns id in the response
+  description: "Team created via KOG, test 00001"
+  name: Team-KOG-00001
+```
+
+</details>
 
 ## Authentication
 
-The authentication to the Azure DevOps REST API is managed using 2 resources (both are required):
+The authentication to the Azure DevOps REST API is managed using **2 resources** (both are required):
 
 - **Kubernetes Secret**: This resource is used to store the Azure DevOps Personal Access Token (PAT) that is used to authenticate with the Azure DevOps REST API. The PAT should have the necessary permissions to manage the resources you want to create, update or delete.
 
@@ -551,63 +867,61 @@ Currently, the supported configuration resources are:
 - `GitRepositoryConfiguration`
 - `PipelineConfiguration`
 - `PipelinePermissionConfiguration`
+- `PullRequestConfiguration`
+- `PolicyConfigurationConfiguration`
+- `RepositoryPermissionConfiguration`
+- `BuildPermissionConfiguration`
+- `TeamConfiguration`
 
 These configuration resources are used to store the authentication information (i.e., reference to the Kubernetes Secret containing the Azure DevOps PAT) and other configuration options for the resource type.
 
-You can find examples of these configuration resources in the `/samples/configs` folder of the chart.
+You can find examples of these configuration resources in the [`/samples/configs`](./azuredevops-provider-kog-blueprint/samples/configuration-crs/) folder of the chart.
 Note that in the case of this chart, the **configuration resources are not created automatically** during the installation of the chart, so you need to create them manually before creating any resources that reference them.
 
 Note that a single configuration resource can be used by multiple resources of the same type.
 For example, you can create a single `GitRepositoryConfiguration` resource and reference it in multiple `GitRepository` resources.
 
-As examplified in the examples in the folder `/samples/configs`, in the case of this provider, the configuration resources are used to specify the API versions to be used for each operation (create, update, delete, get, findby) for the specific resource type.
-
-### values.yaml
-
-You can customize the chart by modifying the `values.yaml` file.
-For instance, you can select which resources the provider should support in the oncoming installation by setting the `restdefinitions` field in the `values.yaml` file. 
-This may be useful if you want to limit the resources managed by the provider to only those you need, reducing the overhead of managing unnecessary controllers. For instance, if you only need to manage `GitRepository` resources, you can disable the other resources by setting the `restdefinitions` field as follows:
-```yaml
-restdefinitions:
-  pipelinepermission:
-    enabled: false
-  gitrepository:
-    enabled: true
-  pipeline:
-    enabled: false
-```
-The default configuration of the chart enables all resources supported by the chart.
+As examplified in the examples in the folder [`/samples/configs`](./azuredevops-provider-kog-blueprint/samples/configuration-crs/), in the case of this provider, the configuration resources are used to specify the API versions to be used for each operation (create, update, delete, get, findby) for the specific resource type.
 
 ### Verbose logging
 
-In order to enable verbose logging for the controllers, you can add the `krateo.io/connector-verbose: "true"` annotation to the metadata of the resources you want to manage, as shown in the examples above. 
+In order to enable verbose logging for the controllers, you can add the `krateo.io/connector-verbose: "true"` annotation to the metadata of the resources (e.g., `GitRepository`, `Pipeline`, `PipelinePermission`) you want to manage, as shown in the examples above. 
 This will enable verbose logging for those specific resources, which can be useful for debugging and troubleshooting as it will provide more detailed information about the operations performed by the controllers.
 
 ## Chart structure
 
-Main components of the chart:
+Main components of the umbrella Helm chart (`azuredevops-provider-kog-blueprint`):
 
-- **RestDefinitions**: These are the core resources needed to manage resources leveraging the Krateo OASGen Provider. In this case, they refers to the OpenAPI Specification to be used for the creation of the Custom Resources (CRs) that represent Azure DevOps resources.
+- **/docs** folder: Contains generated CRDs, migration guides, troubleshooting guides, and references to changes made to the OpenAPI Specification (OAS) files of the resources managed by the Azure DevOps Provider KOG.
+
+- **/samples** folder: Contains example resources for each supported resource type as seen in this README. These examples demonstrate how to create and manage Azure DevOps resources using the Krateo Azure DevOps Provider KOG. The folder contains also example of wrong configurations that can be useful for troubleshooting. The latter annotated with comments explaining the errors.
+
+Main components of the single Helm chart for each supported resource:
+
+- **RestDefinitions**: These are the core resources needed to manage resources leveraging the OASGen Provider. In this case, they refers to the OpenAPI Specification to be used for the creation of the Custom Resources (CRs) that represent Azure DevOps resources.
 They also define the operations that can be performed on those resources. Once the chart is installed, RestDefinitions will be created and as a result, specific controllers will be deployed in the cluster to manage the resources defined with those RestDefinitions.
 
 - **ConfigMaps**: Refer directly to the OpenAPI Specification content in the `/assets` folder.
 
 - **/assets** folder: Contains the selected OpenAPI Specification files for the Azure DevOps REST API.
 
-- **/samples** folder: Contains example resources for each supported resource type as seen in this README. These examples demonstrate how to create and manage Azure DevOps resources using the Krateo Azure DevOps Provider KOG. The folder contains also example of wrong configurations that can be useful for troubleshooting. The latter annotated with comments explaining the errors.
-
 - **Deployment**: Deploys a [plugin](https://github.com/krateoplatformops/azuredevops-rest-dynamic-controller-plugin) that is used as a proxy to resolve some inconsistencies of the Azure DevOps REST API. The specific endpoins managed by the plugin are described in the [plugin README](https://github.com/krateoplatformops/azuredevops-rest-dynamic-controller-plugin/blob/main/README.md)
 
-- **Service**: Exposes the plugin described above, allowing the resource controllers to communicate with the Azure DevOps REST API through the plugin, only if needed.
+- **Service**: Exposes the plugin described above in the cluster, allowing the resource controllers to communicate with the Azure DevOps REST API through the plugin, only if needed.
 
 ## API references
 
+References to the official Azure DevOps REST API documentation and specification:
 - [Azure DevOps REST API](https://learn.microsoft.com/en-us/rest/api/azure/devops/)
 - [Azure DevOps REST API specification](https://github.com/MicrosoftDocs/vsts-rest-api-specs)
 
-A document which describe the changes made to the OpenAPI Specification (OAS) of the resources managed by the Krateo Azure DevOps Provider KOG is available in the [OAS changes](./azuredevops-provider-kog-blueprint/docs/oas_changes_reference.md) section of the `/docs` folder of the main chart.
+A document which describe changes made to the OpenAPI Specification (OAS) files of the resources managed by the Azure DevOps Provider KOG is available in the [OAS changes references](./azuredevops-provider-kog-blueprint/docs/oas_changes_reference.md) file within the `/docs` folder of the main chart.
 
 ## Troubleshooting
 
 For troubleshooting, you can refer to the [Troubleshooting guide](./azuredevops-provider-kog-blueprint/docs/troubleshooting_guide.md) in the `/docs` folder of the main chart.
 It contains common issues and solutions related to this chart.
+
+## Release process
+
+Please refer to the [Release guide](./docs/release.md) in the `/docs` folder for detailed instructions on how to release new versions of the chart and its components.

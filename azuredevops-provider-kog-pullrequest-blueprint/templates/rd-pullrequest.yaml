@@ -1,0 +1,89 @@
+kind: RestDefinition
+apiVersion: ogen.krateo.io/v1alpha1
+metadata:
+  name: {{ .Release.Name }}-pullrequest
+spec:
+  oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-pullrequest/pullrequest.yaml
+  resourceGroup: azuredevops.ogen.krateo.io
+  resource:
+    kind: PullRequest
+    identifiers:
+    - title # Title is enough since the `findby` action supports query filtering
+    additionalStatusFields:
+    - closedBy
+    - closedDate
+    - createdBy
+    - creationDate
+    - isDraft
+    - labels
+    - mergeStatus
+    - pullRequestId
+    - remoteUrl
+    - reviewers
+    - sourceRefName
+    - status
+    - targetRefName
+    - url
+    - lastMergeSourceCommit
+    excludedSpecFields:
+    - pullRequestId
+    - maxCommentLength
+    - $skip
+    - $top
+    - completionOptions.triggeredByAutoComplete
+    - '["searchCriteria.creatorId"]'
+    - '["searchCriteria.includeLinks"]'
+    - '["searchCriteria.maxTime"]'
+    - '["searchCriteria.minTime"]'
+    - '["searchCriteria.queryTimeRangeType"]'
+    - '["searchCriteria.repositoryId"]'
+    - '["searchCriteria.reviewerId"]'
+    - '["searchCriteria.sourceRefName"]'
+    - '["searchCriteria.sourceRepositoryId"]'
+    - '["searchCriteria.status"]'
+    - '["searchCriteria.targetRefName"]'
+    - '["searchCriteria.title"]'
+    verbsDescription:
+    - action: findby
+      method: GET
+      path: /{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests
+      requestFieldMapping:
+        - inQuery: '["searchCriteria.sourceRefName"]'
+          inCustomResource: spec.sourceRefName
+        - inQuery: '["searchCriteria.targetRefName"]'
+          inCustomResource: spec.targetRefName
+        - inQuery: '["searchCriteria.title"]'
+          inCustomResource: spec.title
+    - action: get
+      method: GET
+      path: /{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}
+    - action: create
+      method: POST
+      path: /{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests
+    - action: update
+      method: PATCH
+      path: /api/{organization}/{project}/git/repositories/{repositoryId}/pullrequests/{pullRequestId} # Plugin endpoint
+      requestFieldMapping:
+        - inBody: lastMergeSourceCommit # this is needed otherwise the update fails in case of status change to `completed`
+          inCustomResource: status.lastMergeSourceCommit
+    # DELETE method is not supported for Pull Requests in Azure DevOps, set the status field of the spec to "abandoned" instead
+    configurationFields:
+    # Common among all actions
+    - fromOpenAPI:
+        name: api-version
+        in: query
+      fromRestDefinition:
+        actions: ["*"]
+    # Get
+    - fromOpenAPI:
+        name: includeCommits
+        in: query
+      fromRestDefinition:
+        actions: 
+          - get
+    - fromOpenAPI:
+        name: includeWorkItemRefs
+        in: query
+      fromRestDefinition:
+        actions: 
+          - get

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-policyconfiguration
+data:
+  policyconfiguration.yaml: |
+{{ tpl (.Files.Get "assets/policyconfiguration.yaml") . | indent 4 }}

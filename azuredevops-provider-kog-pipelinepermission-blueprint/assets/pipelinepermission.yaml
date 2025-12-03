@@ -21,13 +21,13 @@ tags:
 - name: Pipeline Permissions
 paths:
   /api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{resourceId}:
-    get:
+    post:
       servers:
         - url: {{ include "pipelinepermission.webServiceUrl" . }}
-          description: URl of the Azure DevOps RDC plugin
-      summary: Get the pipeline permission of a resource
-      description: Get
-      operationId: get-pipelinepermission
+          description: URL of the Azure DevOps RDC plugin
+      summary: Calculate actual pipeline permissions by comparing desired state with Azure DevOps
+      description: This endpoint accepts the desired pipeline permission state in the request body and returns the actual state by comparing with Azure DevOps API response. Pipelines in the desired state that are not authorized in Azure DevOps are marked as unauthorized in the response.
+      operationId: post-pipelinepermission
       parameters:
         - name: organization
           in: path
@@ -43,7 +43,7 @@ paths:
             type: string
         - name: resourceType
           in: path
-          description: Resource type (e.g., pipelines, repositories)
+          description: Resource type (e.g., environment, queue)
           required: true
           schema:
             type: string
@@ -57,7 +57,7 @@ paths:
               - securefile
         - name: resourceId
           in: path
-          description: Resource ID (e.g., pipeline ID, repository ID)
+          description: Resource ID
           required: true
           schema:
             type: string
@@ -73,13 +73,20 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        description: Desired pipeline permission state
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/pipelinepermission.ManagedPipelinesRequest'
+        required: true
       responses:
         "200":
-          description: Pipeline permission details
+          description: Actual pipeline permission state
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourcePipelinePermissions'
+                $ref: '#/components/schemas/pipelinepermission.ResourcePipelinePermissions'
   /{organization}/{project}/_apis/pipelines/pipelinepermissions/{resourceType}/{resourceId}:
     patch:
       tags:
@@ -93,7 +100,6 @@ paths:
         required: true
         schema:
           type: string
-        default: testingDefault
       - name: project
         in: path
         description: Project ID or project name
@@ -130,7 +136,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ResourcePipelinePermissionsTrueOnlyNoAuthorizationDetails'
+              $ref: '#/components/schemas/RequestBody'
         required: true
       responses:
         "200":
@@ -139,14 +145,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResourcePipelinePermissions'
-      security:
-      - oauth2:
-        - vso.pipelineresources_manage
-      x-ms-docs-override-version: 7.2-preview.1
-      x-ms-vss-resource: pipelinePermissions
-      x-ms-vss-method: UpdatePipelinePermisionsForResource
-      x-ms-preview: true
-      x-codegen-request-body-name: body
+      #security:
+      #- oauth2:
+      #  - vso.pipelineresources_manage
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: pipelinePermissions
+      #x-ms-vss-method: UpdatePipelinePermisionsForResource
+      #x-ms-preview: true
+      #x-codegen-request-body-name: body
 components:
   schemas:
     GraphSubjectBase:
@@ -222,20 +228,15 @@ components:
         authorized:
           type: boolean
       description: ""
-    PermissionTrueOnlyNoAuthorizationDetails:
+    PipelinePermissionNoAuthorizationDetails:
       type: object
       properties:
+        id:
+          type: integer
+          format: int32
         authorized:
           type: boolean
-          enum:
-          - true # Only true allowed in the CR
-          default: true
-        #authorizedBy:
-        #  $ref: '#/components/schemas/IdentityRef'
-        #authorizedOn:
-        #  type: string
-        #  format: date-time
-      description: "Schema for a permission that only allows true.  This is used to force a permission to be true in the CR."
+      description: ""
     PipelinePermission:
       properties:
         id:
@@ -244,41 +245,6 @@ components:
       description: ""
       allOf:
       - $ref: '#/components/schemas/Permission'
-    PipelinePermissionTrueOnlyNoAuthorizationDetails:
-      properties:
-        id:
-          type: integer
-          format: int32
-      description: ""
-      allOf:
-      - $ref: '#/components/schemas/PermissionTrueOnlyNoAuthorizationDetails'
-    PipelineProcessResources:
-      type: object
-      properties:
-        resources:
-          type: array
-          items:
-            $ref: '#/components/schemas/PipelineResourceReference'
-      description: ""
-    PipelineResourceReference:
-      type: object
-      properties:
-        authorized:
-          type: boolean
-        authorizedBy:
-          type: string
-          format: uuid
-        authorizedOn:
-          type: string
-          format: date-time
-        definitionId:
-          type: integer
-          format: int32
-        id:
-          type: string
-        type:
-          type: string
-      description: ""
     ReferenceLinks:
       type: object
       properties:
@@ -315,7 +281,7 @@ components:
         resource:
           $ref: '#/components/schemas/Resource'
       description: ""
-    ResourcePipelinePermissionsTrueOnlyNoAuthorizationDetails: # request body of the patch operation
+    RequestBody:
       type: object
       properties:
         allPipelines:
@@ -323,19 +289,116 @@ components:
         pipelines:
           type: array
           items:
-            $ref: '#/components/schemas/PipelinePermissionTrueOnlyNoAuthorizationDetails'
-        #resource:
-        #  $ref: '#/components/schemas/Resource'
+            $ref: '#/components/schemas/PipelinePermissionNoAuthorizationDetails'
       description: ""
-  parameters:
-    api-Version-preview.1:
-      name: api-version
-      in: query
-      description: Version of the API to use.  This should be set to '7.2-preview.1'
-        to use this version of the api.
-      required: true
-      schema:
-        type: string
+
+
+    # Schema from plugin
+    pipelinepermission.IdentityRef:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/pipelinepermission.ReferenceLinks'
+        descriptor:
+          type: string
+        directoryAlias:
+          type: string
+        displayName:
+          type: string
+        id:
+          type: string
+        imageUrl:
+          type: string
+        inactive:
+          type: boolean
+        isAadIdentity:
+          type: boolean
+        isContainer:
+          type: boolean
+        isDeletedInOrigin:
+          type: boolean
+        profileUrl:
+          type: string
+        uniqueName:
+          type: string
+        url:
+          type: string
+    pipelinepermission.ManagedPipelinesRequest:
+      type: object
+      properties:
+        allPipelines:
+          $ref: '#/components/schemas/pipelinepermission.PermissionRequest'
+        pipelines:
+          type: array
+          items:
+            $ref: '#/components/schemas/pipelinepermission.PipelinePermissionRequest'
+    pipelinepermission.Permission:
+      type: object
+      properties:
+        authorized:
+          type: boolean
+        authorizedBy:
+          $ref: '#/components/schemas/pipelinepermission.IdentityRef'
+        authorizedOn:
+          type: string
+    pipelinepermission.PermissionRequest:
+      type: object
+      properties:
+        authorized:
+          type: boolean
+    pipelinepermission.PipelinePermission:
+      type: object
+      properties:
+        authorized:
+          type: boolean
+        authorizedBy:
+          $ref: '#/components/schemas/pipelinepermission.IdentityRef'
+        authorizedOn:
+          type: string
+        id:
+          type: integer
+    pipelinepermission.PipelinePermissionRequest:
+      type: object
+      properties:
+        authorized:
+          type: boolean
+        id:
+          type: integer
+    pipelinepermission.ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties: true
+    pipelinepermission.Resource:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+    pipelinepermission.ResourcePipelinePermissions:
+      type: object
+      properties:
+        allPipelines:
+          $ref: '#/components/schemas/pipelinepermission.Permission'
+        pipelines:
+          type: array
+          items:
+            $ref: '#/components/schemas/pipelinepermission.PipelinePermission'
+        resource:
+          $ref: '#/components/schemas/pipelinepermission.Resource'
+  #parameters:
+  #  api-Version-preview.1:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.1'
+  #      to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
   securitySchemes:
     accessToken:
       type: http

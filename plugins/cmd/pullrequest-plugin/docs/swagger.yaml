@@ -1,0 +1,538 @@
+basePath: /
+definitions:
+  pullrequest.AutoCompleteSetByOnlyId:
+    properties:
+      id:
+        type: string
+    type: object
+  pullrequest.GitChange:
+    properties:
+      changeId:
+        type: integer
+      changeType:
+        type: string
+      item:
+        type: string
+      newContent:
+        $ref: '#/definitions/pullrequest.ItemContent'
+      newContentTemplate:
+        $ref: '#/definitions/pullrequest.GitTemplate'
+      originalPath:
+        type: string
+      sourceServerItem:
+        type: string
+      url:
+        type: string
+    type: object
+  pullrequest.GitCommitRef:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      author:
+        $ref: '#/definitions/pullrequest.GitUserDate'
+      changeCounts:
+        additionalProperties:
+          type: integer
+        type: object
+      changes:
+        items:
+          $ref: '#/definitions/pullrequest.GitChange'
+        type: array
+      comment:
+        type: string
+      commentTruncated:
+        type: boolean
+      commitId:
+        type: string
+      committer:
+        $ref: '#/definitions/pullrequest.GitUserDate'
+      parents:
+        items:
+          type: string
+        type: array
+      remoteUrl:
+        type: string
+      statuses:
+        items:
+          $ref: '#/definitions/pullrequest.GitStatus'
+        type: array
+      url:
+        type: string
+      workItems:
+        items:
+          $ref: '#/definitions/pullrequest.ResourceRef'
+        type: array
+    type: object
+  pullrequest.GitForkRef:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      creator:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      isLocked:
+        type: boolean
+      isLockedBy:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      name:
+        type: string
+      objectId:
+        type: string
+      peeledObjectId:
+        type: string
+      repository:
+        $ref: '#/definitions/pullrequest.GitRepository'
+      statuses:
+        items:
+          $ref: '#/definitions/pullrequest.GitStatus'
+        type: array
+      url:
+        type: string
+    type: object
+  pullrequest.GitPullRequest:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      artifactId:
+        type: string
+      autoCompleteSetBy:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      closedBy:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      closedDate:
+        type: string
+      codeReviewId:
+        type: integer
+      commits:
+        items:
+          $ref: '#/definitions/pullrequest.GitCommitRef'
+        type: array
+      completionOptions:
+        $ref: '#/definitions/pullrequest.GitPullRequestCompletionOptions'
+      completionQueueTime:
+        type: string
+      createdBy:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      creationDate:
+        type: string
+      description:
+        type: string
+      forkSource:
+        $ref: '#/definitions/pullrequest.GitForkRef'
+      isDraft:
+        type: boolean
+      labels:
+        items:
+          $ref: '#/definitions/pullrequest.WebApiTagDefinition'
+        type: array
+      lastMergeCommit:
+        $ref: '#/definitions/pullrequest.GitCommitRef'
+      lastMergeSourceCommit:
+        $ref: '#/definitions/pullrequest.GitCommitRef'
+      lastMergeTargetCommit:
+        $ref: '#/definitions/pullrequest.GitCommitRef'
+      mergeFailureMessage:
+        type: string
+      mergeFailureType:
+        type: string
+      mergeId:
+        type: string
+      mergeOptions:
+        $ref: '#/definitions/pullrequest.GitPullRequestMergeOptions'
+      mergeStatus:
+        type: string
+      pullRequestId:
+        type: integer
+      remoteUrl:
+        type: string
+      repository:
+        $ref: '#/definitions/pullrequest.GitRepository'
+      reviewers:
+        items:
+          $ref: '#/definitions/pullrequest.IdentityRefWithVote'
+        type: array
+      sourceRefName:
+        type: string
+      status:
+        type: string
+      supportsIterations:
+        type: boolean
+      targetRefName:
+        type: string
+      title:
+        type: string
+      url:
+        type: string
+      workItemRefs:
+        items:
+          $ref: '#/definitions/pullrequest.ResourceRef'
+        type: array
+    type: object
+  pullrequest.GitPullRequestCompletionOptions:
+    properties:
+      autoCompleteIgnoreConfigIds:
+        items:
+          type: integer
+        type: array
+      bypassPolicy:
+        type: boolean
+      bypassReason:
+        type: string
+      deleteSourceBranch:
+        type: boolean
+      mergeCommitMessage:
+        type: string
+      mergeStrategy:
+        type: string
+      squashMerge:
+        type: boolean
+      transitionWorkItems:
+        type: boolean
+      triggeredByAutoComplete:
+        type: boolean
+    type: object
+  pullrequest.GitPullRequestMergeOptions:
+    properties:
+      conflictAuthorshipCommits:
+        type: boolean
+      detectRenameFalsePositives:
+        type: boolean
+      disableRenames:
+        type: boolean
+    type: object
+  pullrequest.GitRepository:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      defaultBranch:
+        type: string
+      id:
+        type: string
+      isFork:
+        type: boolean
+      name:
+        type: string
+      parentRepository:
+        $ref: '#/definitions/pullrequest.GitRepositoryRef'
+      project:
+        $ref: '#/definitions/pullrequest.TeamProjectReference'
+      remoteUrl:
+        type: string
+      size:
+        type: integer
+      sshUrl:
+        type: string
+      url:
+        type: string
+      webUrl:
+        type: string
+    type: object
+  pullrequest.GitRepositoryRef:
+    properties:
+      collection:
+        $ref: '#/definitions/pullrequest.TeamProjectCollectionReference'
+      id:
+        type: string
+      isFork:
+        type: boolean
+      name:
+        type: string
+      project:
+        $ref: '#/definitions/pullrequest.TeamProjectReference'
+      remoteUrl:
+        type: string
+      sshUrl:
+        type: string
+      url:
+        type: string
+    type: object
+  pullrequest.GitStatus:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      context:
+        $ref: '#/definitions/pullrequest.GitStatusContext'
+      createdBy:
+        $ref: '#/definitions/pullrequest.IdentityRef'
+      creationDate:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      state:
+        type: string
+      targetUrl:
+        type: string
+      updatedDate:
+        type: string
+    type: object
+  pullrequest.GitStatusContext:
+    properties:
+      genre:
+        type: string
+      name:
+        type: string
+    type: object
+  pullrequest.GitTemplate:
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  pullrequest.GitUserDate:
+    properties:
+      date:
+        type: string
+      email:
+        type: string
+      imageUrl:
+        type: string
+      name:
+        type: string
+    type: object
+  pullrequest.IdentityRef:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      descriptor:
+        type: string
+      directoryAlias:
+        type: string
+      displayName:
+        type: string
+      id:
+        type: string
+      imageUrl:
+        type: string
+      inactive:
+        type: boolean
+      isAadIdentity:
+        type: boolean
+      isContainer:
+        type: boolean
+      isDeletedInOrigin:
+        type: boolean
+      profileUrl:
+        type: string
+      uniqueName:
+        type: string
+      url:
+        type: string
+    type: object
+  pullrequest.IdentityRefWithVote:
+    properties:
+      _links:
+        $ref: '#/definitions/pullrequest.ReferenceLinks'
+      descriptor:
+        type: string
+      directoryAlias:
+        type: string
+      displayName:
+        type: string
+      hasDeclined:
+        type: boolean
+      id:
+        type: string
+      imageUrl:
+        type: string
+      inactive:
+        type: boolean
+      isAadIdentity:
+        type: boolean
+      isContainer:
+        type: boolean
+      isDeletedInOrigin:
+        type: boolean
+      isFlagged:
+        type: boolean
+      isReapprove:
+        type: boolean
+      isRequired:
+        type: boolean
+      profileUrl:
+        type: string
+      reviewerUrl:
+        type: string
+      uniqueName:
+        type: string
+      url:
+        type: string
+      vote:
+        type: integer
+    type: object
+  pullrequest.ItemContent:
+    properties:
+      content:
+        type: string
+      contentType:
+        type: string
+    type: object
+  pullrequest.ReferenceLinks:
+    properties:
+      links:
+        additionalProperties: true
+        type: object
+    type: object
+  pullrequest.ResourceRef:
+    properties:
+      id:
+        type: string
+      url:
+        type: string
+    type: object
+  pullrequest.TeamProjectCollectionReference:
+    properties:
+      avatarUrl:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  pullrequest.TeamProjectReference:
+    properties:
+      abbreviation:
+        type: string
+      defaultTeamImageUrl:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      lastUpdateTime:
+        type: string
+      name:
+        type: string
+      revision:
+        type: integer
+      state:
+        type: string
+      url:
+        type: string
+      visibility:
+        type: string
+    type: object
+  pullrequest.UpdatePullRequestReq:
+    properties:
+      autoCompleteSetBy:
+        $ref: '#/definitions/pullrequest.AutoCompleteSetByOnlyId'
+      completionOptions:
+        $ref: '#/definitions/pullrequest.GitPullRequestCompletionOptions'
+      description:
+        type: string
+      lastMergeSourceCommit:
+        allOf:
+        - $ref: '#/definitions/pullrequest.GitCommitRef'
+        description: Needed to update status to "completed"
+      mergeOptions:
+        $ref: '#/definitions/pullrequest.GitPullRequestMergeOptions'
+      status:
+        type: string
+      targetRefName:
+        type: string
+      title:
+        type: string
+    type: object
+  pullrequest.WebApiTagDefinition:
+    properties:
+      active:
+        type: boolean
+      id:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: contact@krateoplatformops.io
+    name: Krateo Support
+    url: https://krateo.io
+  description: Simple wrapper around Azure DevOps API to provide consistency of API
+    response for Krateo Operator Generator (KOG)
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Azure DevOps PullRequest Plugin API for Krateo Operator Generator (KOG)
+  version: "1.0"
+paths:
+  /api/{organization}/{project}/git/repositories/{repositoryId}/pullrequests/{pullRequestId}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing pull request.
+      operationId: update-pullrequest
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name or ID
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Repository ID
+        in: path
+        name: repositoryId
+        required: true
+        type: string
+      - description: Pull Request ID
+        in: path
+        name: pullRequestId
+        required: true
+        type: integer
+      - description: API version (e.g., 7.2-preview.2)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Pull request updates
+        in: body
+        name: pullRequest
+        required: true
+        schema:
+          $ref: '#/definitions/pullrequest.UpdatePullRequestReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated pull request
+          schema:
+            $ref: '#/definitions/pullrequest.GitPullRequest'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update a pull request
+schemes:
+- http
+swagger: "2.0"

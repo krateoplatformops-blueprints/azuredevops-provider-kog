@@ -2,11 +2,23 @@ package health
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"sync/atomic"
 	"time"
 
 	"github.com/rs/zerolog/log"
+)
+
+type healthResponse struct {
+	Status struct {
+		Health string `json:"health"`
+	} `json:"status"`
+}
+
+var (
+	// Reference: https://learn.microsoft.com/en-us/rest/api/azure/devops/status/health/get
+	azureDevOpsHealthURL = "https://status.dev.azure.com/_apis/status/health"
 )
 
 // LivenessHandler implements Kubernetes liveness probe
@@ -25,7 +37,7 @@ func LivenessHandler(healthy *int32) http.HandlerFunc {
 
 // ReadinessHandler implements Kubernetes readiness probe
 // Returns 200 if the application is ready to serve traffic
-// For a proxy service like this one, this includes checking connectivity to GitHub API
+// For a proxy service like this one, this includes checking connectivity to Azure DevOps API
 func ReadinessHandler(ready *int32, client *http.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// First check if the service is marked as ready
@@ -35,36 +47,41 @@ func ReadinessHandler(ready *int32, client *http.Client) http.HandlerFunc {
 			return
 		}
 
-		// For a GitHub API proxy, we verify we can reach GitHub
+		// For a Azure DevOps API proxy, we verify the Azure DevOps status endpoint is reachable and healthy
 		ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
 		defer cancel()
 
-		req, err := http.NewRequestWithContext(ctx, "GET", "https://api.github.com", nil)
+		req, err := http.NewRequestWithContext(ctx, "GET", azureDevOpsHealthURL, nil)
 		if err != nil {
-			log.Debug().Err(err).Msg("failed to create GitHub API request for readiness check")
+			log.Debug().Err(err).Msg("failed to create Azure DevOps API request for readiness check")
 			w.WriteHeader(http.StatusServiceUnavailable)
-			w.Write([]byte("GitHub API Unreachable"))
+			w.Write([]byte("Azure DevOps API Unreachable"))
 			return
 		}
 
 		resp, err := client.Do(req)
 		if err != nil {
-			log.Debug().Err(err).Msg("failed to reach GitHub API for readiness check")
+			log.Debug().Err(err).Msg("failed to reach Azure DevOps API for readiness check")
 			w.WriteHeader(http.StatusServiceUnavailable)
-			w.Write([]byte("GitHub API Unreachable"))
+			w.Write([]byte("Azure DevOps API Unreachable"))
 			return
 		}
 		defer resp.Body.Close()
 
-		// GitHub API should respond with some 2xx or 4xx status (4xx is still fine, means GitHub API is up)
-		if resp.StatusCode >= 200 && resp.StatusCode < 500 {
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("Ready"))
-			return
+		// Check for 200 OK and that "status":{"health":"healthy"} is in the response
+		if resp.StatusCode == http.StatusOK {
+			var hr healthResponse
+			if err := json.NewDecoder(resp.Body).Decode(&hr); err == nil && hr.Status.Health == "healthy" {
+				//log.Debug().Msg("Azure DevOps API readiness check: healthy")
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("OK"))
+				return
+			}
+			log.Debug().Msg("Azure DevOps API readiness check: health not healthy or failed to parse response")
+		} else {
+			log.Debug().Int("status", resp.StatusCode).Msg("Azure DevOps API returned unexpected status for readiness check")
 		}
-
-		log.Debug().Int("status", resp.StatusCode).Msg("GitHub API returned unexpected status for readiness check")
 		w.WriteHeader(http.StatusServiceUnavailable)
-		w.Write([]byte("GitHub API Error"))
+		w.Write([]byte("Azure DevOps API Error"))
 	}
 }

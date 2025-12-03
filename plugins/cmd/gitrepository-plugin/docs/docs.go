@@ -76,7 +76,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.CreateRepositoryRequest"
+                            "$ref": "#/definitions/gitrepository.CreateRepositoryRequest"
                         }
                     }
                 ],
@@ -84,13 +84,13 @@ const docTemplate = `{
                     "201": {
                         "description": "GitRepository details",
                         "schema": {
-                            "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.CreateRepositoryResponse"
+                            "$ref": "#/definitions/gitrepository.CreateRepositoryResponse"
                         }
                     },
                     "202": {
                         "description": "GitRepository details (repo created but creation of branch deisgnated as default branch is pending, user must create it, then the gitrepository-controller will update the default branch later)",
                         "schema": {
-                            "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.CreateRepositoryResponse"
+                            "$ref": "#/definitions/gitrepository.CreateRepositoryResponse"
                         }
                     },
                     "400": {
@@ -98,261 +98,13 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{resourceId}": {
-            "get": {
-                "description": "Get",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get the pipeline permission of a resource",
-                "operationId": "get-pipelinepermission",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Organization name",
-                        "name": "organization",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Project name",
-                        "name": "project",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Resource type (e.g., pipelines, repositories)",
-                        "name": "resourceType",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Resource ID (e.g., pipeline ID, repository ID)",
-                        "name": "resourceId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "API version (e.g., 7.2-preview.1)",
-                        "name": "api-version",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Basic Auth header (Basic \u003cbase64-encoded-username:password\u003e)",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Pipeline permission details",
-                        "schema": {
-                            "$ref": "#/definitions/pipelinepermission.ResourcePipelinePermissions"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/{organization}/{project}/pipelines/{id}": {
-            "get": {
-                "description": "Get",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get a pipeline",
-                "operationId": "get-pipeline",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Organization name",
-                        "name": "organization",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Project name or ID",
-                        "name": "project",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Pipeline ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "API version (e.g., 7.2-preview.1)",
-                        "name": "api-version",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Basic Auth header (Basic \u003cbase64-encoded-username:password\u003e)",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Pipeline details",
-                        "schema": {
-                            "$ref": "#/definitions/pipeline.GetPipelineResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    }
-                }
-            },
-            "put": {
-                "description": "Update a pipeline using build definitions endpoint",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Update a pipeline",
-                "operationId": "put-pipeline",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Organization name",
-                        "name": "organization",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Project name or ID",
-                        "name": "project",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Pipeline ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Basic Auth header (Basic \u003cbase64-encoded-username:password\u003e)",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "Pipeline update request body",
-                        "name": "pipelineUpdate",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/pipeline.UpdatePipelineRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Updated pipeline details",
-                        "schema": {
-                            "$ref": "#/definitions/pipeline.UpdatePipelineResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a pipeline using build definitions endpoint",
-                "summary": "Delete a pipeline",
-                "operationId": "delete-pipeline",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Organization name",
-                        "name": "organization",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Project name or ID",
-                        "name": "project",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Pipeline ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Basic Auth header (Basic \u003cbase64-encoded-username:password\u003e)",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content - Pipeline deleted successfully"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
                     }
                 }
             }
         }
     },
     "definitions": {
-        "cmd_gitrepository-plugin_handlers.AzureDevOpsTime": {
+        "gitrepository.AzureDevOpsTime": {
             "type": "object",
             "properties": {
                 "time.Time": {
@@ -360,7 +112,7 @@ const docTemplate = `{
                 }
             }
         },
-        "cmd_gitrepository-plugin_handlers.CreateRepositoryRequest": {
+        "gitrepository.CreateRepositoryRequest": {
             "type": "object",
             "properties": {
                 "defaultBranch": {
@@ -374,21 +126,21 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parentRepository": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.GitRepositoryRefMinimal"
+                    "$ref": "#/definitions/gitrepository.GitRepositoryRefMinimal"
                 },
                 "project": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.TeamProjectReferenceMinimal"
+                    "$ref": "#/definitions/gitrepository.TeamProjectReferenceMinimal"
                 }
             }
         },
-        "cmd_gitrepository-plugin_handlers.CreateRepositoryResponse": {
+        "gitrepository.CreateRepositoryResponse": {
             "type": "object",
             "properties": {
                 "_links": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.ReferenceLinks"
+                    "$ref": "#/definitions/gitrepository.ReferenceLinks"
                 },
                 "creationDate": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.AzureDevOpsTime"
+                    "$ref": "#/definitions/gitrepository.AzureDevOpsTime"
                 },
                 "defaultBranch": {
                     "type": "string"
@@ -409,10 +161,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "parentRepository": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.GitRepositoryRef"
+                    "$ref": "#/definitions/gitrepository.GitRepositoryRef"
                 },
                 "project": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.TeamProjectReference"
+                    "$ref": "#/definitions/gitrepository.TeamProjectReference"
                 },
                 "remoteUrl": {
                     "type": "string"
@@ -437,11 +189,11 @@ const docTemplate = `{
                 }
             }
         },
-        "cmd_gitrepository-plugin_handlers.GitRepositoryRef": {
+        "gitrepository.GitRepositoryRef": {
             "type": "object",
             "properties": {
                 "collection": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.TeamProjectCollectionReference"
+                    "$ref": "#/definitions/gitrepository.TeamProjectCollectionReference"
                 },
                 "id": {
                     "type": "string"
@@ -453,7 +205,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "project": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.TeamProjectReference"
+                    "$ref": "#/definitions/gitrepository.TeamProjectReference"
                 },
                 "remoteUrl": {
                     "type": "string"
@@ -466,18 +218,18 @@ const docTemplate = `{
                 }
             }
         },
-        "cmd_gitrepository-plugin_handlers.GitRepositoryRefMinimal": {
+        "gitrepository.GitRepositoryRefMinimal": {
             "type": "object",
             "properties": {
                 "id": {
                     "type": "string"
                 },
                 "project": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.TeamProjectReferenceMinimal"
+                    "$ref": "#/definitions/gitrepository.TeamProjectReferenceMinimal"
                 }
             }
         },
-        "cmd_gitrepository-plugin_handlers.ProjectState": {
+        "gitrepository.ProjectState": {
             "type": "string",
             "enum": [
                 "deleting",
@@ -498,7 +250,7 @@ const docTemplate = `{
                 "ProjectStateDeleted"
             ]
         },
-        "cmd_gitrepository-plugin_handlers.ProjectVisibility": {
+        "gitrepository.ProjectVisibility": {
             "type": "string",
             "enum": [
                 "private",
@@ -509,7 +261,7 @@ const docTemplate = `{
                 "ProjectVisibilityPublic"
             ]
         },
-        "cmd_gitrepository-plugin_handlers.ReferenceLinks": {
+        "gitrepository.ReferenceLinks": {
             "type": "object",
             "properties": {
                 "links": {
@@ -518,7 +270,7 @@ const docTemplate = `{
                 }
             }
         },
-        "cmd_gitrepository-plugin_handlers.TeamProjectCollectionReference": {
+        "gitrepository.TeamProjectCollectionReference": {
             "type": "object",
             "properties": {
                 "avatarUrl": {
@@ -535,7 +287,7 @@ const docTemplate = `{
                 }
             }
         },
-        "cmd_gitrepository-plugin_handlers.TeamProjectReference": {
+        "gitrepository.TeamProjectReference": {
             "type": "object",
             "properties": {
                 "abbreviation": {
@@ -551,7 +303,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "lastUpdateTime": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.AzureDevOpsTime"
+                    "$ref": "#/definitions/gitrepository.AzureDevOpsTime"
                 },
                 "name": {
                     "type": "string"
@@ -560,273 +312,21 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "state": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.ProjectState"
+                    "$ref": "#/definitions/gitrepository.ProjectState"
                 },
                 "url": {
                     "type": "string"
                 },
                 "visibility": {
-                    "$ref": "#/definitions/cmd_gitrepository-plugin_handlers.ProjectVisibility"
+                    "$ref": "#/definitions/gitrepository.ProjectVisibility"
                 }
             }
         },
-        "cmd_gitrepository-plugin_handlers.TeamProjectReferenceMinimal": {
+        "gitrepository.TeamProjectReferenceMinimal": {
             "type": "object",
             "properties": {
                 "id": {
                     "type": "string"
-                }
-            }
-        },
-        "pipeline.BuildRepository": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "description": "Required",
-                    "type": "string"
-                },
-                "type": {
-                    "description": "Required - enum: unknown, gitHub, azureReposGit, azureReposGitHyphenated",
-                    "type": "string"
-                }
-            }
-        },
-        "pipeline.GetPipelineResponse": {
-            "type": "object",
-            "properties": {
-                "_links": {
-                    "$ref": "#/definitions/pipeline.ReferenceLinks"
-                },
-                "configuration": {
-                    "$ref": "#/definitions/pipeline.PipelineConfiguration"
-                },
-                "folder": {
-                    "description": "Embedded fields from PipelineBase",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "revision": {
-                    "type": "integer"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "pipeline.PipelineConfiguration": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string"
-                },
-                "repository": {
-                    "description": "Required",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/pipeline.BuildRepository"
-                        }
-                    ]
-                },
-                "type": {
-                    "description": "enum: unknown, yaml, designerJson, justInTime, designerHyphenJson",
-                    "type": "string"
-                }
-            }
-        },
-        "pipeline.PipelineConfigurationParameters": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string"
-                },
-                "repository": {
-                    "description": "Required",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/pipeline.BuildRepository"
-                        }
-                    ]
-                },
-                "type": {
-                    "description": "Required - enum: unknown, yaml, designerJson, justInTime, designerHyphenJson",
-                    "type": "string"
-                }
-            }
-        },
-        "pipeline.ReferenceLinks": {
-            "type": "object",
-            "properties": {
-                "links": {
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pipeline.UpdatePipelineRequest": {
-            "type": "object",
-            "properties": {
-                "configuration": {
-                    "$ref": "#/definitions/pipeline.PipelineConfigurationParameters"
-                },
-                "folder": {
-                    "type": "string"
-                },
-                "id": {
-                    "description": "maybe to be removed since RDC does not include it",
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "revision": {
-                    "type": "integer"
-                }
-            }
-        },
-        "pipeline.UpdatePipelineResponse": {
-            "type": "object",
-            "properties": {
-                "_links": {
-                    "$ref": "#/definitions/pipeline.ReferenceLinks"
-                },
-                "configuration": {
-                    "$ref": "#/definitions/pipeline.PipelineConfiguration"
-                },
-                "folder": {
-                    "description": "Embedded fields from PipelineBase",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "revision": {
-                    "type": "integer"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "pipelinepermission.IdentityRef": {
-            "type": "object",
-            "properties": {
-                "_links": {
-                    "$ref": "#/definitions/pipelinepermission.ReferenceLinks"
-                },
-                "descriptor": {
-                    "type": "string"
-                },
-                "directoryAlias": {
-                    "type": "string"
-                },
-                "displayName": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "imageUrl": {
-                    "type": "string"
-                },
-                "inactive": {
-                    "type": "boolean"
-                },
-                "isAadIdentity": {
-                    "type": "boolean"
-                },
-                "isContainer": {
-                    "type": "boolean"
-                },
-                "isDeletedInOrigin": {
-                    "type": "boolean"
-                },
-                "profileUrl": {
-                    "type": "string"
-                },
-                "uniqueName": {
-                    "type": "string"
-                },
-                "url": {
-                    "type": "string"
-                }
-            }
-        },
-        "pipelinepermission.Permission": {
-            "type": "object",
-            "properties": {
-                "authorized": {
-                    "type": "boolean"
-                },
-                "authorizedBy": {
-                    "$ref": "#/definitions/pipelinepermission.IdentityRef"
-                },
-                "authorizedOn": {
-                    "type": "string"
-                }
-            }
-        },
-        "pipelinepermission.PipelinePermission": {
-            "type": "object",
-            "properties": {
-                "authorized": {
-                    "type": "boolean"
-                },
-                "authorizedBy": {
-                    "$ref": "#/definitions/pipelinepermission.IdentityRef"
-                },
-                "authorizedOn": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "pipelinepermission.ReferenceLinks": {
-            "type": "object",
-            "properties": {
-                "links": {
-                    "type": "object",
-                    "additionalProperties": true
-                }
-            }
-        },
-        "pipelinepermission.Resource": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "pipelinepermission.ResourcePipelinePermissions": {
-            "type": "object",
-            "properties": {
-                "allPipelines": {
-                    "$ref": "#/definitions/pipelinepermission.Permission"
-                },
-                "pipelines": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/pipelinepermission.PipelinePermission"
-                    }
-                },
-                "resource": {
-                    "$ref": "#/definitions/pipelinepermission.Resource"
                 }
             }
         }

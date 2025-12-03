@@ -57,3 +57,20 @@ type GraphSubjectBase struct {
 type ReferenceLinks struct {
 	Links map[string]interface{} `json:"links,omitempty"`
 }
+
+// PipelinePermissionRequest represents a simplified pipeline permission for request body with only ID and authorized status
+type PipelinePermissionRequest struct {
+	Authorized bool  `json:"authorized"`
+	ID         int32 `json:"id"`
+}
+
+// PermissionRequest represents a simplified permission for request body with only authorized status
+type PermissionRequest struct {
+	Authorized bool `json:"authorized"`
+}
+
+// ManagedPipelinesRequest represents the request body for POST endpoint containing desired pipeline permissions
+type ManagedPipelinesRequest struct {
+	AllPipelines *PermissionRequest           `json:"allPipelines,omitempty"`
+	Pipelines    []PipelinePermissionRequest `json:"pipelines,omitempty"`
+}

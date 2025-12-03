@@ -1,0 +1,851 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Azure DevOps PullRequest Plugin API for Krateo Operator Generator (KOG)",
+    "description": "Simple wrapper around Azure DevOps API to provide consistency of API response for Krateo Operator Generator (KOG)",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "name": "Krateo Support",
+      "url": "https://krateo.io",
+      "email": "contact@krateoplatformops.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/"
+    }
+  ],
+  "paths": {
+    "/api/{organization}/{project}/git/repositories/{repositoryId}/pullrequests/{pullRequestId}": {
+      "patch": {
+        "summary": "Update a pull request",
+        "description": "Update an existing pull request.",
+        "operationId": "update-pullrequest",
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "Organization name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "project",
+            "in": "path",
+            "description": "Project name or ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "description": "Repository ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pullRequestId",
+            "in": "path",
+            "description": "Pull Request ID",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "API version (e.g., 7.2-preview.2)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Basic Auth header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Pull request updates",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/pullrequest.UpdatePullRequestReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated pull request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/pullrequest.GitPullRequest"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "pullRequest"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "pullrequest.AutoCompleteSetByOnlyId": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.GitChange": {
+        "type": "object",
+        "properties": {
+          "changeId": {
+            "type": "integer"
+          },
+          "changeType": {
+            "type": "string"
+          },
+          "item": {
+            "type": "string"
+          },
+          "newContent": {
+            "$ref": "#/components/schemas/pullrequest.ItemContent"
+          },
+          "newContentTemplate": {
+            "$ref": "#/components/schemas/pullrequest.GitTemplate"
+          },
+          "originalPath": {
+            "type": "string"
+          },
+          "sourceServerItem": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.GitCommitRef": {
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/pullrequest.ReferenceLinks"
+          },
+          "author": {
+            "$ref": "#/components/schemas/pullrequest.GitUserDate"
+          },
+          "changeCounts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pullrequest.GitChange"
+            }
+          },
+          "comment": {
+            "type": "string"
+          },
+          "commentTruncated": {
+            "type": "boolean"
+          },
+          "commitId": {
+            "type": "string"
+          },
+          "committer": {
+            "$ref": "#/components/schemas/pullrequest.GitUserDate"
+          },
+          "parents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remoteUrl": {
+            "type": "string"
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pullrequest.GitStatus"
+            }
+          },
+          "url": {
+            "type": "string"
+          },
+          "workItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pullrequest.ResourceRef"
+            }
+          }
+        }
+      },
+      "pullrequest.GitForkRef": {
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/pullrequest.ReferenceLinks"
+          },
+          "creator": {
+            "$ref": "#/components/schemas/pullrequest.IdentityRef"
+          },
+          "isLocked": {
+            "type": "boolean"
+          },
+          "isLockedBy": {
+            "$ref": "#/components/schemas/pullrequest.IdentityRef"
+          },
+          "name": {
+            "type": "string"
+          },
+          "objectId": {
+            "type": "string"
+          },
+          "peeledObjectId": {
+            "type": "string"
+          },
+          "repository": {
+            "$ref": "#/components/schemas/pullrequest.GitRepository"
+          },
+          "statuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pullrequest.GitStatus"
+            }
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.GitPullRequest": {
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/pullrequest.ReferenceLinks"
+          },
+          "artifactId": {
+            "type": "string"
+          },
+          "autoCompleteSetBy": {
+            "$ref": "#/components/schemas/pullrequest.IdentityRef"
+          },
+          "closedBy": {
+            "$ref": "#/components/schemas/pullrequest.IdentityRef"
+          },
+          "closedDate": {
+            "type": "string"
+          },
+          "codeReviewId": {
+            "type": "integer"
+          },
+          "commits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pullrequest.GitCommitRef"
+            }
+          },
+          "completionOptions": {
+            "$ref": "#/components/schemas/pullrequest.GitPullRequestCompletionOptions"
+          },
+          "completionQueueTime": {
+            "type": "string"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/pullrequest.IdentityRef"
+          },
+          "creationDate": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "forkSource": {
+            "$ref": "#/components/schemas/pullrequest.GitForkRef"
+          },
+          "isDraft": {
+            "type": "boolean"
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pullrequest.WebApiTagDefinition"
+            }
+          },
+          "lastMergeCommit": {
+            "$ref": "#/components/schemas/pullrequest.GitCommitRef"
+          },
+          "lastMergeSourceCommit": {
+            "$ref": "#/components/schemas/pullrequest.GitCommitRef"
+          },
+          "lastMergeTargetCommit": {
+            "$ref": "#/components/schemas/pullrequest.GitCommitRef"
+          },
+          "mergeFailureMessage": {
+            "type": "string"
+          },
+          "mergeFailureType": {
+            "type": "string"
+          },
+          "mergeId": {
+            "type": "string"
+          },
+          "mergeOptions": {
+            "$ref": "#/components/schemas/pullrequest.GitPullRequestMergeOptions"
+          },
+          "mergeStatus": {
+            "type": "string"
+          },
+          "pullRequestId": {
+            "type": "integer"
+          },
+          "remoteUrl": {
+            "type": "string"
+          },
+          "repository": {
+            "$ref": "#/components/schemas/pullrequest.GitRepository"
+          },
+          "reviewers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pullrequest.IdentityRefWithVote"
+            }
+          },
+          "sourceRefName": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "supportsIterations": {
+            "type": "boolean"
+          },
+          "targetRefName": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "workItemRefs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/pullrequest.ResourceRef"
+            }
+          }
+        }
+      },
+      "pullrequest.GitPullRequestCompletionOptions": {
+        "type": "object",
+        "properties": {
+          "autoCompleteIgnoreConfigIds": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "bypassPolicy": {
+            "type": "boolean"
+          },
+          "bypassReason": {
+            "type": "string"
+          },
+          "deleteSourceBranch": {
+            "type": "boolean"
+          },
+          "mergeCommitMessage": {
+            "type": "string"
+          },
+          "mergeStrategy": {
+            "type": "string"
+          },
+          "squashMerge": {
+            "type": "boolean"
+          },
+          "transitionWorkItems": {
+            "type": "boolean"
+          },
+          "triggeredByAutoComplete": {
+            "type": "boolean"
+          }
+        }
+      },
+      "pullrequest.GitPullRequestMergeOptions": {
+        "type": "object",
+        "properties": {
+          "conflictAuthorshipCommits": {
+            "type": "boolean"
+          },
+          "detectRenameFalsePositives": {
+            "type": "boolean"
+          },
+          "disableRenames": {
+            "type": "boolean"
+          }
+        }
+      },
+      "pullrequest.GitRepository": {
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/pullrequest.ReferenceLinks"
+          },
+          "defaultBranch": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "isFork": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "parentRepository": {
+            "$ref": "#/components/schemas/pullrequest.GitRepositoryRef"
+          },
+          "project": {
+            "$ref": "#/components/schemas/pullrequest.TeamProjectReference"
+          },
+          "remoteUrl": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "sshUrl": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "webUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.GitRepositoryRef": {
+        "type": "object",
+        "properties": {
+          "collection": {
+            "$ref": "#/components/schemas/pullrequest.TeamProjectCollectionReference"
+          },
+          "id": {
+            "type": "string"
+          },
+          "isFork": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "project": {
+            "$ref": "#/components/schemas/pullrequest.TeamProjectReference"
+          },
+          "remoteUrl": {
+            "type": "string"
+          },
+          "sshUrl": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.GitStatus": {
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/pullrequest.ReferenceLinks"
+          },
+          "context": {
+            "$ref": "#/components/schemas/pullrequest.GitStatusContext"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/pullrequest.IdentityRef"
+          },
+          "creationDate": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "state": {
+            "type": "string"
+          },
+          "targetUrl": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.GitStatusContext": {
+        "type": "object",
+        "properties": {
+          "genre": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.GitTemplate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.GitUserDate": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.IdentityRef": {
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/pullrequest.ReferenceLinks"
+          },
+          "descriptor": {
+            "type": "string"
+          },
+          "directoryAlias": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "inactive": {
+            "type": "boolean"
+          },
+          "isAadIdentity": {
+            "type": "boolean"
+          },
+          "isContainer": {
+            "type": "boolean"
+          },
+          "isDeletedInOrigin": {
+            "type": "boolean"
+          },
+          "profileUrl": {
+            "type": "string"
+          },
+          "uniqueName": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.IdentityRefWithVote": {
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/pullrequest.ReferenceLinks"
+          },
+          "descriptor": {
+            "type": "string"
+          },
+          "directoryAlias": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "hasDeclined": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "inactive": {
+            "type": "boolean"
+          },
+          "isAadIdentity": {
+            "type": "boolean"
+          },
+          "isContainer": {
+            "type": "boolean"
+          },
+          "isDeletedInOrigin": {
+            "type": "boolean"
+          },
+          "isFlagged": {
+            "type": "boolean"
+          },
+          "isReapprove": {
+            "type": "boolean"
+          },
+          "isRequired": {
+            "type": "boolean"
+          },
+          "profileUrl": {
+            "type": "string"
+          },
+          "reviewerUrl": {
+            "type": "string"
+          },
+          "uniqueName": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "vote": {
+            "type": "integer"
+          }
+        }
+      },
+      "pullrequest.ItemContent": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.ReferenceLinks": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "pullrequest.ResourceRef": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.TeamProjectCollectionReference": {
+        "type": "object",
+        "properties": {
+          "avatarUrl": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.TeamProjectReference": {
+        "type": "object",
+        "properties": {
+          "abbreviation": {
+            "type": "string"
+          },
+          "defaultTeamImageUrl": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "lastUpdateTime": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "state": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.UpdatePullRequestReq": {
+        "type": "object",
+        "properties": {
+          "autoCompleteSetBy": {
+            "$ref": "#/components/schemas/pullrequest.AutoCompleteSetByOnlyId"
+          },
+          "completionOptions": {
+            "$ref": "#/components/schemas/pullrequest.GitPullRequestCompletionOptions"
+          },
+          "description": {
+            "type": "string"
+          },
+          "lastMergeSourceCommit": {
+            "type": "object",
+            "description": "Needed to update status to \"completed\"",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/pullrequest.GitCommitRef"
+              }
+            ]
+          },
+          "mergeOptions": {
+            "$ref": "#/components/schemas/pullrequest.GitPullRequestMergeOptions"
+          },
+          "status": {
+            "type": "string"
+          },
+          "targetRefName": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "pullrequest.WebApiTagDefinition": {
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "x-original-swagger-version": "2.0"
+}

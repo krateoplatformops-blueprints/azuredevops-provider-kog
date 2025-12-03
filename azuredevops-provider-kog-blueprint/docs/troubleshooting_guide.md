@@ -19,6 +19,8 @@ This document serves as a troubleshooting guide for the Krateo Azure DevOps Prov
     - [Case 3.1: Fork With Invalid `sourceRef`](#case-31-fork-with-invalid-sourceref)
     - [Case 3.2: Fork With No Branch Configuration](#case-32-fork-with-no-branch-configuration)
     - [Case 3.3: Fork With Nonexistent Default Branch](#case-33-fork-with-nonexistent-default-branch)
+- [PolicyConfiguration](#policyconfiguration)
+
 
 ## GitRepository 
 
@@ -27,8 +29,6 @@ Each case states the input configuration and resulting behavior.
 
 Some sample Custom Resources are provided in the [`/samples/gitrepository/` directory](../chart/samples/gitrepository/) of the chart. 
 Files are named after some of the cases described below, e.g., [`gitrepository_2.3.yaml`](../chart/samples/gitrepository/gitrepository_2.3.yaml) corresponds to Case 2.3.
-
----
 
 ### 1. New Repository Cases
 
@@ -151,4 +151,108 @@ Note: it is not recommended to fork from uninitialized repositories.
   The Kubernetes resource will be in a `Ready: False` state until the user creates the `test-branch` on Azure DevOps.
   After the user manually creates the `test-branch` on the GitRepository (not in the parent), the `gitrepository-controller` will update the repository to set `test-branch` as the default branch. Finally, the GitRepository CR will become `Ready: True`.
 
----
+## PolicyConfiguration
+
+To list all available policy types in your Azure DevOps organization, you can use the following `curl` command. Make sure to replace `<ORG>`, `<PROJECT>`, and `TOKEN`:
+```sh
+curl -X GET "https://dev.azure.com/<ORG>/<PROJECT>/_apis/policy/types?api-version=7.2-preview.1" \
+-H "Authorization: Basic TOKEN"
+```
+
+```json
+{
+  "count": 17,
+  "value": [
+    {
+      "description": "GitRepositorySettingsPolicyName",
+      "id": "0517f88d-4ec5-4343-9d26-9930ebd53069",
+      "displayName": "GitRepositorySettingsPolicyName"
+    },
+    {
+      "description": "This policy will reject pushes to a repository for files that contain credentials or secrets.",
+      "id": "ec003f37-8db0-4e10-992a-a2895045752c",
+      "displayName": "Secrets scanning restriction"
+    },
+    {
+      "description": "This policy will reject pushes to a repository for files that contain credentials or secrets.",
+      "id": "90f9629b-664b-4804-a560-dd79b0c628f8",
+      "displayName": "Secrets scanning restriction"
+    },
+    {
+      "description": "This policy will reject pushes to a repository for paths which exceed the specified length.",
+      "id": "001a79cf-fda1-4c4e-9e7c-bac40ee5ead8",
+      "displayName": "Path Length restriction"
+    },
+    {
+      "description": "This policy will require a successful proof of presence for the PR.",
+      "id": "67ed70bd-2a6b-4006-af44-be590463f46d",
+      "displayName": "Proof Of Presence"
+    },
+    {
+      "description": "This policy will reject pushes to a repository for names which aren't valid on all supported client OSes.",
+      "id": "db2b9b4c-180d-4529-9701-01541d19f36b",
+      "displayName": "Reserved names restriction"
+    },
+    {
+      "description": "This policy ensures that pull requests use a consistent merge strategy.",
+      "id": "fa4e907d-c16b-4a4c-9dfa-4916e5d171ab",
+      "displayName": "Require a merge strategy"
+    },
+    {
+      "description": "Check if the pull request has any active comments",
+      "id": "c6a1889d-b943-4856-b76f-9e46bb6b0df2",
+      "displayName": "Comment requirements"
+    },
+    {
+      "description": "This policy will require a successful status to be posted before updating protected refs.",
+      "id": "cbdc66da-9728-4af8-aada-9a5a32e4a226",
+      "displayName": "Status"
+    },
+    {
+      "description": "Git repository settings",
+      "id": "7ed39669-655c-494e-b4a0-a08b4da0fcce",
+      "displayName": "Git repository settings"
+    },
+    {
+      "description": "This policy will require a successful build has been performed before updating protected refs.",
+      "id": "0609b952-1397-4640-95ec-e00a01b2c241",
+      "displayName": "Build"
+    },
+    {
+      "description": "This policy will reject pushes to a repository for files which exceed the specified size.",
+      "id": "2e26e725-8201-4edd-8bf5-978563c34a80",
+      "displayName": "File size restriction"
+    },
+    {
+      "description": "This policy will reject pushes to a repository which add file paths that match the specified patterns.",
+      "id": "51c78909-e838-41a2-9496-c647091e3c61",
+      "displayName": "File name restriction"
+    },
+    {
+      "description": "This policy will block pushes from including commits where the author email does not match the specified patterns.",
+      "id": "77ed4bd3-b063-4689-934a-175e4d0a78d7",
+      "displayName": "Commit author email validation"
+    },
+    {
+      "description": "This policy will ensure that required reviewers are added for modified files matching specified patterns.",
+      "id": "fd2167ab-b0be-447a-8ec8-39368250530e",
+      "displayName": "Required reviewers"
+    },
+    {
+      "description": "This policy will ensure that a minimum number of reviewers have approved a pull request before completion.",
+      "id": "fa4e907d-c16b-4a4c-9dfa-4906e5d171dd",
+      "displayName": "Minimum number of reviewers"
+    },
+    {
+      "description": "This policy encourages developers to link commits to work items.",
+      "id": "40e92b44-2fe1-4dd6-b3d8-74a9c21d0c6e",
+      "displayName": "Work item linking"
+    }
+  ]
+}
+```
+
+## Team
+
+Unlike other Azure DevOps resources, the field `projectId` in the Team resource can only accept the **Project ID** (a UUID) and not the Project Name.
+This is due to the fact that the Azure DevOps REST API for Teams returns always the Project ID in the response, even if the Team was created using the Project Name. This difference would lead to infinite reconciliation loops in the controller if the Project Name was used.

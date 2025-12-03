@@ -1,0 +1,41 @@
+# Example inspired by: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/03cce9dd0355aa5a5fa808dcc0bd15aadda383b9/specification/policy/7.2/httpExamples/configurations/POST__policy_configurations.json
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: PolicyConfiguration
+metadata:
+  name: pc-2
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-policyconfiguration-config
+    namespace: default
+
+  isBlocking: true              # required                 
+  isEnabled: true               # required
+  
+  organization: krateo-kog      # required
+  project: project-1-classic    # required
+  
+  type:
+    id: "fd2167ab-b0be-447a-8ec8-39368250530e" # required. Policy type: "Required reviewers"
+
+  settings:
+    addedFilesOnly: true
+    creatorVoteCounts: true
+    minimumApproverCount: 1
+    filenamePatterns:
+      - "**/*.go"
+      - "**/*.md"
+      - "**/*.yaml"
+    requiredReviewerIds:
+      - "32915def-23aa-609f-b91d-9a8d94384aa2"
+      #- "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    scope:
+      - repositoryId: null
+        refName: "refs/heads/main"
+        matchKind: Exact
+      - repositoryId: null
+        refName: "refs/heads/release/*"
+        matchKind: Prefix

@@ -1,0 +1,52 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: PolicyConfiguration
+metadata:
+  name: pc-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-policyconfiguration-config
+    namespace: default
+
+  isBlocking: false             # required        
+  #isDeleted: false            
+  isEnabled: true               # required
+  #isEnterpriseManaged: false
+  
+  organization: krateo-kog      # required
+  project: project-1-classic    # required
+  
+  type:
+    id: "90f9629b-664b-4804-a560-dd79b0c628f8" # required. Policy type: "Secrets scanning restriction"
+
+  settings:
+    #addedFilesOnly: false
+    #creatorVoteCounts: true
+    #enforceConsistentCase: false
+    #manualQueueOnly: false
+    #queueOnSourceUpdateOnly: true
+    #useSquashMerge: false
+    #useUncompressedSize: false
+    #buildDefinitionId: 123
+    #maximumGitBlobSizeInBytes: 1048576
+    #minimumApproverCount: 2
+    #message: "Test message from Krateo"
+    #validDuration: "P30D" # ISO 8601 duration
+    #filenamePatterns:
+    #  - "**/*.go"
+    #  - "**/*.md"
+
+    #requiredReviewerIds:
+      #- "11111111-2222-3333-4444-555555555555"
+      #- "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+
+    scope:
+      - repositoryId: "5605b0ba-e2fa-4aab-af0b-0888321b3a08"
+        #refName: "refs/heads/main"
+        #matchKind: Exact
+      #- repositoryId: "repo-0002"
+      #  refName: "refs/heads/release/*"
+      #  matchKind: Prefix

@@ -1,0 +1,155 @@
+# `GitRepository` migration example
+
+**Starting point**: `GitRepository` resource managed by Azure DevOps Provider (classic).
+**Ending point**: `GitRepository` resource managed by Azure DevOps Provider KOG.
+Note: the external resource (`GitRepository` on Azure DevOps) will be the same.
+
+Note that the `GitRepository` resource is a non-namespaced resource in the context of Azure DevOps Provider (classic), while it is a namespaced resource in the context of Azure DevOps Provider KOG (you can check this by running the following command):
+```sh
+kubectl api-resources | awk 'NR==1 || $1 == "gitrepositories"'
+```
+Output:
+```sh
+NAME                                SHORTNAMES   APIVERSION                            NAMESPACED   KIND
+gitrepositories                                  azuredevops.ogen.krateo.io/v1alpha1   true         GitRepository
+gitrepositories                                  azuredevops.krateo.io/v1alpha1        false        GitRepository
+```
+
+The **starting point** for this migration is the following example of a `GitRepository` resource managed by the Azure DevOps Provider (classic):
+```yaml
+apiVersion: azuredevops.krateo.io/v1alpha1
+kind: GitRepository
+metadata:
+  name: gitrepository-1
+spec:
+  connectorConfigRef:
+    name: connectorconfig-sample
+    namespace: default
+  projectRef:
+    name: project-1-classic
+    namespace: default
+  name: gitrepository-1
+  initialize: true  
+```
+
+Note that the `GitRepository` resource is referecing a `ConnectorConfig` resource and a `Project` resource, which are both managed by the Azure DevOps Provider "classic".
+
+To ensure that the old version of the resource is not reconciled while you are migrating to the new version, you should set the `krateo.io/paused: true` annotation.
+You can do this by running the following commands:
+```sh
+kubectl annotate gitrepositories.azuredevops.krateo.io gitrepository-1 "krateo.io/paused=true"
+```
+
+In addition, in order to keep the external resource (on Azure DevOps) after the deletion of the old `GitRepository` resource on Kubernetes, you need to set `deletionPolicy: Orphan` in the `spec` of the resource.
+You can do this with the following command:
+```sh
+kubectl patch gitrepositories.azuredevops.krateo.io gitrepository-1 \
+  --type=merge \
+  -p '{"spec":{"deletionPolicy": "Orphan"}}'
+```
+
+You can check the changes in the resource with the following command:
+```sh
+kubectl get gitrepositories.azuredevops.krateo.io gitrepository-1 -o yaml
+```
+
+And the output should look like this:
+```diff
+apiVersion: azuredevops.krateo.io/v1alpha1
+kind: GitRepository
+metadata:
+  name: gitrepository-1
+  annotations:
++   krateo.io/paused: "true"
+spec:
++ deletionPolicy: Orphan  
+  connectorConfigRef:
+    name: connectorconfig-sample
+    namespace: default
+  projectRef:
+    name: project-1-classic
+    namespace: default
+  name: gitrepository-1
+  initialize: true
+status:
+  conditions:
++  - lastTransitionTime: "2025-07-14T15:35:05Z"
++    reason: ReconcilePaused
++    status: "False"
++    type: Synced
+```
+
+Now, you can create a new `GitRepository` resource using the Azure DevOps Provider KOG following the new schema.
+You can find the schema in the specific section of the [README](../../README.md#gitrepository-schema) file of this chart.
+You can apply the following example:
+```sh
+kubectl apply -f - <<EOF
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: GitRepository
+metadata:
+  name: gitrepository-1
+  namespace: azuredevops-system                   # Replace with your namespace
+  annotations:
+    krateo.io/connector-verbose: "true"           # Optional: to enable verbose logging
+    krateo.io/deletion-policy: orphan             # Optional: to ensure the external resource is not deleted when the resource is deleted
+spec:
+  configurationRef:                               # Reference to a GitRepositoryConfiguration CR that contains the authentication information.
+    name: my-gitrepository-config
+    namespace: default
+
+  organization: "krateo-kog"                      # Name of the Azure DevOps organization
+  projectId: "project-1-classic"                  # ID or name of the project
+
+  name: "gitrepository-1"                         # Name of the repository to create or manage  
+  initialize: true                                # Whether to initialize the repository with a first commit. If set to true, the repository will be initialized with a first commit.
+EOF
+```
+
+Note that: 
+- the `projectRef` field has been replaced with `projectId`, which can be either the `ID` or the `name` of the project in the case of the spec of the `GitRepository` resource.
+
+In order to dynamically retrieve the IDs, you can use a Helm `lookup` function.
+
+An example of how to use a Helm `lookup` function to retrieve the project ID dynamically is shown below.
+In this case the context is a Helm chart, so the `lookup` function is used to retrieve the `TeamProject` resource by its name and namespace, and then the project ID is accessed from the status of that resource.
+
+```yaml
+{{- $project := lookup "azuredevops.krateo.io/v1alpha1" "TeamProject" .Release.Namespace (.Values.project.name | lower) }}
+{{- if and $project $project.status $project.status.id }}
+
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: GitRepository
+spec:
+  projectId: "{{ $project.status.id }}"  # Dynamically retrieve the project ID
+...
+
+{{- end }}
+```
+
+Note that you need to have already created a `GitRepositoryConfiguration` resource that contains the authentication and configuration information for the `GitRepository` resource.
+See the main [README](../../../README.md#configuration) for more details about configuration resources.
+
+You can check the new `GitRepository` resource managed by Azure DevOps Provider KOG by running the following command:
+```sh
+kubectl get gitrepositories.azuredevops.ogen.krateo.io gitrepository-1 -n azuredevops-system
+```
+And the output should look like this:
+```sh
+NAME              AGE    READY
+gitrepository-1   10s    True
+```
+
+At this point, you can proceed to delete the old `GitRepository` resource managed by Azure DevOps Provider (classic) (note the different API group).
+
+First, you can delete the old `GitRepository` resource managed by Azure DevOps Provider (classic):
+```sh
+kubectl delete gitrepositories.azuredevops.krateo.io gitrepository-1
+```
+
+You need also to change the `krateo.io/paused` annotation to `false` to allow the resource to be deleted.
+Either you `CTRL+C` the previous command (that is hanging) and run the following command, or you can run it in a separate terminal:
+```sh
+kubectl annotate gitrepositories.azuredevops.krateo.io gitrepository-1 --overwrite "krateo.io/paused=false"
+```
+
+At this point, the migration of the `GitRepository` resource from Azure DevOps Provider (classic) to Azure DevOps Provider KOG is complete.

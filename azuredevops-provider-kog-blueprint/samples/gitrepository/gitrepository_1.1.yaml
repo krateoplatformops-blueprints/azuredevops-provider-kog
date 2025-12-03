@@ -1,7 +1,7 @@
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: GitRepository
 metadata:
-  name: test-gitrepository-kog-1-1
+  name: test-gitrepository-pre-demo
   namespace: default
   annotations:
     krateo.io/connector-verbose: "true"
@@ -13,4 +13,4 @@ spec:
   organization: "krateo-kog"             # Name of the Azure DevOps organization
   projectId: "project-1-classic"         # ID or name of the project
 
-  name: "test-gitrepository-kog-1-1"     # Name of the repository to create or manage  
+  name: "test-gitrepository-pre-demo"     # Name of the repository to create or manage

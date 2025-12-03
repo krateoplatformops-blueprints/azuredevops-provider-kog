@@ -1,0 +1,14 @@
+apiVersion: v2
+name: azuredevops-provider-kog-team
+description: A Helm chart for deploying the Azure DevOps KOG Team.
+type: application
+version: TEAM_CHART_VERSION
+
+home: https://krateo.io
+icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
+keywords:
+  - generator
+sources:
+  - https://github.com/krateoplatformops-blueprints/azuredevops-provider-kog/tree/main/azuredevops-provider-kog-team-blueprint
+annotations:
+  krateoSupportedVersion: ">= 2.7.0"

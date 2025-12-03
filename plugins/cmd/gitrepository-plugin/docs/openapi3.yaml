@@ -54,7 +54,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.CreateRepositoryRequest'
+              $ref: '#/components/schemas/gitrepository.CreateRepositoryRequest'
         required: true
       responses:
         "201":
@@ -62,13 +62,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.CreateRepositoryResponse'
+                $ref: '#/components/schemas/gitrepository.CreateRepositoryResponse'
         "202":
           description: GitRepository details (repo created but creation of branch deisgnated as default branch is pending, user must create it, then the gitrepository-controller will update the default branch later)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.CreateRepositoryResponse'
+                $ref: '#/components/schemas/gitrepository.CreateRepositoryResponse'
         "400":
           description: Bad Request
           content: {}
@@ -76,216 +76,14 @@ paths:
           description: Unauthorized
           content: {}
       x-codegen-request-body-name: gitrepositoryCreate
-  /api/{organization}/{project}/pipelines/pipelinepermissions/{resourceType}/{resourceId}:
-    get:
-      summary: Get the pipeline permission of a resource
-      description: Get
-      operationId: get-pipelinepermission
-      parameters:
-        - name: organization
-          in: path
-          description: Organization name
-          required: true
-          schema:
-            type: string
-        - name: project
-          in: path
-          description: Project name
-          required: true
-          schema:
-            type: string
-        - name: resourceType
-          in: path
-          description: Resource type (e.g., pipelines, repositories)
-          required: true
-          schema:
-            type: string
-        - name: resourceId
-          in: path
-          description: Resource ID (e.g., pipeline ID, repository ID)
-          required: true
-          schema:
-            type: string
-        - name: api-version
-          in: query
-          description: API version (e.g., 7.2-preview.1)
-          required: true
-          schema:
-            type: string
-        - name: Authorization
-          in: header
-          description: Basic Auth header (Basic <base64-encoded-username:password>)
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Pipeline permission details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/pipelinepermission.ResourcePipelinePermissions'
-  /api/{organization}/{project}/pipelines/{id}:
-    get:
-      summary: Get a pipeline
-      description: Get
-      operationId: get-pipeline
-      parameters:
-        - name: organization
-          in: path
-          description: Organization name
-          required: true
-          schema:
-            type: string
-        - name: project
-          in: path
-          description: Project name or ID
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          description: Pipeline ID
-          required: true
-          schema:
-            type: string
-        - name: api-version
-          in: query
-          description: API version (e.g., 7.2-preview.1)
-          required: true
-          schema:
-            type: string
-        - name: Authorization
-          in: header
-          description: Basic Auth header (Basic <base64-encoded-username:password>)
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Pipeline details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/pipeline.GetPipelineResponse'
-        "400":
-          description: Bad Request
-          content: {}
-        "401":
-          description: Unauthorized
-          content: {}
-        "500":
-          description: Internal Server Error
-          content: {}
-    put:
-      summary: Update a pipeline
-      description: Update a pipeline using build definitions endpoint
-      operationId: put-pipeline
-      parameters:
-        - name: organization
-          in: path
-          description: Organization name
-          required: true
-          schema:
-            type: string
-        - name: project
-          in: path
-          description: Project name or ID
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          description: Pipeline ID
-          required: true
-          schema:
-            type: string
-        - name: Authorization
-          in: header
-          description: Basic Auth header (Basic <base64-encoded-username:password>)
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Pipeline update request body
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/pipeline.UpdatePipelineRequest'
-        required: true
-      responses:
-        "200":
-          description: Updated pipeline details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/pipeline.UpdatePipelineResponse'
-        "400":
-          description: Bad Request
-          content: {}
-        "401":
-          description: Unauthorized
-          content: {}
-        "404":
-          description: Not Found
-          content: {}
-        "500":
-          description: Internal Server Error
-          content: {}
-      x-codegen-request-body-name: pipelineUpdate
-    delete:
-      summary: Delete a pipeline
-      description: Delete a pipeline using build definitions endpoint
-      operationId: delete-pipeline
-      parameters:
-        - name: organization
-          in: path
-          description: Organization name
-          required: true
-          schema:
-            type: string
-        - name: project
-          in: path
-          description: Project name or ID
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          description: Pipeline ID
-          required: true
-          schema:
-            type: string
-        - name: Authorization
-          in: header
-          description: Basic Auth header (Basic <base64-encoded-username:password>)
-          required: true
-          schema:
-            type: string
-      responses:
-        "204":
-          description: No Content - Pipeline deleted successfully
-          content: {}
-        "400":
-          description: Bad Request
-          content: {}
-        "401":
-          description: Unauthorized
-          content: {}
-        "404":
-          description: Not Found
-          content: {}
-        "500":
-          description: Internal Server Error
-          content: {}
 components:
   schemas:
-    cmd_gitrepository-plugin_handlers.AzureDevOpsTime:
+    gitrepository.AzureDevOpsTime:
       type: object
       properties:
         time.Time:
           type: string
-    cmd_gitrepository-plugin_handlers.CreateRepositoryRequest:
+    gitrepository.CreateRepositoryRequest:
       type: object
       properties:
         defaultBranch:
@@ -296,16 +94,16 @@ components:
         name:
           type: string
         parentRepository:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.GitRepositoryRefMinimal'
+          $ref: '#/components/schemas/gitrepository.GitRepositoryRefMinimal'
         project:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.TeamProjectReferenceMinimal'
-    cmd_gitrepository-plugin_handlers.CreateRepositoryResponse:
+          $ref: '#/components/schemas/gitrepository.TeamProjectReferenceMinimal'
+    gitrepository.CreateRepositoryResponse:
       type: object
       properties:
         _links:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.ReferenceLinks'
+          $ref: '#/components/schemas/gitrepository.ReferenceLinks'
         creationDate:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.AzureDevOpsTime'
+          $ref: '#/components/schemas/gitrepository.AzureDevOpsTime'
         defaultBranch:
           type: string
         id:
@@ -319,9 +117,9 @@ components:
         name:
           type: string
         parentRepository:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.GitRepositoryRef'
+          $ref: '#/components/schemas/gitrepository.GitRepositoryRef'
         project:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.TeamProjectReference'
+          $ref: '#/components/schemas/gitrepository.TeamProjectReference'
         remoteUrl:
           type: string
         size:
@@ -336,11 +134,11 @@ components:
             type: string
         webUrl:
           type: string
-    cmd_gitrepository-plugin_handlers.GitRepositoryRef:
+    gitrepository.GitRepositoryRef:
       type: object
       properties:
         collection:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.TeamProjectCollectionReference'
+          $ref: '#/components/schemas/gitrepository.TeamProjectCollectionReference'
         id:
           type: string
         isFork:
@@ -348,21 +146,21 @@ components:
         name:
           type: string
         project:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.TeamProjectReference'
+          $ref: '#/components/schemas/gitrepository.TeamProjectReference'
         remoteUrl:
           type: string
         sshUrl:
           type: string
         url:
           type: string
-    cmd_gitrepository-plugin_handlers.GitRepositoryRefMinimal:
+    gitrepository.GitRepositoryRefMinimal:
       type: object
       properties:
         id:
           type: string
         project:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.TeamProjectReferenceMinimal'
-    cmd_gitrepository-plugin_handlers.ProjectState:
+          $ref: '#/components/schemas/gitrepository.TeamProjectReferenceMinimal'
+    gitrepository.ProjectState:
       type: string
       enum:
         - deleting
@@ -380,7 +178,7 @@ components:
         - ProjectStateAll
         - ProjectStateUnchanged
         - ProjectStateDeleted
-    cmd_gitrepository-plugin_handlers.ProjectVisibility:
+    gitrepository.ProjectVisibility:
       type: string
       enum:
         - private
@@ -388,13 +186,13 @@ components:
       x-enum-varnames:
         - ProjectVisibilityPrivate
         - ProjectVisibilityPublic
-    cmd_gitrepository-plugin_handlers.ReferenceLinks:
+    gitrepository.ReferenceLinks:
       type: object
       properties:
         links:
           type: object
           additionalProperties: true
-    cmd_gitrepository-plugin_handlers.TeamProjectCollectionReference:
+    gitrepository.TeamProjectCollectionReference:
       type: object
       properties:
         avatarUrl:
@@ -405,7 +203,7 @@ components:
           type: string
         url:
           type: string
-    cmd_gitrepository-plugin_handlers.TeamProjectReference:
+    gitrepository.TeamProjectReference:
       type: object
       properties:
         abbreviation:
@@ -417,186 +215,20 @@ components:
         id:
           type: string
         lastUpdateTime:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.AzureDevOpsTime'
+          $ref: '#/components/schemas/gitrepository.AzureDevOpsTime'
         name:
           type: string
         revision:
           type: integer
         state:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.ProjectState'
+          $ref: '#/components/schemas/gitrepository.ProjectState'
         url:
           type: string
         visibility:
-          $ref: '#/components/schemas/cmd_gitrepository-plugin_handlers.ProjectVisibility'
-    cmd_gitrepository-plugin_handlers.TeamProjectReferenceMinimal:
+          $ref: '#/components/schemas/gitrepository.ProjectVisibility'
+    gitrepository.TeamProjectReferenceMinimal:
       type: object
       properties:
         id:
           type: string
-    pipeline.BuildRepository:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Required
-        type:
-          type: string
-          description: 'Required - enum: unknown, gitHub, azureReposGit, azureReposGitHyphenated'
-    pipeline.GetPipelineResponse:
-      type: object
-      properties:
-        _links:
-          $ref: '#/components/schemas/pipeline.ReferenceLinks'
-        configuration:
-          $ref: '#/components/schemas/pipeline.PipelineConfiguration'
-        folder:
-          type: string
-          description: Embedded fields from PipelineBase
-        id:
-          type: integer
-        name:
-          type: string
-        revision:
-          type: integer
-        url:
-          type: string
-    pipeline.PipelineConfiguration:
-      type: object
-      properties:
-        path:
-          type: string
-        repository:
-          type: object
-          description: Required
-          allOf:
-            - $ref: '#/components/schemas/pipeline.BuildRepository'
-        type:
-          type: string
-          description: 'enum: unknown, yaml, designerJson, justInTime, designerHyphenJson'
-    pipeline.PipelineConfigurationParameters:
-      type: object
-      properties:
-        path:
-          type: string
-        repository:
-          type: object
-          description: Required
-          allOf:
-            - $ref: '#/components/schemas/pipeline.BuildRepository'
-        type:
-          type: string
-          description: 'Required - enum: unknown, yaml, designerJson, justInTime, designerHyphenJson'
-    pipeline.ReferenceLinks:
-      type: object
-      properties:
-        links:
-          type: object
-          additionalProperties: true
-    pipeline.UpdatePipelineRequest:
-      type: object
-      properties:
-        configuration:
-          $ref: '#/components/schemas/pipeline.PipelineConfigurationParameters'
-        folder:
-          type: string
-        id:
-          type: integer
-          description: maybe to be removed since RDC does not include it
-        name:
-          type: string
-        revision:
-          type: integer
-    pipeline.UpdatePipelineResponse:
-      type: object
-      properties:
-        _links:
-          $ref: '#/components/schemas/pipeline.ReferenceLinks'
-        configuration:
-          $ref: '#/components/schemas/pipeline.PipelineConfiguration'
-        folder:
-          type: string
-          description: Embedded fields from PipelineBase
-        id:
-          type: integer
-        name:
-          type: string
-        revision:
-          type: integer
-        url:
-          type: string
-    pipelinepermission.IdentityRef:
-      type: object
-      properties:
-        _links:
-          $ref: '#/components/schemas/pipelinepermission.ReferenceLinks'
-        descriptor:
-          type: string
-        directoryAlias:
-          type: string
-        displayName:
-          type: string
-        id:
-          type: string
-        imageUrl:
-          type: string
-        inactive:
-          type: boolean
-        isAadIdentity:
-          type: boolean
-        isContainer:
-          type: boolean
-        isDeletedInOrigin:
-          type: boolean
-        profileUrl:
-          type: string
-        uniqueName:
-          type: string
-        url:
-          type: string
-    pipelinepermission.Permission:
-      type: object
-      properties:
-        authorized:
-          type: boolean
-        authorizedBy:
-          $ref: '#/components/schemas/pipelinepermission.IdentityRef'
-        authorizedOn:
-          type: string
-    pipelinepermission.PipelinePermission:
-      type: object
-      properties:
-        authorized:
-          type: boolean
-        authorizedBy:
-          $ref: '#/components/schemas/pipelinepermission.IdentityRef'
-        authorizedOn:
-          type: string
-        id:
-          type: integer
-    pipelinepermission.ReferenceLinks:
-      type: object
-      properties:
-        links:
-          type: object
-          additionalProperties: true
-    pipelinepermission.Resource:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        type:
-          type: string
-    pipelinepermission.ResourcePipelinePermissions:
-      type: object
-      properties:
-        allPipelines:
-          $ref: '#/components/schemas/pipelinepermission.Permission'
-        pipelines:
-          type: array
-          items:
-            $ref: '#/components/schemas/pipelinepermission.PipelinePermission'
-        resource:
-          $ref: '#/components/schemas/pipelinepermission.Resource'
 x-original-swagger-version: "2.0"
