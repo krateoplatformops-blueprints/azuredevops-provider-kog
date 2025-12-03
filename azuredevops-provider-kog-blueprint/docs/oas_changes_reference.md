@@ -11,6 +11,7 @@ Note that the changes are made to **comply with some requirements** of the OASGe
 - [PullRequest](#pullrequest)
 - [PolicyConfiguration](#policyconfiguration)
 - [RepositoryPermission](#repositorypermission)
+- [BuildPermission](#buildpermission)
 - [Team](#team)
 
 ## `GitRepository`
@@ -118,7 +119,7 @@ The PATCH operation is used in the RestDefinition `pipelinepermission` for the `
 ## `RepositoryPermission`
 
 Note: `RepositoryPermission` resource is an abstraction over the `AccessControlEntries` resource provided by the Azure DevOps REST API.
-The OAS file is obtained by using thw `swag` tool to generate an OpenAPI Specification (OAS) from Go code. In this case, the Go code of the plugin that implemtent the `RepositoryPermission` resource over the `AccessControlEntries` resource.
+The OAS file is obtained by using thw `swag` tool to generate an OpenAPI Specification (OAS) from Go code. In this case, the Go code of the plugin that implements the `RepositoryPermission` resource over the `AccessControlEntries` resource.
 
 **Version**: `7.2-preview.1` (AccessControlEntries)
 **Original specification file** (AccessControlEntries):
@@ -129,28 +130,73 @@ The OAS file is obtained by using thw `swag` tool to generate an OpenAPI Specifi
 - Manually commented out the `additionalProperties` fields in the `allow` and `deny` properties to provide a fixed set of permissions that can be set on a RepositoryPermission resource. This is necessary to obtain a correct reconciliation of the resource by the Rest Dynamic Controller.
 For example, part of the the modified `PermissionInfo` schema is as follows:
 ```yaml
-        deny:
-          type: object
-          # FIXED
-          #additionalProperties:
-          #  type: boolean
-          properties:
-            administerpermission:
-              type: boolean
-              default: false
-            genericread:
-              type: boolean
-              default: false
-            genericcontribute:
-              type: boolean
-              default: false
-            forcepush:
-              type: boolean
-              default: false
-            ...
+allow:
+  type: object
+  # FIXED
+  #additionalProperties:
+  #  type: boolean
+  properties:
+    Administer:
+      type: boolean
+      default: false
+      description: "displayName: 'Administer' "
+    GenericRead:
+      type: boolean
+      default: false
+      description: "displayName: 'Read' "
+    GenericContribute:
+      type: boolean
+      default: false
+      description: "displayName: 'Contribute' "
+    ForcePush:
+      type: boolean
+      default: false
+      description: "displayName: 'Force push (rewrite history, delete branches and tags)' "
+    CreateBranch:
+      type: boolean
+      default: false
+      description: "displayName: 'Create branch' "
+...
 ```
 
+## `BuildPermission`
 
+Note: `BuildPermission` resource is an abstraction over the `AccessControlEntries` resource provided by the Azure DevOps REST API.
+The OAS file is obtained by using thw `swag` tool to generate an OpenAPI Specification (OAS) from Go code. In this case, the Go code of the plugin that implements the `BuildPermission` resource over the `AccessControlEntries` resource.
+
+**Version**: `7.2-preview.1` (AccessControlEntries)
+**Original specification file** (AccessControlEntries):
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/security/7.2/security.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/security/7.2/security.json
+
+**List of change made to the OpenAPI Specification (OAS)** (generated entirely from the plugin code):
+- Manually commented out the `additionalProperties` fields in the `allow` and `deny` properties to provide a fixed set of permissions that can be set on a BuildPermission resource. This is necessary to obtain a correct reconciliation of the resource by the Rest Dynamic Controller.
+For example, part of the the modified `PermissionInfo` schema is as follows:
+```yaml
+allow:
+  type: object
+  # FIXED
+  #additionalProperties:
+  #  type: boolean
+  properties:
+    ViewBuilds:
+      type: boolean
+      default: false
+      description: "displayName: 'View Builds' "
+    EditBuildQuality:
+      type: boolean
+      default: false
+      description: "displayName: 'Edit build quality' "
+    RetainIndefinitely:
+      type: boolean
+      default: false
+      description: "displayName: 'Retain indefinitely' "
+    DeleteBuilds:
+      type: boolean
+      default: false
+      description: "displayName: 'Delete builds' "
+...
+```
 
 ## `Team`
 

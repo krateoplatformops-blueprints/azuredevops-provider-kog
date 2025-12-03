@@ -4,8 +4,11 @@ This README is only related to the plugins contained in this repository. For mor
 
 This repository contains the source code of a set of plugins written in Go for the Azure DevOps Provider KOG.
 
-These plugins are specialized web services that address some inconsistencies in the Azure DevOps REST API or provide a way to use Azure DevOps API seamlessly within KOG (Krateo Operator Generator). This may be due differences in request/response schemas, missing fields, or additional validations needed when managing Azure DevOps resources. Sometimes, since the REST API is not originally designed to be used by a Kubernetes operator, these plugins fill the gap by providing the necessary functionality to manage Azure DevOps resources effectively through KOG.
+These plugins are specialized web services that address some inconsistencies in the Azure DevOps REST API or provide a way to use Azure DevOps API seamlessly within KOG (Krateo Operator Generator). This may be due differences in request/response schemas, missing fields, or additional validations needed when managing Azure DevOps resources. 
+
+Sometimes, since the REST API is not originally designed to be used by a Kubernetes operator, these plugins fill the gap by providing the necessary functionality to manage Azure DevOps resources effectively through KOG.
 On the other hand, some missing features of Krateo Operator Generator are addressed by these plugins as well.
+
 In addition, some resources managed by Azure DevOps Provider KOG are **abstractions** (e.g, `RepositoryPermission`, `BuildPermission`) that do not have a direct counterpart in the Azure DevOps REST API. In these cases, the plugins implement the necessary logic to map the Kubernetes Custom Resource specifications to the appropriate Azure DevOps API calls.
 
 They are designed to work as a middleware between the [Rest Dynamic Controller](https://github.com/krateoplatformops/rest-dynamic-controller/) and the Azure DevOps REST API.
@@ -407,7 +410,7 @@ This endpoint deletes a specific pipeline by its ID in the specified Azure DevOp
 - In order to delete a pipeline, you need to use the `/build/definitions/{id}` endpoint, which currently support a different `api-version` parameter when compared to the `/pipelines/{id}` endpoint used for retrieving pipelines.
 - This endpoint sets the correct `api-version` parameter needed to delete a pipeline using the `/build/definitions/{id}` endpoint (`7.2-preview.7`).
 
-> Currently, the `api-version` parameter is passed as an environment variable to the plugin by the related Helm chart.
+> Currently, the `api-version` parameter for BuildDefinitions is passed as an environment variable to the plugin by the related Helm chart.
 
 </details>
 
