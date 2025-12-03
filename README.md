@@ -368,6 +368,7 @@ The `Pipeline` resource is used to manage Azure DevOps pipelines.
 #### Pipeline schema
 
 The `Pipeline` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pipeline.md).
+
 The `Pipeline` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pipeline-crd.yaml).
 
 #### Pipeline example CR
@@ -405,6 +406,8 @@ spec:
 
 </details>
 
+---
+
 ### PipelinePermission
 
 The `PipelinePermission` resource is used to manage permissions for Azure DevOps pipelines to access resources.
@@ -429,6 +432,7 @@ Reference to the official [Azure DevOps REST API documentation](https://learn.mi
 #### PipelinePermission schema
 
 The `PipelinePermission` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pipelinepermission.md).
+
 The `PipelinePermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pipelinepermission-crd.yaml).
 
 Note: in the case of managing a `PipelinePermission` for an Agent Pool, the `resourceType` should be set to `queue`.
@@ -472,6 +476,8 @@ spec:
 
 </details>
 
+---
+
 ### PullRequest
 
 The `PullRequest` resource is used to manage Azure DevOps pull requests.
@@ -485,6 +491,7 @@ The `PullRequest` resource is used to manage Azure DevOps pull requests.
 #### PullRequest schema
 
 The `PullRequest` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pullrequest.md).
+
 The `PullRequest` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pullrequest-crd.yaml).
 
 An example of a `PullRequest` resource is:
@@ -530,6 +537,8 @@ spec:
 
 </details>
 
+---
+
 ### PolicyConfiguration
 
 The `PolicyConfiguration` resource is used to manage Azure DevOps policy configurations for repositories.
@@ -543,6 +552,7 @@ The `PolicyConfiguration` resource is used to manage Azure DevOps policy configu
 #### PolicyConfiguration schema
 
 The `PolicyConfiguration` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/policyconfiguration.md).
+
 The `PolicyConfiguration` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/policyconfiguration-crd.yaml).
 
 An example of a `PolicyConfiguration` resource is:
@@ -595,6 +605,8 @@ spec:
 
 </details>
 
+---
+
 ### RepositoryPermission
 
 The `RepositoryPermission` resource is used to manage repository permissions in Azure DevOps. It is an abstaction over the underlying Access Control Entries (ACEs) used by Azure DevOps to manage permissions.
@@ -609,6 +621,7 @@ The `RepositoryPermission` resource is used to manage repository permissions in 
 #### RepositoryPermission schema
 
 The `RepositoryPermission` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/repositorypermission.md).
+
 The `RepositoryPermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/repositorypermission-crd.yaml).
 
 An example of a `RepositoryPermission` resource is:
@@ -656,6 +669,8 @@ spec:
 
 </details>
 
+---
+
 ### BuildPermission
 
 The `BuildPermission` resource is used to manage repository permissions in Azure DevOps. It is an abstaction over the underlying Access Control Entries (ACEs) used by Azure DevOps to manage permissions.
@@ -670,6 +685,7 @@ The `BuildPermission` resource is used to manage repository permissions in Azure
 #### BuildPermission schema
 
 The `BuildPermission` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/buildpermission.md).
+
 The `BuildPermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/buildpermission-crd.yaml).
 
 An example of a `BuildPermission` resource is:
@@ -713,9 +729,11 @@ spec:
 
 </details>
 
+---
+
 ### Team
 
-The `Tean` resource is used to manage teams in Azure DevOps.
+The `Team` resource is used to manage teams in Azure DevOps.
 
 #### Team operations
 
@@ -727,6 +745,7 @@ The `Tean` resource is used to manage teams in Azure DevOps.
 #### BuildPermission schema
 
 The `Team` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/team.md).
+
 The `Team` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/team-crd.yaml).
 
 An example of a `Team` resource is:
