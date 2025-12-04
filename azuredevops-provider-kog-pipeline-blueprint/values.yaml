@@ -12,7 +12,7 @@ image:
 
 imagePullSecrets: []
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: "azuredevops-provider-kog-pipeline-plugin"
 
 serviceAccount:
   # Specifies whether a service account should be created
