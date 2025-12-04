@@ -1,6 +1,6 @@
 apiVersion: v2
 name: azuredevops-provider-kog-buildpermission
-description: A Helm chart for deploying the Azure DevOps KOG Repository Permission.
+description: A Helm chart for deploying the Azure DevOps KOG BuildPermission.
 type: application
 version: BUILDPERMISSION_CHART_VERSION
 appVersion: BUILDPERMISSION_APP_VERSION
