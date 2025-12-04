@@ -142,7 +142,7 @@ helm install azuredevops-provider-kog azuredevops-provider-kog \
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  --version 1.2.0 \
+  --version 1.3.0 \
   --wait
 ```
 
@@ -182,9 +182,11 @@ helm install azuredevops-provider-kog-gitrepository azuredevops-provider-kog-git
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  --version 1.2.0 \
+  --version 1.3.0 \
   --wait
 ```
+
+Note: the version specified in the command should match the version of specific resource chart you want to install and not necessarily the version of the umbrella chart as they can have different release cycles.
 
 ## Use "in parallel" with Azure DevOps Provider (classic)
 
