@@ -39,6 +39,9 @@ spec:
 
 Note that the `Team` resource is referecing a `ConnectorConfig` resource and a `Project` resource, which are both managed by the Azure DevOps Provider "classic".
 
+Note also that the field `groupRefs` is not supported in the `Team` schema of Azure DevOps Provider KOG since the Azure DevOps REST API does not directly support managing groups associated with a team. 
+Specific resources for managing group memberships will likely be introduced in future versions of the Azure DevOps Provider KOG.
+
 To ensure that the old version of the resource is not reconciled while you are migrating to the new version, you should set the `krateo.io/paused: true` annotation.
 You can do this by running the following commands:
 ```sh

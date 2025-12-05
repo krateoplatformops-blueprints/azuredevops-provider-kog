@@ -1,0 +1,79 @@
+kind: RestDefinition
+apiVersion: ogen.krateo.io/v1alpha1
+metadata:
+  name: azuredevops-provider-kog-graphgroup
+spec:
+  oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-graphgroup/graphgroup.yaml
+  resourceGroup: azuredevops.ogen.krateo.io
+  resource:
+    kind: GraphGroup # `kind: Group` cannot be used as it lead to errors while generating the CRD.
+    identifiers:
+    - displayName # Within the organization/scope, the displayName of a Group must be unique, so we can use it as an identifier.
+    additionalStatusFields:
+    - descriptor # Technical identifier used by get and delete actions
+    - domain
+    - principalName
+    - legacyDescriptor
+    - origin
+    - originId
+    - subjectKind
+    - url
+    - _links
+    excludedSpecFields:
+    - continuationToken
+    verbsDescription:
+    - action: findby
+      method: GET
+      path: /{organization}/_apis/graph/groups
+      pagination:
+        type: continuationToken
+        continuationToken:
+          request:
+            tokenIn: query
+            tokenPath: "continuationToken"
+          response:
+            tokenIn: header
+            tokenPath: "X-MS-ContinuationToken"
+    - action: get
+      method: GET
+      path: /{organization}/_apis/graph/groups/{groupDescriptor}
+      requestFieldMapping:
+        - inPath: groupDescriptor
+          inCustomResource: status.descriptor
+    - action: create
+      method: POST
+      path: /{organization}/_apis/graph/groups
+    - action: delete
+      method: DELETE
+      path: /{organization}/_apis/graph/groups/{groupDescriptor}
+      requestFieldMapping:
+        - inPath: groupDescriptor
+          inCustomResource: status.descriptor
+    # Note: update action (PATCH) is not included because the Azure DevOps API uses
+    # JsonPatchDocument format which is not directly supported by OASGen Provider.
+    # A plugin/middleware would be needed to support group updates.
+    configurationFields:
+    - fromOpenAPI:
+        name: api-version
+        in: query
+      fromRestDefinition:
+        actions: ["*"] # Common among all actions
+    - fromOpenAPI:
+        name: subjectTypes
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]
+    # Note: scopeDescriptor and groupDescriptors are NOT configuration fields.
+    # They are part of the main resource spec (in GraphGroupCreationContextUnified schema)
+
+    #scopeDescriptor could be the project descriptor for instance
+    #scopeDescriptor during create: 
+    #A descriptor referencing the scope (collection, project) in which the group should be created. 
+    # If omitted, will be created in the scope of the enclosing account or organization. 
+    #Valid only for VSTS groups.
+
+    # groupDescriptors: A comma separated list of descriptors referencing groups you want the graph group to join
+
+    # subjectTypes
+    #  A comma separated list of user subject subtypes to reduce the retrieved results, e.g. Microsoft.IdentityModel.Claims.ClaimsIdentity
+

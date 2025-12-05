@@ -232,3 +232,18 @@ https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc42439
 - Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
 - Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
 - Commented out the `components.parameters` section at root level as it just to inform about api versions.
+
+
+## GraphGroup
+
+**Version**: 7.2-preview.1
+**Original specification file**:
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/graph/7.2/graph.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/graph/7.2/graph.json
+
+TODO
+
+
+## User
+
+TODO
