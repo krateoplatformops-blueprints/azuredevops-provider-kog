@@ -437,7 +437,7 @@ The `PipelinePermission` CRD reference can found [here](./azuredevops-provider-k
 
 The `PipelinePermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pipelinepermission-crd.yaml).
 
-Note: in the case of managing a `PipelinePermission` for an Agent Pool, the `resourceType` should be set to `queue`.
+Note: in the case of managing a `PipelinePermission` for an Agent Pool, the `resourceType` should be set to `queue` ([reference](./azuredevops-provider-kog-blueprint/docs/troubleshooting_guide.md#pipelinepermission-for-agent-pools)).
 
 Note: if you set `allPipelines.authorized` to `true`, and also specify individual pipelines in the `pipelines` array, there will be the following behavior on Azure DevOps:
 - All pipelines in the project will be authorized to use the resource.

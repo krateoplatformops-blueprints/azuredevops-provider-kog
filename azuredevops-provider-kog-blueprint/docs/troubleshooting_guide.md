@@ -20,7 +20,8 @@ This document serves as a troubleshooting guide for the Krateo Azure DevOps Prov
     - [Case 3.2: Fork With No Branch Configuration](#case-32-fork-with-no-branch-configuration)
     - [Case 3.3: Fork With Nonexistent Default Branch](#case-33-fork-with-nonexistent-default-branch)
 - [PolicyConfiguration](#policyconfiguration)
-
+- [PipelinePermission](#pipelinepermission)
+  - [PipelinePermission for Agent Pools](#pipelinepermission-for-agent-pools)
 
 ## GitRepository 
 
@@ -256,3 +257,9 @@ curl -X GET "https://dev.azure.com/<ORG>/<PROJECT>/_apis/policy/types?api-versio
 
 Unlike other Azure DevOps resources, the field `projectId` in the Team resource can only accept the **Project ID** (a UUID) and not the Project Name.
 This is due to the fact that the Azure DevOps REST API for Teams returns always the Project ID in the response, even if the Team was created using the Project Name. This difference would lead to infinite reconciliation loops in the controller if the Project Name was used.
+
+## PipelinePermission
+
+### PipelinePermission for Agent Pools
+
+In the case of managing a `PipelinePermission` for an Agent Pool, the `resourceType` should be set to `queue`. [Reference on StackOverflow](https://stackoverflow.com/questions/77258168/how-to-update-azure-pipeline-permissions-for-resource-using-cli#comment139630674_77258662).
