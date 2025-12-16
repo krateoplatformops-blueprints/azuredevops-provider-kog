@@ -241,7 +241,12 @@ https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc42439
 - Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/graph/7.2/graph.json
 - Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/graph/7.2/graph.json
 
-TODO
+
+
+- created new schema `GraphGroupCreationContextUnified` for the request body of the `create` operation.
+- changed response code from 200 to 201 in create operation
+
+
 
 
 ## User

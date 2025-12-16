@@ -20,7 +20,11 @@ spec:
     - url
     - _links
     excludedSpecFields:
+    - groupDescriptor       # Populated from status.descriptor after creation using requestFieldMapping
     - continuationToken
+    - crossProject          # legacy field
+    - restrictedVisibility  # legacy field
+    - specialGroupType      # legacy field
     verbsDescription:
     - action: findby
       method: GET
@@ -51,7 +55,7 @@ spec:
           inCustomResource: status.descriptor
     # Note: update action (PATCH) is not included because the Azure DevOps API uses
     # JsonPatchDocument format which is not directly supported by OASGen Provider.
-    # A plugin/middleware would be needed to support group updates.
+    # A plugin/middleware would be needed to support graphgroup updates.
     configurationFields:
     - fromOpenAPI:
         name: api-version
@@ -74,6 +78,6 @@ spec:
 
     # groupDescriptors: A comma separated list of descriptors referencing groups you want the graph group to join
 
-    # subjectTypes
+    # subjectTypes (in findby):
     #  A comma separated list of user subject subtypes to reduce the retrieved results, e.g. Microsoft.IdentityModel.Claims.ClaimsIdentity
 

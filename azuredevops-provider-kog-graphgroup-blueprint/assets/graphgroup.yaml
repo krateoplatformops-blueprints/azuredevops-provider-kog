@@ -127,7 +127,8 @@ paths:
               $ref: '#/components/schemas/GraphGroupCreationContextUnified'
         required: true
       responses:
-        '200':
+        #'200':
+        '201': # Fixed: changed response code from 200 to 201
           description: successful operation
           content:
             application/json:
@@ -225,7 +226,8 @@ paths:
         schema:
           type: string
       responses:
-        '200':
+        #'200':
+        '204': # Fixed: changed response code from 200 to 204
           description: successful operation
           content: {}
       #security:
@@ -302,30 +304,134 @@ components:
       description: Graph group entity
       allOf:
       - $ref: '#/components/schemas/GraphMember'
+    #GraphGroupCreationContextUnified:
+    #  type: object
+    #  properties:
+    #    # Base properties (from GraphGroupCreationContext)
+    #    storageKey:
+    #      type: string
+    #      description: 'Optional: If provided, we will use this identifier for the storage key of the created group'
+    #      format: uuid
+    #    # VSTS Group properties (from GraphGroupVstsCreationContext)
+    #    displayName:
+    #      type: string
+    #      description: 'Used by VSTS groups; if set this will be the group DisplayName'
+    #    description:
+    #      type: string
+    #      description: 'Used by VSTS groups; if set this will be the group description'
+    #    # AAD Group properties via mail address (from GraphGroupMailAddressCreationContext)
+    #    mailAddress:
+    #      type: string
+    #      description: 'This should be the mail address of the group in the source AD or AAD provider. Example: jamal@contoso.com. Team Services will communicate with the source provider to fill all other fields on creation.'
+    #    # AAD Group properties via origin ID (from GraphGroupOriginIdCreationContext)
+    #    originId:
+    #      type: string
+    #      description: 'This should be the object id or sid of the group from the source AD or AAD provider. Example: d47d025a-ce2f-4a79-8618-e8862ade30dd. Team Services will communicate with the source provider to fill all other fields on creation.'
+    #  description: 'Unified creation context supporting multiple group creation scenarios: VSTS native groups (use displayName/description), AAD groups via mail address (use mailAddress), or AAD groups via origin ID (use originId). Provide the fields appropriate for your use case.'
+    
+    
     GraphGroupCreationContextUnified:
       type: object
+      allOf:
+      - $ref: '#/components/schemas/GraphGroupCreationContext'
+      - $ref: '#/components/schemas/GraphGroupVstsCreationContext'
+      - $ref: '#/components/schemas/GraphGroupMailAddressCreationContext'
+      - $ref: '#/components/schemas/GraphGroupOriginIdCreationContext'
+      description: "Unified creation context supporting multiple group creation scenarios:\
+        \ VSTS native groups (use displayName/description), AAD groups via mail address\
+        \ (use mailAddress), or AAD groups via origin ID (use originId). Provide the fields\
+        \ appropriate for your use case."
+
+
+
+
+
+    GraphGroupCreationContext:
+      type: object
       properties:
-        # Base properties (from GraphGroupCreationContext)
         storageKey:
           type: string
-          description: 'Optional: If provided, we will use this identifier for the storage key of the created group'
+          description: "Optional: If provided, we will use this identifier for the\
+            \ storage key of the created group"
           format: uuid
-        # VSTS Group properties (from GraphGroupVstsCreationContext)
-        displayName:
-          type: string
-          description: 'Used by VSTS groups; if set this will be the group DisplayName'
-        description:
-          type: string
-          description: 'Used by VSTS groups; if set this will be the group description'
-        # AAD Group properties via mail address (from GraphGroupMailAddressCreationContext)
+      description: Do not attempt to use this type to create a new group. This type
+        does not contain sufficient fields to create a new group.
+    GraphGroupMailAddressCreationContext:
+      properties:
         mailAddress:
           type: string
-          description: 'This should be the mail address of the group in the source AD or AAD provider. Example: jamal@contoso.com. Team Services will communicate with the source provider to fill all other fields on creation.'
-        # AAD Group properties via origin ID (from GraphGroupOriginIdCreationContext)
+          description: "This should be the mail address or the group in the source\
+            \ AD or AAD provider. Example: jamal@contoso.com Team Services will communicate\
+            \ with the source provider to fill all other fields on creation."
+      description: Use this type to create a new group using the mail address as a
+        reference to an existing group from an external AD or AAD backed provider.
+        This is the subset of GraphGroup fields required for creation of a group for
+        the AAD and AD use case.
+      allOf:
+      - $ref: '#/components/schemas/GraphGroupCreationContext'
+    GraphGroupOriginIdCreationContext:
+      properties:
         originId:
           type: string
-          description: 'This should be the object id or sid of the group from the source AD or AAD provider. Example: d47d025a-ce2f-4a79-8618-e8862ade30dd. Team Services will communicate with the source provider to fill all other fields on creation.'
-      description: 'Unified creation context supporting multiple group creation scenarios: VSTS native groups (use displayName/description), AAD groups via mail address (use mailAddress), or AAD groups via origin ID (use originId). Provide the fields appropriate for your use case.'
+          description: "This should be the object id or sid of the group from the\
+            \ source AD or AAD provider. Example: d47d025a-ce2f-4a79-8618-e8862ade30dd\
+            \ Team Services will communicate with the source provider to fill all\
+            \ other fields on creation."
+      description: Use this type to create a new group using the OriginID as a reference
+        to an existing group from an external AD or AAD backed provider. This is the
+        subset of GraphGroup fields required for creation of a group for the AD and
+        AAD use case.
+      allOf:
+      - $ref: '#/components/schemas/GraphGroupCreationContext'
+    GraphGroupVstsCreationContext:
+      properties:
+        crossProject:
+          type: boolean
+          description: For internal use only in back compat scenarios.
+        description:
+          type: string
+          description: "Used by VSTS groups; if set this will be the group description,\
+            \ otherwise ignored"
+        descriptor:
+          type: string
+        displayName:
+          type: string
+          description: "Used by VSTS groups; if set this will be the group DisplayName,\
+            \ otherwise ignored"
+        restrictedVisibility:
+          type: boolean
+          description: For internal use only in back compat scenarios.
+        specialGroupType:
+          type: string
+          description: For internal use only in back compat scenarios.
+      description: Use this type to create a new Vsts group that is not backed by
+        an external provider.
+      allOf:
+      - $ref: '#/components/schemas/GraphGroupCreationContext'
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     GraphMember:
       properties:
         domain:

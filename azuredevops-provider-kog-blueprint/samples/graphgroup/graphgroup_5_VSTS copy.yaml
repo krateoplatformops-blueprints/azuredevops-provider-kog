@@ -1,0 +1,26 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: GraphGroup
+metadata:
+  name: test-graphgroup-00001
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # Reference to the configuration CR
+  configurationRef:
+    name: my-graphgroup-config
+    namespace: default
+
+  # Azure DevOps organization name
+  organization: krateo-kog
+
+  # VSTS group creation fields
+  displayName: DevSecOps Specialists
+  description: Test group created via Krateo OASGen Provider with nested membership
+
+  # Add this new group as a member of multiple existing groups
+  # This creates a nested group hierarchy
+  # Format: comma-separated list of group descriptors
+  # Example descriptors below (replace with actual descriptors from your organization)
+  groupDescriptors: "vssgp.Uy0xLTktMTU1MTM3NDI0NS0xMjA0NDAwOTY5LTI0MDI5ODY0MTMtMjE3OTQwODYxNi0zLTI4NjM5MTYzOTItMzYxOTQ3MjYyOS0yNDM3MzAyNjgy,vssgp.Uy0xLTktMTU1MTM3NDI0NS0xMjA0NDAwOTY5LTI0MDI5ODY0MTMtMjE3OTQwODYxNi0zLTI4NjM5MTYzOTItMzYxOTQ3MjYyOS0xMjM0NTY3ODkw"
+
