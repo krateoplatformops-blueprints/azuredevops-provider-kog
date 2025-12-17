@@ -33,6 +33,8 @@ They are designed to work as a middleware between the [Rest Dynamic Controller](
 - [BuildPermission plugin](#buildpermission-plugin)
   - [GET BuildPermission](#get-buildpermission)
   - [POST BuildPermission](#post-buildpermission)
+- [GraphGroup plugin](#graphgroup-plugin)
+  - [GET GraphGroups](#get-graphgroups)
 - [Azure DevOps API Reference](#azuredevops-api-reference)
 - [Authentication](#authentication)
 - [API documentation](#api-documentation)
@@ -1268,6 +1270,116 @@ POST /plugin/buildpermission/{organization}/{projectId}
 ```
 
 </details>
+
+---
+
+## GraphGroup plugin
+
+### GET GraphGroups
+
+**Description**:
+This endpoint retrieves graph groups (list) from Azure DevOps, with additional filtering capabilities. When listing groups at the organization level (without a `scopeDescriptor`), it automatically filters out project-level groups to return only organization-level groups. When a `scopeDescriptor` is provided, all groups within that scope are returned without filtering.
+
+<details>
+<summary><b>Why This Endpoint Exists</b></summary>
+<br/>
+
+- The standard Azure DevOps Graph API returns both organization-level and project-level groups when listing groups without a `scopeDescriptor`, thus making it ambigous for Rest Dynamic Controller to manage groups with the same name but different scopes.
+- This endpoint automatically filters out project-level groups (those with domain starting with `vstfs:///Classification/TeamProject/`) when no `scopeDescriptor` is provided (i.e., when listing at the organization level).
+- When a `scopeDescriptor` is set (indicating a specific scope, such as a project), the endpoint passes through all groups without filtering, maintaining native Azure DevOps behavior.
+- The response includes additional metadata fields (`originalCount`, `count`, `numberOfFilteredOut`) to provide transparency about the filtering operation.
+- The pagination mechanism is preserved using the `continuationToken` query parameter and the `X-MS-ContinuationToken` response header as per native Azure DevOps API behavior.
+
+</details>
+
+<details>
+<summary><b>Request</b></summary>
+<br/>
+
+```http
+GET /plugin/{organization}/graph/groups
+```
+
+**Path parameters**:
+- `organization` (string, required): The name of the Azure DevOps organization.
+
+**Query parameters**:
+- `api-version` (string, required): The version of the Azure DevOps REST API to use. For example, `7.2-preview.1`.
+- `scopeDescriptor` (string, optional): The scope descriptor to filter groups. If not provided, only organization-level groups are returned.
+- `subjectTypes` (string, optional): Comma-separated list of subject types to filter by (e.g., `vssgp` for groups, `aadgp` for Azure AD groups).
+- `continuationToken` (string, optional): Continuation token for pagination.
+
+</details>
+
+<details>
+<summary><b>Response</b></summary>
+<br/>
+
+**Response status codes**:
+- `200 OK`: The request was successful and graph groups are returned.
+- `400 Bad Request`: The request is invalid. Ensure that the `organization` and `api-version` parameters are correct.
+- `401 Unauthorized`: The request is not authorized. Ensure that the `Authorization` header is set correctly.
+- `500 Internal Server Error`: An unexpected error occurred while processing the request.
+
+**Response headers**:
+- `X-MS-ContinuationToken` (string, optional): Continuation token for pagination. Present only if more results are available.
+
+**Response body example**:
+```json
+{
+  "originalCount": 15,
+  "count": 8,
+  "numberOfFilteredOut": 7,
+  "value": [
+    {
+      "_links": {
+        "self": {
+          "href": "https://vssps.dev.azure.com/org/_apis/Graph/Groups/descriptor"
+        },
+        "memberships": {
+          "href": "https://vssps.dev.azure.com/org/_apis/Graph/Memberships/descriptor"
+        }
+      },
+      "descriptor": "vssgp.<REDACTED>",
+      "displayName": "Project Collection Administrators",
+      "domain": "vstfs:///Framework/IdentityDomain/<REDACTED>",
+      "mailAddress": null,
+      "origin": "vsts",
+      "originId": "<REDACTED>",
+      "principalName": "[TEAM FOUNDATION]\\Project Collection Administrators",
+      "subjectKind": "group",
+      "url": "https://vssps.dev.azure.com/org/_apis/Graph/Groups/vssgp.<REDACTED>"
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://vssps.dev.azure.com/org/_apis/Graph/Groups/descriptor"
+        }
+      },
+      "descriptor": "aadgp.<REDACTED>",
+      "displayName": "Azure AD Group Example",
+      "domain": "vstfs:///Framework/IdentityDomain/<REDACTED>",
+      "isCrossProject": false,
+      "mailAddress": "azuread-group@example.com",
+      "origin": "aad",
+      "originId": "<REDACTED>",
+      "principalName": "azuread-group@example.com",
+      "subjectKind": "group"
+    }
+    ...
+  ]
+}
+```
+
+**Field descriptions**:
+- `originalCount`: The total number of groups returned by Azure DevOps before filtering
+- `count`: The number of groups after filtering (equals `originalCount` when `scopeDescriptor` is provided)
+- `numberOfFilteredOut`: The number of project-level groups that were filtered out (0 when `scopeDescriptor` is provided)
+- `value`: Array of graph groups (project-level groups excluded when no `scopeDescriptor` is set)
+
+</details>
+
+---
 
 ## Azure DevOps API Reference
 

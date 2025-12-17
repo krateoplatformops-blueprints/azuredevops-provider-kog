@@ -8,7 +8,9 @@ spec:
   resource:
     kind: GraphGroup # `kind: Group` cannot be used as it lead to errors while generating the CRD.
     identifiers:
-    - displayName # Within the organization/scope, the displayName of a Group must be unique, so we can use it as an identifier.
+    - displayName # VSTS. Within the organization/scope, the displayName of a Group must be unique, so we can use it as an identifier.
+    - mailAddress
+    - originId
     additionalStatusFields:
     - descriptor # Technical identifier used by get and delete actions
     - domain
@@ -28,7 +30,8 @@ spec:
     verbsDescription:
     - action: findby
       method: GET
-      path: /{organization}/_apis/graph/groups
+      path: /plugin/{organization}/graph/groups  # Plugin endpoint
+      identifiersMatchPolicy: OR
       pagination:
         type: continuationToken
         continuationToken:
@@ -53,7 +56,7 @@ spec:
       requestFieldMapping:
         - inPath: groupDescriptor
           inCustomResource: status.descriptor
-    # Note: update action (PATCH) is not included because the Azure DevOps API uses
+    # Note: update action (PATCH) is not included because ot this specific resource the Azure DevOps API uses
     # JsonPatchDocument format which is not directly supported by OASGen Provider.
     # A plugin/middleware would be needed to support graphgroup updates.
     configurationFields:

@@ -21,57 +21,57 @@ tags:
 - name: Groups
 paths:
   /{organization}/_apis/graph/groups:
-    get:
-      tags:
-      - Groups
-      description: "Gets a list of all groups in the current scope (usually organization or account).\n\nThe optional parameters\
-        \ are used to filter down the returned results. Returned results are in no guaranteed order.\n\n Since the list of\
-        \ groups may be large, results are returned in pages of groups.  If there are more results\n than can be returned\
-        \ in a single page, the result set will contain a continuation token for retrieval of the\n next set of results."
-      operationId: Groups_List
-      parameters:
-      - name: organization
-        in: path
-        description: The name of the Azure DevOps organization.
-        required: true
-        schema:
-          type: string
-      - name: scopeDescriptor
-        in: query
-        description: Specify a non-default scope (collection, project) to search for groups.
-        schema:
-          type: string
-      - name: subjectTypes
-        in: query
-        description: A comma separated list of user subject subtypes to reduce the retrieved results, e.g. Microsoft.IdentityModel.Claims.ClaimsIdentity
-        schema:
-          type: string
-          format: array (string)
-      - name: continuationToken
-        in: query
-        description: An opaque data blob that allows the next page of data to resume immediately after where the previous
-          page ended. The only reliable way to know if there is more data left is the presence of a continuation token.
-        schema:
-          type: string
-      - name: api-version
-        in: query
-        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          headers:
-            X-MS-ContinuationToken:
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/GraphGroup'
+    #get:
+    #  tags:
+    #  - Groups
+    #  description: "Gets a list of all groups in the current scope (usually organization or account).\n\nThe optional parameters\
+    #    \ are used to filter down the returned results. Returned results are in no guaranteed order.\n\n Since the list of\
+    #    \ groups may be large, results are returned in pages of groups.  If there are more results\n than can be returned\
+    #    \ in a single page, the result set will contain a continuation token for retrieval of the\n next set of results."
+    #  operationId: Groups_List
+    #  parameters:
+    #  - name: organization
+    #    in: path
+    #    description: The name of the Azure DevOps organization.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  - name: scopeDescriptor
+    #    in: query
+    #    description: Specify a non-default scope (collection, project) to search for groups.
+    #    schema:
+    #      type: string
+    #  - name: subjectTypes
+    #    in: query
+    #    description: A comma separated list of user subject subtypes to reduce the retrieved results, e.g. Microsoft.IdentityModel.Claims.ClaimsIdentity
+    #    schema:
+    #      type: string
+    #      format: array (string)
+    #  - name: continuationToken
+    #    in: query
+    #    description: An opaque data blob that allows the next page of data to resume immediately after where the previous
+    #      page ended. The only reliable way to know if there is more data left is the presence of a continuation token.
+    #    schema:
+    #      type: string
+    #  - name: api-version
+    #    in: query
+    #    description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  responses:
+    #    '200':
+    #      description: successful operation
+    #      headers:
+    #        X-MS-ContinuationToken:
+    #          schema:
+    #            type: string
+    #      content:
+    #        application/json:
+    #          schema:
+    #            type: array
+    #            items:
+    #              $ref: '#/components/schemas/GraphGroup'
       #security:
       #- oauth2:
       #  - vso.graph
@@ -294,6 +294,80 @@ paths:
     #     ? ''
     #     : $ref: ./httpExamples/Groups/UpdateGroup.json
     #   x-codegen-request-body-name: body
+  /plugin/{organization}/graph/groups:
+    get:
+      servers:
+        - url: {{ include "graphgroup.webServiceUrl" . }}
+          description: URL of the Azure DevOps RDC plugin
+      tags:
+        - Graph Groups
+      summary: Get graph groups with optional filtering
+      description: Retrieve graph groups from Azure DevOps. When scopeDescriptor is not provided, filters out project-level groups to return only organization-level groups.
+      operationId: get-graphgroups
+      parameters:
+        - name: organization
+          in: path
+          description: Organization name
+          required: true
+          schema:
+            type: string
+        - name: scopeDescriptor
+          in: query
+          description: Scope descriptor (e.g., project descriptor). When provided, returns all groups within that scope without filtering.
+          schema:
+            type: string
+        - name: subjectTypes
+          in: query
+          description: Comma-separated list of subject types to filter by
+          schema:
+            type: string
+        - name: continuationToken
+          in: query
+          description: Continuation token for pagination
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.1)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Retrieved graph groups with filtering metadata
+          headers:
+            X-MS-ContinuationToken:
+              description: Continuation token for pagination (if more results available)
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/graphgroup.GraphGroupsResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
 components:
   schemas:
     GraphGroup:
@@ -304,36 +378,9 @@ components:
       description: Graph group entity
       allOf:
       - $ref: '#/components/schemas/GraphMember'
-    #GraphGroupCreationContextUnified:
-    #  type: object
-    #  properties:
-    #    # Base properties (from GraphGroupCreationContext)
-    #    storageKey:
-    #      type: string
-    #      description: 'Optional: If provided, we will use this identifier for the storage key of the created group'
-    #      format: uuid
-    #    # VSTS Group properties (from GraphGroupVstsCreationContext)
-    #    displayName:
-    #      type: string
-    #      description: 'Used by VSTS groups; if set this will be the group DisplayName'
-    #    description:
-    #      type: string
-    #      description: 'Used by VSTS groups; if set this will be the group description'
-    #    # AAD Group properties via mail address (from GraphGroupMailAddressCreationContext)
-    #    mailAddress:
-    #      type: string
-    #      description: 'This should be the mail address of the group in the source AD or AAD provider. Example: jamal@contoso.com. Team Services will communicate with the source provider to fill all other fields on creation.'
-    #    # AAD Group properties via origin ID (from GraphGroupOriginIdCreationContext)
-    #    originId:
-    #      type: string
-    #      description: 'This should be the object id or sid of the group from the source AD or AAD provider. Example: d47d025a-ce2f-4a79-8618-e8862ade30dd. Team Services will communicate with the source provider to fill all other fields on creation.'
-    #  description: 'Unified creation context supporting multiple group creation scenarios: VSTS native groups (use displayName/description), AAD groups via mail address (use mailAddress), or AAD groups via origin ID (use originId). Provide the fields appropriate for your use case.'
-    
-    
     GraphGroupCreationContextUnified:
       type: object
       allOf:
-      - $ref: '#/components/schemas/GraphGroupCreationContext'
       - $ref: '#/components/schemas/GraphGroupVstsCreationContext'
       - $ref: '#/components/schemas/GraphGroupMailAddressCreationContext'
       - $ref: '#/components/schemas/GraphGroupOriginIdCreationContext'
@@ -341,11 +388,6 @@ components:
         \ VSTS native groups (use displayName/description), AAD groups via mail address\
         \ (use mailAddress), or AAD groups via origin ID (use originId). Provide the fields\
         \ appropriate for your use case."
-
-
-
-
-
     GraphGroupCreationContext:
       type: object
       properties:
@@ -408,30 +450,6 @@ components:
         an external provider.
       allOf:
       - $ref: '#/components/schemas/GraphGroupCreationContext'
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     GraphMember:
       properties:
         domain:
@@ -543,6 +561,52 @@ components:
           description: The readonly view of the links.  Because Reference links are readonly, we only want to expose them
             as read only.
       description: The class to represent a collection of REST reference links.
+    # Additional Schemas for Plugin Endpoint
+    graphgroup.GraphGroup:
+      type: object
+      properties:
+        _links:
+          type: object
+          additionalProperties: true
+        description:
+          type: string
+        descriptor:
+          type: string
+        displayName:
+          type: string
+        domain:
+          type: string
+        isCrossProject:
+          type: boolean
+        mailAddress:
+          type: string
+        origin:
+          type: string
+        originId:
+          type: string
+        principalName:
+          type: string
+        subjectKind:
+          type: string
+        url:
+          type: string
+    graphgroup.GraphGroupsResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Count after filtering (equals originalCount if no filtering)
+        numberOfFilteredOut:
+          type: integer
+          description: Number of groups filtered out (0 if no filtering)
+        originalCount:
+          type: integer
+          description: Original count from Azure DevOps API
+        value:
+          type: array
+          description: Array of graph groups
+          items:
+            $ref: '#/components/schemas/graphgroup.GraphGroup'
   #parameters:
   #  api-Version-preview.1:
   #    name: api-version

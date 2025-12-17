@@ -15,5 +15,5 @@ spec:
   organization: krateo-kog
 
   # VSTS group creation fields
-  displayName: Test Group from KOG 00001
-  description: Test group created via Krateo OASGen Provider
+  displayName: test1
+  description: test_description

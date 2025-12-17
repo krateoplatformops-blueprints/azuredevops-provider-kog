@@ -22,6 +22,10 @@ This document serves as a troubleshooting guide for the Krateo Azure DevOps Prov
 - [PolicyConfiguration](#policyconfiguration)
 - [PipelinePermission](#pipelinepermission)
   - [PipelinePermission for Agent Pools](#pipelinepermission-for-agent-pools)
+- [GraphGroup](#graphgroup)
+  - [Adding non-VS groups with custom scope (project level)](#adding-non-vs-groups-with-custom-scope-project-level)
+  - [Setting multiple `groupDescriptors` for nested groups](#setting-multiple-groupdescriptors-for-nested-groups)
+  - [AAD Groups not listed in Graph Groups API if not nested](#aad-groups-not-listed-in-graph-groups-api-if-not-nested) d
 
 ## GitRepository 
 
@@ -257,9 +261,77 @@ curl -X GET "https://dev.azure.com/<ORG>/<PROJECT>/_apis/policy/types?api-versio
 
 Unlike other Azure DevOps resources, the field `projectId` in the Team resource can only accept the **Project ID** (a UUID) and not the Project Name.
 This is due to the fact that the Azure DevOps REST API for Teams returns always the Project ID in the response, even if the Team was created using the Project Name. This difference would lead to infinite reconciliation loops in the controller if the Project Name was used.
+For instance, if you create a Team with `projectId: MyProject`, the API will return `projectId: 850e8400-e29b-41d4-a716-446655440000` (the actual Project ID), causing the controller to think that the resource is out of sync and attempt to update it again with `projectId: MyProject`, leading to an infinite loop.
 
 ## PipelinePermission
 
 ### PipelinePermission for Agent Pools
 
 In the case of managing a `PipelinePermission` for an Agent Pool, the `resourceType` should be set to `queue`. [Reference on StackOverflow](https://stackoverflow.com/questions/77258168/how-to-update-azure-pipeline-permissions-for-resource-using-cli#comment139630674_77258662).
+
+## GraphGroup
+
+Plugin to be implemented:
+
+if scopeDescriptor is not set
+it means the group searched is at organization level
+so we want to filter out all project level groups
+so if they have
+"domain": "vstfs:///Classification/TeamProject/
+then the proxied response should filter them out
+
+if instead, scopeDescriptor is set, we are already scoping to a project (native behavior of the AzureDevops API)
+and so we don't need to filter anything
+
+note also that project level groups cannot be AAD groups (materialized by mail or originId), so no need to worry about that case
+
+### Adding non-VS groups with custom scope (project level)
+
+When trying to add a non-Visual Studio created group (e.g., an AAD group) to a custom scope (e.g., a project level scope) in Azure DevOps, an error is encountered.
+
+Reference error:
+```json
+{
+  "$id": "1",
+  "errorCode": 0,
+  "eventId": 3000,
+  "innerException": null,
+  "message": "VS860004: Only Visual Studio created groups can be added to a custom scope.",
+  "typeKey": "GraphBadRequestException",
+  "typeName": "Microsoft.VisualStudio.Services.Graph.GraphBadRequestException, Microsoft.VisualStudio.Services.WebApi"
+}
+```
+
+### Setting multiple `groupDescriptors` for nested groups
+
+An error is experienced when trying to set more than one `groupDescriptor` for nested groups in Azure DevOps.
+Reference error:
+```json
+{
+  "$id": "1",
+  "errorCode": 0,
+  "eventId": 0,
+  "innerException": null,
+  "message": "Given identifier length is out of range of valid values.\r\nParameter name: identifier\r\nActual value was vssgp.Uy0xLTktMTU1MTM3NDI0NS0yMzgyNjQzNzU1LTExODE2NjQzMjMtMzEwNTYzNjM2Ni00MjA0NjczODI2LTEtNjU2MTUwMTQzLTM3NTk4OTk3MTItMjIxMjU1NjYyMi0yMzI3NjU1NTkz,vssgp.Uy0xLTktMTU1MTM3NDI0NS0yMzgyNjQzNzU1LTExODE2NjQzMjMtMzEwNTYzNjM2Ni00MjA0NjczODI2LTEtMTAwOTI3ODYzMi0zMDcyMjM3MTI2LTMxNDYxODc2MDEtMjMxOTM2MjE4.",
+  "typeKey": "ArgumentOutOfRangeException",
+  "typeName": "System.ArgumentOutOfRangeException, mscorlib"
+}
+```
+
+Currently, no solution has been found to this issue.
+
+### AAD Groups not listed in Graph Groups API if not nested
+
+If a AAD group is materialized (by mail or originId) into Azure DevOps, **without being nested under another group** using the `groupDescriptors` field, it will not be listed in the response of the API for listing groups.
+
+An example scenario:
+- `GET /{organization}/_apis/graph/groups` does not list the group
+- but `GET /{organization}/_apis/graph/groups/{groupDescriptor}` can fetch it
+- and it can be deleted too using `DELETE /{organization}/_apis/graph/groups/{groupDescriptor}`
+
+This can also be verified in the Azure DevOps portal when navigating to the Organization Settings -> Permissions -> Groups page: https://dev.azure.com/krateo-kog/_settings/groups.
+
+However, the group can still be accessed directly if you know its descriptor, for example: https://dev.azure.com/krateo-kog/_settings/groups?subjectDescriptor=aadgp.AAABBBCCC
+
+Currently, no solution has been found to this issue.
+

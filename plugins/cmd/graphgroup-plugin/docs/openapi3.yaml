@@ -1,0 +1,135 @@
+openapi: 3.0.1
+info:
+  title: Azure DevOps GraphGroup Plugin API for Krateo Operator Generator (KOG)
+  description: Proxy wrapper around Azure DevOps Graph Groups API that filters organization-level groups when scopeDescriptor is not provided
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Krateo Support
+    url: https://krateo.io
+    email: contact@krateoplatformops.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: "1.0"
+servers:
+  - url: http://localhost:8080/
+paths:
+  /plugin/{organization}/graph/groups:
+    get:
+      tags:
+        - Graph Groups
+      summary: Get graph groups with optional filtering
+      description: Retrieve graph groups from Azure DevOps. When scopeDescriptor is not provided, filters out project-level groups to return only organization-level groups.
+      operationId: get-graphgroups
+      parameters:
+        - name: organization
+          in: path
+          description: Organization name
+          required: true
+          schema:
+            type: string
+        - name: scopeDescriptor
+          in: query
+          description: Scope descriptor (e.g., project descriptor). When provided, returns all groups within that scope without filtering.
+          schema:
+            type: string
+        - name: subjectTypes
+          in: query
+          description: Comma-separated list of subject types to filter by
+          schema:
+            type: string
+        - name: continuationToken
+          in: query
+          description: Continuation token for pagination
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.1)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Retrieved graph groups with filtering metadata
+          headers:
+            X-MS-ContinuationToken:
+              description: Continuation token for pagination (if more results available)
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/graphgroup.GraphGroupsResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  schemas:
+    graphgroup.GraphGroup:
+      type: object
+      properties:
+        _links:
+          type: object
+          additionalProperties: true
+        description:
+          type: string
+        descriptor:
+          type: string
+        displayName:
+          type: string
+        domain:
+          type: string
+        isCrossProject:
+          type: boolean
+        mailAddress:
+          type: string
+        origin:
+          type: string
+        originId:
+          type: string
+        principalName:
+          type: string
+        subjectKind:
+          type: string
+        url:
+          type: string
+    graphgroup.GraphGroupsResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Count after filtering (equals originalCount if no filtering)
+        numberOfFilteredOut:
+          type: integer
+          description: Number of groups filtered out (0 if no filtering)
+        originalCount:
+          type: integer
+          description: Original count from Azure DevOps API
+        value:
+          type: array
+          description: Array of graph groups
+          items:
+            $ref: '#/components/schemas/graphgroup.GraphGroup'
+x-original-swagger-version: "2.0"
