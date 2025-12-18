@@ -304,7 +304,7 @@ Reference error:
 
 ### Setting multiple `groupDescriptors` for nested groups
 
-An error is experienced when trying to set more than one `groupDescriptor` for nested groups in Azure DevOps.
+An error could be experienced when trying to set more than one `groupDescriptor` for nested groups in Azure DevOps.
 Reference error:
 ```json
 {
@@ -318,6 +318,7 @@ Reference error:
 }
 ```
 
+It is not known if this behavior can be experienced only in certain scenarios or every time multiple `groupDescriptors` are set.
 Currently, no solution has been found to this issue.
 
 ### AAD Groups not listed in Graph Groups API if not nested
@@ -335,3 +336,13 @@ However, the group can still be accessed directly if you know its descriptor, fo
 
 Currently, no solution has been found to this issue.
 
+
+{
+  "$id": "1",
+  "errorCode": 0,
+  "eventId": 4207,
+  "innerException": null,
+  "message": "TF50258: An error occurred finding the group. There is no group with the security identifier (SID) S-1-9-1551374245-1204400969-2402986413-2179408616-3-1968947946-954710338-3207406156-2488723893.",
+  "typeKey": "FindGroupSidDoesNotExistException",
+  "typeName": "Microsoft.VisualStudio.Services.Identity.FindGroupSidDoesNotExistException, Microsoft.VisualStudio.Services.WebApi"
+}

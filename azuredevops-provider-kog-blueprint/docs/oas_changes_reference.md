@@ -13,6 +13,7 @@ Note that the changes are made to **comply with some requirements** of the OASGe
 - [RepositoryPermission](#repositorypermission)
 - [BuildPermission](#buildpermission)
 - [Team](#team)
+- [GraphGroup](#graphgroup)
 
 ## `GitRepository`
 

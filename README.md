@@ -21,37 +21,14 @@ The resources in Kubernetes are the **source of truth** for the corresponding Az
   - [Helm Lookup functions example](#helm-lookup-functions-example)
 - [Supported resources](#supported-resources)
   - [GitRepository](#gitrepository)
-    - [GitRepository operations](#gitrepository-operations)
-    - [GitRepository schema](#gitrepository-schema)
-    - [GitRepository example CR](#gitrepository-example-cr)
   - [Pipeline](#pipeline)
-    - [Pipeline operations](#pipeline-operations)
-    - [Pipeline schema](#pipeline-schema)
-    - [Pipeline example CR](#pipeline-example-cr)
   - [PipelinePermission](#pipelinepermission)
-    - [PipelinePermission operations](#pipelinepermission-operations)
-    - [PipelinePermission schema](#pipelinepermission-schema)
-    - [PipelinePermission example CR](#pipelinepermission-example-cr)
   - [PullRequest](#pullrequest)
-    - [PullRequest operations](#pullrequest-operations)
-    - [PullRequest schema](#pullrequest-schema)
-    - [PullRequest example CR](#pullrequest-example-cr)
   - [PolicyConfiguration](#policyconfiguration)
-    - [PolicyConfiguration operations](#policyconfiguration-operations)
-    - [PolicyConfiguration schema](#policyconfiguration-schema)
-    - [PolicyConfiguration example CR](#policyconfiguration-example-cr)
   - [RepositoryPermission](#repositorypermission)
-    - [RepositoryPermission operations](#repositorypermission-operations)
-    - [RepositoryPermission schema](#repositorypermission-schema)
-    - [RepositoryPermission example CR](#repositorypermission-example-cr)
   - [BuildPermission](#buildpermission)
-    - [BuildPermission operations](#buildpermission-operations)
-    - [BuildPermission schema](#buildpermission-schema)
-    - [BuildPermission example CR](#buildpermission-example-cr)
   - [Team](#team)
-    - [Team operations](#team-operations)
-    - [Team schema](#team-schema)
-    - [Team example CR](#team-example-cr)
+  - [GraphGroup](#graphgroup)
 - [Authentication](#authentication)
 - [Configuration](#configuration)
   - [Configuration resources](#configuration-resources)
@@ -200,6 +177,7 @@ As a matter of fact, currently, this chart allows you to manage the following re
 - `RepositoryPermission`
 - `BuildPermission`
 - `Team`
+- `GraphGroup`
 
 Other resources (`TeamProject`, `Queue`, `Environment`, etc.) can be managed using the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
 For example, you can create a `PipelinePermission` resource that references an `Environment` resource created by the Azure DevOps Provider (classic).
@@ -218,6 +196,7 @@ Note that the following resources:
 - `PolicyConfiguration`
 - `RepositoryPermission`
 - `Team`
+- `GraphGroup` (called `Groups` with final `s` in the Azure DevOps Provider (classic))
 
 are supported by both the Azure DevOps Provider (classic) and the Azure DevOps Provider KOG and migration guides are available in the [Migration guide](./azuredevops-provider-kog-blueprint/docs/migration-guides/) folder of the `/docs` folder of the main chart.
 The migration guide explains how to migrate from the Azure DevOps Provider (classic) resources to the Azure DevOps Provider KOG resources whenever possible.
@@ -279,9 +258,10 @@ This chart supports the following resources and operations:
 | RepositoryPermission| ✅   | 🚫 Not supported    | ✅     | 🚫 Not supported |
 | BuildPermission     | ✅   | 🚫 Not supported    | ✅     | 🚫 Not supported |
 | Team                | ✅   | ✅                  | ✅     | ✅     |
+| GraphGroup          | ✅   | ✅                  | 🚫 Not supported     | ✅     |
 
 > [!NOTE]  
-> 🚫 *"Not supported"* means that the operation is not supported by the resource (e.g., the underlying REST API does not support it and therefore the controller does not implement it) or the operation is not applicable to the resource due to the nature of the resource.
+> 🚫 *"Not supported"* means that the operation is not supported by the resource (e.g., the underlying REST API does not support it and therefore the controller does not implement it), the operation is not applicable to the resource due to the nature of the resource or the operation is not implemented in this provider version.
 
 The resources listed above are Custom Resources (CRs) defined in the `azuredevops.ogen.krateo.io` API group. They are used to manage Azure DevOps resources in a Kubernetes-native way, allowing you to create, update, and delete Azure DevOps resources using Kubernetes manifests.
 
@@ -443,6 +423,8 @@ Note: if you set `allPipelines.authorized` to `true`, and also specify individua
 - All pipelines in the project will be authorized to use the resource.
 - If you manually remove the newly added "global" permission named "No restrictions - Any pipeline may use this resource" in the Azure DevOps UI, then only the pipelines specified in the `pipelines` array will remain authorized.
 
+#### PipelinePermission example CR
+
 An example of a `PipelinePermission` resource is:
 <details>
 <summary><b> PipelinePermission Example</b></summary>
@@ -495,6 +477,8 @@ The `PullRequest` resource is used to manage Azure DevOps pull requests.
 The `PullRequest` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/pullrequest.md).
 
 The `PullRequest` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/pullrequest-crd.yaml).
+
+#### PullRequest example CR
 
 An example of a `PullRequest` resource is:
 <details>
@@ -556,6 +540,8 @@ The `PolicyConfiguration` resource is used to manage Azure DevOps policy configu
 The `PolicyConfiguration` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/policyconfiguration.md).
 
 The `PolicyConfiguration` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/policyconfiguration-crd.yaml).
+
+#### PolicyConfiguration example CR
 
 An example of a `PolicyConfiguration` resource is:
 <details>
@@ -626,6 +612,8 @@ The `RepositoryPermission` CRD reference can found [here](./azuredevops-provider
 
 The `RepositoryPermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/repositorypermission-crd.yaml).
 
+#### RepositoryPermission example CR
+
 An example of a `RepositoryPermission` resource is:
 <details>
 <summary><b> RepositoryPermission Example</b></summary>
@@ -690,6 +678,8 @@ The `BuildPermission` CRD reference can found [here](./azuredevops-provider-kog-
 
 The `BuildPermission` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/buildpermission-crd.yaml).
 
+#### BuildPermission example CR
+
 An example of a `BuildPermission` resource is:
 <details>
 <summary><b> BuildPermission Example</b></summary>
@@ -744,11 +734,13 @@ The `Team` resource is used to manage teams in Azure DevOps.
 - **Create**: You can create a new team in Azure DevOps.
 - **Delete**: You can delete an existing team. This will remove the team from Azure DevOps.
 
-#### BuildPermission schema
+#### Team schema
 
 The `Team` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/team.md).
 
 The `Team` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/team-crd.yaml).
+
+#### Team example CR
 
 An example of a `Team` resource is:
 <details>
@@ -772,6 +764,56 @@ spec:
   projectId: 99837031-4e4e-4753-9a47-73fcc4cba766 # Note: this must be a projectId, not a project name since the API returns id in the response
   description: "Team created via KOG, test 00001"
   name: Team-KOG-00001
+```
+
+</details>
+
+---
+
+### GraphGroup
+
+The `GraphGroup` resource is used to manage GraphGroups in Azure DevOps.
+
+#### GraphGroup operations
+
+- **Get**: You can retrieve information about an existing GraphGroup in Azure DevOps.
+- **Create**: You can create a new GraphGroup in Azure DevOps (VSTS group or a group materialized from an AAD group).
+- **Delete**: You can delete an existing GraphGroup. This will remove the GraphGroup from Azure DevOps.
+
+#### GraphGroup schema
+
+The `GraphGroup` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/graphgroup.md).
+
+The `GraphGroup` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/graphgroup-crd.yaml).
+
+#### GraphGroup example CR
+
+An example of a `GraphGroup` resource is:
+<details>
+<summary><b> GraphGroup Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: GraphGroup
+metadata:
+  name: test-graphgroup-00001
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # Reference to the configuration CR
+  configurationRef:
+    name: my-graphgroup-config
+    namespace: default
+
+  # Azure DevOps organization name
+  organization: krateo-kog
+
+  # VSTS group creation fields
+  displayName: test1
+  description: test_description
+
 ```
 
 </details>
@@ -874,6 +916,7 @@ Currently, the supported configuration resources are:
 - `RepositoryPermissionConfiguration`
 - `BuildPermissionConfiguration`
 - `TeamConfiguration`
+- `GraphGroupConfiguration`
 
 These configuration resources are used to store the authentication information (i.e., reference to the Kubernetes Secret containing the Azure DevOps PAT) and other configuration options for the resource type.
 

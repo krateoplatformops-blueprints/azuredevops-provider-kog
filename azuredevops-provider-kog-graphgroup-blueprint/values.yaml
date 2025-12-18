@@ -44,6 +44,19 @@ service:
   type: ClusterIP
   port: 8080
 
+# Health check configuration for Kubernetes probes
+healthChecks:
+  livenessProbe:
+    initialDelaySeconds: 15
+    periodSeconds: 180
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 180
+    timeoutSeconds: 10
+    failureThreshold: 2
+
 ingress:
   enabled: false
   className: ""

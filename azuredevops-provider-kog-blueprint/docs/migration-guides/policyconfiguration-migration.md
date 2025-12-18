@@ -58,9 +58,9 @@ spec:
       id: "0609b952-1397-4640-95ec-e00a01b2c241"
 ```
 
-Note: the `id` field in the `type` section corresponds to the policy description: *"This policy will require a successful build has been performed before updating protected refs."*. You can find more information about the policy types in the related section of the [troubleshooting guide](../troubleshooting_guide.md#policyconfiguration)
-
-Note that the `Policy` resource is referecing a `ConnectorConfig` resource, a `Project` resource and a `GitRepository` resource, which are by the Azure DevOps Provider "classic".
+Note that:
+- the `Policy` resource is referecing a `ConnectorConfig` resource, a `Project` resource and a `GitRepository` resource, which are by the Azure DevOps Provider "classic".
+- the `id` field in the `type` section corresponds to the policy description: *"This policy will require a successful build has been performed before updating protected refs."*. You can find more information about the policy types in the related section of the [troubleshooting guide](../troubleshooting_guide.md#policyconfiguration)
 
 To ensure that the old version of the resource is not reconciled while you are migrating to the new version, you should set the `krateo.io/paused: true` annotation.
 You can do this by running the following commands:
