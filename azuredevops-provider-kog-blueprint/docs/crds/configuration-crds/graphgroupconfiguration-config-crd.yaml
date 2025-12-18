@@ -3,11 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: "2025-12-09T15:08:22Z"
-  generation: 1
   name: graphgroupconfigurations.azuredevops.ogen.krateo.io
-  resourceVersion: "4585410"
-  uid: fa2315a4-56a5-4c23-9002-f2b7214704c6
 spec:
   conversion:
     strategy: None
@@ -109,7 +105,6 @@ spec:
                           api-version:
                             type: string
                           subjectTypes:
-                            description: '(format: array (string))'
                             type: string
                         required:
                         - api-version
@@ -128,26 +123,3 @@ spec:
     served: true
     storage: true
     subresources: {}
-status:
-  acceptedNames:
-    categories:
-    - graphgroup
-    - restconfigs
-    - rc
-    kind: GraphGroupConfiguration
-    listKind: GraphGroupConfigurationList
-    plural: graphgroupconfigurations
-    singular: graphgroupconfiguration
-  conditions:
-  - lastTransitionTime: "2025-12-09T15:08:22Z"
-    message: no conflicts found
-    reason: NoConflicts
-    status: "True"
-    type: NamesAccepted
-  - lastTransitionTime: "2025-12-09T15:08:22Z"
-    message: the initial names have been accepted
-    reason: InitialNamesAccepted
-    status: "True"
-    type: Established
-  storedVersions:
-  - v1alpha1

@@ -3,11 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: "2025-12-09T16:04:52Z"
-  generation: 1
   name: graphgroups.azuredevops.ogen.krateo.io
-  resourceVersion: "4595596"
-  uid: fd4b2cef-05f3-4092-b290-89cfc70abfa4
 spec:
   conversion:
     strategy: None
@@ -88,7 +84,7 @@ spec:
                   on creation.'
                 type: string
               organization:
-                description: 'PARAMETER: path - The name of the Azure DevOps organization.'
+                description: 'PARAMETER: path - Organization name'
                 type: string
               originId:
                 description: 'This should be the object id or sid of the group from
@@ -97,8 +93,8 @@ spec:
                   all other fields on creation.'
                 type: string
               scopeDescriptor:
-                description: 'PARAMETER: query - Specify a non-default scope (collection,
-                  project) to search for groups.'
+                description: 'PARAMETER: query - Scope descriptor (e.g., project descriptor).
+                  When provided, returns all groups within that scope without filtering.'
                 type: string
               storageKey:
                 description: 'Optional: If provided, we will use this identifier for
@@ -175,6 +171,10 @@ spec:
                 description: '[Internal Use Only] The legacy descriptor is here in
                   case you need to access old version IMS using identity descriptor.'
                 type: string
+              mailAddress:
+                description: The email address of record for a given graph member.
+                  This may be different than the principal name.
+                type: string
               origin:
                 description: The type of source provider for the origin identifier
                   (ex:AD, AAD, MSA)
@@ -205,26 +205,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    categories:
-    - graphgroup
-    - restresources
-    - rr
-    kind: GraphGroup
-    listKind: GraphGroupList
-    plural: graphgroups
-    singular: graphgroup
-  conditions:
-  - lastTransitionTime: "2025-12-09T16:04:52Z"
-    message: no conflicts found
-    reason: NoConflicts
-    status: "True"
-    type: NamesAccepted
-  - lastTransitionTime: "2025-12-09T16:04:52Z"
-    message: the initial names have been accepted
-    reason: InitialNamesAccepted
-    status: "True"
-    type: Established
-  storedVersions:
-  - v1alpha1

@@ -22,7 +22,7 @@ spec:
     - url
     - _links
     excludedSpecFields:
-    - groupDescriptor       # Populated from status.descriptor after creation using requestFieldMapping
+    - groupDescriptor       # Populated from status.descriptor after creation using requestFieldMapping, not availabke at create time
     - continuationToken
     - crossProject          # legacy field
     - restrictedVisibility  # legacy field

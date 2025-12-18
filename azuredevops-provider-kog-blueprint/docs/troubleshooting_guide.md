@@ -335,14 +335,3 @@ This can also be verified in the Azure DevOps portal when navigating to the Orga
 However, the group can still be accessed directly if you know its descriptor, for example: https://dev.azure.com/krateo-kog/_settings/groups?subjectDescriptor=aadgp.AAABBBCCC
 
 Currently, no solution has been found to this issue.
-
-
-{
-  "$id": "1",
-  "errorCode": 0,
-  "eventId": 4207,
-  "innerException": null,
-  "message": "TF50258: An error occurred finding the group. There is no group with the security identifier (SID) S-1-9-1551374245-1204400969-2402986413-2179408616-3-1968947946-954710338-3207406156-2488723893.",
-  "typeKey": "FindGroupSidDoesNotExistException",
-  "typeName": "Microsoft.VisualStudio.Services.Identity.FindGroupSidDoesNotExistException, Microsoft.VisualStudio.Services.WebApi"
-}
