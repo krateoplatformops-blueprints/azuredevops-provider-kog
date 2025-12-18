@@ -193,7 +193,7 @@ Note that the following resources:
 - `Pipeline`
 - `PipelinePermission` 
 - `PullRequest`
-- `PolicyConfiguration`
+- `PolicyConfiguration` (called `Policy` in the Azure DevOps Provider (classic))
 - `RepositoryPermission`
 - `Team`
 - `GraphGroup` (called `Groups` with final `s` in the Azure DevOps Provider (classic))
