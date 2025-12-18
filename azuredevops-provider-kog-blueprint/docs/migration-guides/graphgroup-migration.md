@@ -153,6 +153,7 @@ EOF
 ```
 
 Note that: 
+- `groupName` in the old `Groups` resource is mapped to `displayName` in the new `GraphGroup` resource which is aligned with the Azure DevOps REST API which uses `displayName` to define the name of a VSTS group.
 - `scopeDescriptor` is used to define the scope where the group will be created. In this case, it is set to a project scope descriptor, so the group will be created at the project level. You can retrieve the scope descriptor of a project by using the Azure DevOps REST API. Currently there is not a resource in Azure DevOps Provider KOG representing descriptors, so you need to retrieve it manually.
 - `groupDescriptors` is used to add the new group as a member of existing groups. Group descriptors can be found in the status of existing `GraphGroup` resources or `Groups` resources managed by Azure DevOps Provider (classic).
 
@@ -193,13 +194,13 @@ At this point, you can proceed to delete the old `Groups` resource managed by Az
 
 First, you can delete the old `Groups` resource managed by Azure DevOps Provider (classic):
 ```sh
-kubectl delete groups.azuredevops.krateo.io group-1
+kubectl delete groups.azuredevops.krateo.io group-test
 ```
 
 You need also to change the `krateo.io/paused` annotation to `false` to allow the resource to be deleted.
 Either you `CTRL+C` the previous command (that is hanging) and run the following command, or you can run it in a separate terminal:
 ```sh
-kubectl annotate groups.azuredevops.krateo.io group-1 --overwrite "krateo.io/paused=false"
+kubectl annotate groups.azuredevops.krateo.io group-test --overwrite "krateo.io/paused=false"
 ```
 
 At this point, the migration of the `Groups` resource from Azure DevOps Provider (classic) to Azure DevOps Provider KOG is complete.
