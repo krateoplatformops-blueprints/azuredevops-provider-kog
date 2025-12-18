@@ -1,5 +1,7 @@
 # `Pipeline` migration example
 
+## Scenario
+
 **Starting point**: `Pipeline` resource managed by Azure DevOps Provider "classic".
 **Ending point**: `Pipeline` resource managed by Azure DevOps Provider KOG.
 Note: the external resource (`Pipeline` on Azure DevOps) will be the same.
@@ -14,6 +16,10 @@ NAME                                SHORTNAMES   APIVERSION                     
 pipelines                                        azuredevops.ogen.krateo.io/v1alpha1   true         Pipeline
 pipelines                                        azuredevops.krateo.io/v1alpha1        false        Pipeline
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `Pipeline` resource
 
 The **starting point** for this migration is the following example of a `Pipeline` resource managed by the Azure DevOps Provider "classic":
 ```yaml
@@ -93,6 +99,8 @@ status:
   url: https://dev.azure.com/krateo-kog/82575162-69b2-4a88-8fd7-bda0d05c0284/_apis/pipelines/65?revision=1
 ```
 
+### Step 2: Create the new `Pipeline` resource
+
 Now, you can create a new `Pipeline` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../README.md#pipeline-schema) file of this chart.
 You can apply the following example:
@@ -166,6 +174,8 @@ And the output should look like this:
 NAME         AGE   READY
 pipeline-1   86s   True
 ```
+
+### Step 3: Delete the old `Pipeline` resource
 
 At this point, you can proceed to delete the old `Pipeline` resource managed by Azure DevOps Provide "classic" (note the different API group).
 

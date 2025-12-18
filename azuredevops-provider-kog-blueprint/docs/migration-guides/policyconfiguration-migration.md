@@ -1,5 +1,7 @@
 # `PolicyConfiguration` migration example
 
+## Scenario
+
 Note that the name of the resource in Azure DevOps Provider KOG is `PolicyConfiguration`, while in Azure DevOps Provider (classic) it is `Policy`.
 The rationale behind this change is to be more aligned with the original naming used by Azure DevOps REST API.
 Thus, the migration involves also a change in the kind of the resource.
@@ -25,6 +27,10 @@ Output:
 NAME                                 SHORTNAMES   APIVERSION                            NAMESPACED   KIND
 policyconfigurations                              azuredevops.ogen.krateo.io/v1alpha1   true         PolicyConfiguration
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `Policy` resource
 
 The **starting point** for this migration is the following example of a `Policy` resource managed by the Azure DevOps Provider (classic):
 ```yaml
@@ -121,6 +127,8 @@ status:
 +    type: Synced
 ```
 
+### Step 2: Create the new `PolicyConfiguration` resource
+
 Now, you can create a new `PolicyConfiguration` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../../README.md#policyconfiguration-schema) file of this chart.
 You can apply the following example:
@@ -200,6 +208,8 @@ And the output should look like this:
 NAME       AGE    READY
 policy-1   10s    True
 ```
+
+### Step 3: Delete the old `Policy` resource
 
 At this point, you can proceed to delete the old `Policy` resource managed by Azure DevOps Provider (classic) (note the different API group and kind).
 

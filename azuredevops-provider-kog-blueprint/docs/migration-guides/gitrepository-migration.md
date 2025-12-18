@@ -1,5 +1,7 @@
 # `GitRepository` migration example
 
+## Scenario
+
 **Starting point**: `GitRepository` resource managed by Azure DevOps Provider (classic).
 **Ending point**: `GitRepository` resource managed by Azure DevOps Provider KOG.
 Note: the external resource (`GitRepository` on Azure DevOps) will be the same.
@@ -14,6 +16,10 @@ NAME                                SHORTNAMES   APIVERSION                     
 gitrepositories                                  azuredevops.ogen.krateo.io/v1alpha1   true         GitRepository
 gitrepositories                                  azuredevops.krateo.io/v1alpha1        false        GitRepository
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `GitRepository` resource
 
 The **starting point** for this migration is the following example of a `GitRepository` resource managed by the Azure DevOps Provider (classic):
 ```yaml
@@ -80,6 +86,8 @@ status:
 +    type: Synced
 ```
 
+### Step 2: Create the new `GitRepository` resource
+
 Now, you can create a new `GitRepository` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../README.md#gitrepository-schema) file of this chart.
 You can apply the following example:
@@ -139,6 +147,8 @@ And the output should look like this:
 NAME              AGE    READY
 gitrepository-1   10s    True
 ```
+
+#### Step 3: Delete the old `GitRepository` resource
 
 At this point, you can proceed to delete the old `GitRepository` resource managed by Azure DevOps Provider (classic) (note the different API group).
 

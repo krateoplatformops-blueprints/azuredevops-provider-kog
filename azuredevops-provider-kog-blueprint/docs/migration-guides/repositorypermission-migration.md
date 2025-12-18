@@ -1,5 +1,7 @@
 # `RepositoryPermission` migration example
 
+## Scenario
+
 **Starting point**: `RepositoryPermission` resource managed by Azure DevOps Provider (classic).
 **Ending point**: `RepositoryPermission` resource managed by Azure DevOps Provider KOG.
 Note: the external resource (`RepositoryPermission` on Azure DevOps) will be the same.
@@ -13,6 +15,10 @@ NAME                                 SHORTNAMES   APIVERSION                    
 repositorypermissions                             azuredevops.krateo.io/v1alpha1        false        RepositoryPermission
 repositorypermissions                             azuredevops.ogen.krateo.io/v1alpha1   true         RepositoryPermission
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `RepositoryPermission` resource
 
 The **starting point** for this migration is the following example of a `RepositoryPermission` resource managed by the Azure DevOps Provider (classic):
 ```yaml
@@ -104,6 +110,8 @@ status:
 +    type: Synced
 ```
 
+### Step 2: Create the new `RepositoryPermission` resource
+
 Now, you can create a new `RepositoryPermission` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../../README.md#repositorypermission-schema) file of this chart.
 You can apply the following example:
@@ -177,6 +185,8 @@ And the output should look like this:
 NAME              AGE    READY
 repository-permission-1   10s    True
 ```
+
+### Step 3: Delete the old `RepositoryPermission` resource
 
 At this point, you can proceed to delete the old `RepositoryPermission` resource managed by Azure DevOps Provider (classic) (note the different API group).
 

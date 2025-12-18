@@ -1,5 +1,7 @@
 # `GraphGroup` migration example
 
+## Scenario
+
 Note that the name of the resource in Azure DevOps Provider KOG is `GraphGroup`, while in Azure DevOps Provider (classic) it is `Groups`.
 The rationale behind this change is to be more aligned with the original naming used by Azure DevOps REST API.
 Thus, the migration involves also a change in the kind of the resource.
@@ -25,6 +27,10 @@ Output:
 NAME                                 SHORTNAMES   APIVERSION                            NAMESPACED   KIND
 graphgroups                                       azuredevops.ogen.krateo.io/v1alpha1   true         GraphGroup
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `Groups` resource
 
 The **starting point** for this migration is the following example of a `Groups` resource managed by the Azure DevOps Provider (classic):
 ```yaml
@@ -108,6 +114,8 @@ status:
 +    type: Synced
 ```
 
+### Step 2: Create the new `GraphGroup` resource
+
 Now, you can create a new `GraphGroup` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../../README.md#graphgroup-schema) file of this chart.
 You can apply the following example:
@@ -178,6 +186,8 @@ And the output should look like this:
 NAME         AGE    READY
 group-test   10s    True
 ```
+
+#### Step 3: Delete the old `Groups` resource
 
 At this point, you can proceed to delete the old `Groups` resource managed by Azure DevOps Provider (classic) (note the different API group).
 

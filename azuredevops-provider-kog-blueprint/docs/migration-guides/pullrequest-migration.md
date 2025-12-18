@@ -1,5 +1,7 @@
 # `PullRequest` migration example
 
+## Scenario
+
 **Starting point**: `PullRequest` resource managed by Azure DevOps Provider (classic).
 **Ending point**: `PullRequest` resource managed by Azure DevOps Provider KOG.
 Note: the external resource (`PullRequest` on Azure DevOps) will be the same.
@@ -13,6 +15,10 @@ NAME                                 SHORTNAMES   APIVERSION                    
 pullrequests                                      azuredevops.krateo.io/v1alpha1        false        PullRequest
 pullrequests                                      azuredevops.ogen.krateo.io/v1alpha1   true         PullRequest
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `PullRequest` resource
 
 The **starting point** for this migration is the following example of a `PullRequest` resource managed by the Azure DevOps Provider (classic):
 ```yaml
@@ -96,6 +102,8 @@ status:
 +    type: Synced
 ```
 
+### Step 2: Create the new `PullRequest` resource
+
 Now, you can create a new `PullRequest` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../../README.md#pullrequest-schema) file of this chart.
 You can apply the following example:
@@ -170,6 +178,8 @@ And the output should look like this:
 NAME     AGE   READY
 pullrequest-1   10s    True
 ```
+
+### Step 3: Delete the old `PullRequest` resource
 
 At this point, you can proceed to delete the old `PullRequest` resource managed by Azure DevOps Provider (classic) (note the different API group).
 

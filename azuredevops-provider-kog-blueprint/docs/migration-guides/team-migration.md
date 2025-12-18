@@ -1,5 +1,7 @@
 # `Team` migration example
 
+## Scenario
+
 **Starting point**: `Team` resource managed by Azure DevOps Provider (classic).
 **Ending point**: `Team` resource managed by Azure DevOps Provider KOG.
 Note: the external resource (`Team` on Azure DevOps) will be the same.
@@ -14,6 +16,10 @@ NAME                                 SHORTNAMES   APIVERSION                    
 teams                                             azuredevops.krateo.io/v1alpha1        false        Team
 teams                                             azuredevops.ogen.krateo.io/v1alpha1   true         Team
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `Team` resource
 
 The **starting point** for this migration is the following example of a `Team` resource managed by the Azure DevOps Provider (classic):
 ```yaml
@@ -90,6 +96,8 @@ status:
 +    type: Synced
 ```
 
+### Step 2: Create the new `Team` resource
+
 Now, you can create a new `Team` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../../README.md#team-schema) file of this chart.
 You can apply the following example:
@@ -149,6 +157,8 @@ And the output should look like this:
 NAME     AGE    READY
 team-1   10s    True
 ```
+
+### Step 3: Delete the old `Team` resource
 
 At this point, you can proceed to delete the old `Team` resource managed by Azure DevOps Provider (classic) (note the different API group).
 
