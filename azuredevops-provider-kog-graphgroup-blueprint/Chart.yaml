@@ -2,9 +2,8 @@ apiVersion: v2
 name: azuredevops-provider-kog-graphgroup
 description: A Helm chart for deploying the Azure DevOps KOG GraphGroup.
 type: application
-#version: GRAPHGROUP_CHART_VERSION
-version: 1.0.0
-#appVersion: GRAPHGROUP_APP_VERSION
+version: GRAPHGROUP_CHART_VERSION
+appVersion: GRAPHGROUP_APP_VERSION
 
 home: https://krateo.io
 icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
