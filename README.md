@@ -4,7 +4,7 @@
 
 This is a Helm chart that deploys the Azure DevOps Provider KOG leveraging the [OASGen Provider](https://github.com/krateoplatformops/oasgen-provider).
 This provider allows you to manage [Azure DevOps resources](https://azure.microsoft.com/en-us/products/devops) such as `GitRepository`, `Pipeline`, and `PipelinePermission` in a Kubernetes-native way using Custom Resources (CRs).
-The resources on Kubernetes will represent the corresponding resources on Azure DevOps, allowing you to create, update, and delete Azure DevOps resources using Kubernetes manifests. 
+The resources on Kubernetes will represent the corresponding resources on Azure DevOps, allowing you to create, update, and delete Azure DevOps resources using Kubernetes objects. 
 The resources in Kubernetes are the **source of truth** for the corresponding Azure DevOps resources.
 
 ## Summary
@@ -119,7 +119,7 @@ helm install azuredevops-provider-kog azuredevops-provider-kog \
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  --version 1.3.0 \
+  --version 1.4.0 \
   --wait
 ```
 
@@ -159,7 +159,7 @@ helm install azuredevops-provider-kog-gitrepository azuredevops-provider-kog-git
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  --version 1.3.0 \
+  --version 1.4.0 \
   --wait
 ```
 
