@@ -1,0 +1,207 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.18.0
+  name: graphgroups.azuredevops.ogen.krateo.io
+spec:
+  conversion:
+    strategy: None
+  group: azuredevops.ogen.krateo.io
+  names:
+    categories:
+    - graphgroup
+    - restresources
+    - rr
+    kind: GraphGroup
+    listKind: GraphGroupList
+    plural: graphgroups
+    singular: graphgroup
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              configurationRef:
+                description: A reference to the Configuration CR that holds all the
+                  needed configuration for this resource. OASGen Provider added this
+                  field automatically.
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    description: Namespace of the referenced Configuration CR. If
+                      not provided, the same namespace will be used.
+                    type: string
+                required:
+                - name
+                type: object
+              description:
+                description: Used by VSTS groups; if set this will be the group description,
+                  otherwise ignored
+                type: string
+              descriptor:
+                type: string
+              displayName:
+                description: Used by VSTS groups; if set this will be the group DisplayName,
+                  otherwise ignored
+                type: string
+              groupDescriptors:
+                description: 'PARAMETER: query - A comma separated list of descriptors
+                  referencing groups you want the graph group to join'
+                type: string
+              mailAddress:
+                description: 'This should be the mail address or the group in the
+                  source AD or AAD provider. Example: jamal@contoso.com Team Services
+                  will communicate with the source provider to fill all other fields
+                  on creation.'
+                type: string
+              organization:
+                description: 'PARAMETER: path - Organization name'
+                type: string
+              originId:
+                description: 'This should be the object id or sid of the group from
+                  the source AD or AAD provider. Example: d47d025a-ce2f-4a79-8618-e8862ade30dd
+                  Team Services will communicate with the source provider to fill
+                  all other fields on creation.'
+                type: string
+              scopeDescriptor:
+                description: 'PARAMETER: query - Scope descriptor (e.g., project descriptor).
+                  When provided, returns all groups within that scope without filtering.'
+                type: string
+              storageKey:
+                description: 'Optional: If provided, we will use this identifier for
+                  the storage key of the created group (format: uuid)'
+                type: string
+            required:
+            - configurationRef
+            - organization
+            type: object
+          status:
+            properties:
+              _links:
+                description: The class to represent a collection of REST reference
+                  links.
+                properties:
+                  links:
+                    description: The readonly view of the links.  Because Reference
+                      links are readonly, we only want to expose them as read only.
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                type: object
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  description: A Condition that may apply to a resource.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        LastTransitionTime is the last time this condition transitioned from one
+                        status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        A Message containing details about this condition's last transition from
+                        one status to another, if any.
+                      type: string
+                    reason:
+                      description: A Reason for this condition's last transition from
+                        one status to another.
+                      type: string
+                    status:
+                      description: Status of this condition; is it currently True,
+                        False, or Unknown?
+                      type: string
+                    type:
+                      description: |-
+                        Type of this condition. At most one of each condition type may apply to
+                        a resource at any point in time.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              descriptor:
+                description: The descriptor is the primary way to reference the graph
+                  subject while the system is running. This field will uniquely identify
+                  the same graph subject across both Accounts and Organizations.
+                type: string
+              displayName:
+                description: This is the non-unique display name of the graph subject.
+                  To change this field, you must alter its value in the source provider.
+                type: string
+              domain:
+                description: This represents the name of the container of origin for
+                  a graph member. (For MSA this is "Windows Live ID", for AD the name
+                  of the domain, for AAD the tenantID of the directory, for VSTS groups
+                  the ScopeId, etc)
+                type: string
+              legacyDescriptor:
+                description: '[Internal Use Only] The legacy descriptor is here in
+                  case you need to access old version IMS using identity descriptor.'
+                type: string
+              mailAddress:
+                description: The email address of record for a given graph member.
+                  This may be different than the principal name.
+                type: string
+              origin:
+                description: The type of source provider for the origin identifier
+                  (ex:AD, AAD, MSA)
+                type: string
+              originId:
+                description: The unique identifier from the system of origin. Typically
+                  a sid, object id or Guid. Linking and unlinking operations can cause
+                  this value to change for a user because the user is not backed by
+                  a different provider and has a different unique id in the new provider.
+                type: string
+              principalName:
+                description: This is the PrincipalName of this graph member from the
+                  source provider. The source provider may change this field over
+                  time and it is not guaranteed to be immutable for the life of the
+                  graph member by VSTS.
+                type: string
+              subjectKind:
+                description: 'This field identifies the type of the graph subject
+                  (ex: Group, Scope, User).'
+                type: string
+              url:
+                description: This url is the full route to the source resource of
+                  this graph subject.
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

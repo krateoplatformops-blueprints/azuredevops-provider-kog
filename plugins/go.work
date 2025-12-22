@@ -3,6 +3,7 @@ go 1.24.2
 use (
 	./cmd/buildpermission-plugin
 	./cmd/gitrepository-plugin
+	./cmd/graphgroup-plugin
 	./cmd/pipeline-plugin
 	./cmd/pipelinepermission-plugin
 	./cmd/pullrequest-plugin

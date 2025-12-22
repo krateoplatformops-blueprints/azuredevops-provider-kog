@@ -1,0 +1,642 @@
+openapi: 3.0.1
+info:
+  title: Graph
+  description: ''
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.2-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://vssps.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Groups
+paths:
+  /{organization}/_apis/graph/groups:
+    #get:
+    #  tags:
+    #  - Groups
+    #  description: "Gets a list of all groups in the current scope (usually organization or account).\n\nThe optional parameters\
+    #    \ are used to filter down the returned results. Returned results are in no guaranteed order.\n\n Since the list of\
+    #    \ groups may be large, results are returned in pages of groups.  If there are more results\n than can be returned\
+    #    \ in a single page, the result set will contain a continuation token for retrieval of the\n next set of results."
+    #  operationId: Groups_List
+    #  parameters:
+    #  - name: organization
+    #    in: path
+    #    description: The name of the Azure DevOps organization.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  - name: scopeDescriptor
+    #    in: query
+    #    description: Specify a non-default scope (collection, project) to search for groups.
+    #    schema:
+    #      type: string
+    #  - name: subjectTypes
+    #    in: query
+    #    description: A comma separated list of user subject subtypes to reduce the retrieved results, e.g. Microsoft.IdentityModel.Claims.ClaimsIdentity
+    #    schema:
+    #      type: string
+    #      format: array (string)
+    #  - name: continuationToken
+    #    in: query
+    #    description: An opaque data blob that allows the next page of data to resume immediately after where the previous
+    #      page ended. The only reliable way to know if there is more data left is the presence of a continuation token.
+    #    schema:
+    #      type: string
+    #  - name: api-version
+    #    in: query
+    #    description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  responses:
+    #    '200':
+    #      description: successful operation
+    #      headers:
+    #        X-MS-ContinuationToken:
+    #          schema:
+    #            type: string
+    #      content:
+    #        application/json:
+    #          schema:
+    #            type: array
+    #            items:
+    #              $ref: '#/components/schemas/GraphGroup'
+      #security:
+      #- oauth2:
+      #  - vso.graph
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: groups
+      #x-ms-vss-method: ListGroups
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/Groups/GetAllGroups.json
+    post:
+      tags:
+      - Groups
+      description: "Create a new Azure DevOps group or materialize an existing AAD group.\n\nThe body of the request must\
+        \ be a derived type of GraphGroupCreationContext:\n  * GraphGroupVstsCreationContext - Create a new Azure DevOps group\
+        \ that is not backed by an external provider.\n  * GraphGroupMailAddressCreationContext - Create a new group using\
+        \ the mail address as a reference to an existing group from an external AD or AAD backed provider.\n  * GraphGroupOriginIdCreationContext\
+        \ - Create a new group using the OriginID as a reference to a group from an external AD or AAD backed provider.\n\n\
+        \ Optionally, you can add the newly created group as a member of an existing Azure DevOps group and/or specify a custom\
+        \ storage key for the group."
+      operationId: Groups_Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: scopeDescriptor
+        in: query
+        description: A descriptor referencing the scope (collection, project) in which the group should be created. If omitted,
+          will be created in the scope of the enclosing account or organization. Valid only for VSTS groups.
+        schema:
+          type: string
+      - name: groupDescriptors
+        in: query
+        description: A comma separated list of descriptors referencing groups you want the graph group to join
+        schema:
+          type: string
+          format: array (string)
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The subset of the full graph group used to uniquely find the graph subject in an external provider.
+        content:
+          application/json:
+            schema:
+              # $ref: '#/components/schemas/GraphGroupCreationContext'  # Fixed: changed to unified schema
+              $ref: '#/components/schemas/GraphGroupCreationContextUnified'
+        required: true
+      responses:
+        #'200':
+        '201': # Fixed: changed response code from 200 to 201
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraphGroup'
+      #security:
+      #- oauth2:
+      #  - vso.graph_manage
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: groups
+      #x-ms-vss-method: CreateGroup
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  Create a Group at the account level:
+      #    $ref: ./httpExamples/Groups/CreateGroup.json
+      #  Create a Group at the project level:
+      #    $ref: ./httpExamples/Groups/CreateGroupInProject.json
+      #  Add an AAD Group by OID:
+      #    $ref: ./httpExamples/Groups/MaterializeAADGroupByOID.json
+      #  Add an AAD Group as member of a group:
+      #    $ref: ./httpExamples/Groups/MaterializeAADGroupByOIDAsMember.json
+      #  Add an AAD Group with a custom storage key:
+      #    $ref: ./httpExamples/Groups/MaterializeAADGroupByOIDWithStorageKey.json
+      #x-codegen-request-body-name: body
+  /{organization}/_apis/graph/groups/{groupDescriptor}:
+    get:
+      tags:
+      - Groups
+      description: 'Get a group by its descriptor.
+
+
+        The group will be returned even if it has been deleted from the account or has had all its memberships
+
+        deleted.'
+      operationId: Groups_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: groupDescriptor
+        in: path
+        description: The descriptor of the desired graph group.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraphGroup'
+      #security:
+      #- oauth2:
+      #  - vso.graph
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: groups
+      #x-ms-vss-method: GetGroup
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/Groups/GetGroup-AddRemoveAADGroupByOID.json
+    delete:
+      tags:
+      - Groups
+      description: "Removes an Azure DevOps group from all of its parent groups.\n\nThe group will still be visible, but membership\n\
+        \ checks for the group, and all descendants which derive membership through it, will return false.\u201D"
+      operationId: Groups_Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: groupDescriptor
+        in: path
+        description: The descriptor of the group to delete.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        #'200':
+        '204': # Fixed: changed response code from 200 to 204
+          description: successful operation
+          content: {}
+      #security:
+      #- oauth2:
+      #  - vso.graph_manage
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: groups
+      #x-ms-vss-method: DeleteGroup
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/Groups/DeleteGroup.json
+    # PATCH endpoint commented out - JsonPatchDocument format not supported by OASGen Provider
+    # Update functionality would require a plugin/middleware to convert standard updates to JSON Patch format
+    # patch:
+    #   tags:
+    #   - Groups
+    #   description: 'Update the properties of an Azure DevOps group.
+    #
+    #
+    #     Currently limited to only changing the description and account name.'
+    #   operationId: Groups_Update
+    #   parameters:
+    #   - name: organization
+    #     in: path
+    #     description: The name of the Azure DevOps organization.
+    #     required: true
+    #     schema:
+    #       type: string
+    #   - name: groupDescriptor
+    #     in: path
+    #     description: The descriptor of the group to modify.
+    #     required: true
+    #     schema:
+    #       type: string
+    #   - name: api-version
+    #     in: query
+    #     description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+    #     required: true
+    #     schema:
+    #       type: string
+    #   requestBody:
+    #     description: The JSON+Patch document containing the fields to alter.
+    #     content:
+    #       application/json-patch+json:
+    #         schema:
+    #           $ref: '#/components/schemas/JsonPatchDocument'
+    #     required: true
+    #   responses:
+    #     '200':
+    #       description: successful operation
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/GraphGroup'
+    #   security:
+    #   - oauth2:
+    #     - vso.graph_manage
+    #   x-ms-docs-override-version: 7.2-preview.1
+    #   x-ms-vss-resource: groups
+    #   x-ms-vss-method: UpdateGroup
+    #   x-ms-preview: true
+    #   x-ms-examples:
+    #     ? ''
+    #     : $ref: ./httpExamples/Groups/UpdateGroup.json
+    #   x-codegen-request-body-name: body
+  /plugin/{organization}/graph/groups:
+    get:
+      servers:
+        - url: {{ include "graphgroup.webServiceUrl" . }}
+          description: URL of the Azure DevOps RDC plugin
+      tags:
+        - Graph Groups
+      summary: Get graph groups with optional filtering
+      description: Retrieve graph groups from Azure DevOps. When scopeDescriptor is not provided, filters out project-level groups to return only organization-level groups.
+      operationId: get-graphgroups
+      parameters:
+        - name: organization
+          in: path
+          description: Organization name
+          required: true
+          schema:
+            type: string
+        - name: scopeDescriptor
+          in: query
+          description: Scope descriptor (e.g., project descriptor). When provided, returns all groups within that scope without filtering.
+          schema:
+            type: string
+        - name: subjectTypes
+          in: query
+          description: Comma-separated list of subject types to filter by
+          schema:
+            type: string
+        - name: continuationToken
+          in: query
+          description: Continuation token for pagination
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.1)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Retrieved graph groups with filtering metadata
+          headers:
+            X-MS-ContinuationToken:
+              description: Continuation token for pagination (if more results available)
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/graphgroup.GraphGroupsResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  schemas:
+    GraphGroup:
+      properties:
+        description:
+          type: string
+          description: A short phrase to help human readers disambiguate groups with similar names
+      description: Graph group entity
+      allOf:
+      - $ref: '#/components/schemas/GraphMember'
+    GraphGroupCreationContextUnified:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/GraphGroupVstsCreationContext'
+      - $ref: '#/components/schemas/GraphGroupMailAddressCreationContext'
+      - $ref: '#/components/schemas/GraphGroupOriginIdCreationContext'
+      description: "Unified creation context supporting multiple group creation scenarios:\
+        \ VSTS native groups (use displayName/description), AAD groups via mail address\
+        \ (use mailAddress), or AAD groups via origin ID (use originId). Provide the fields\
+        \ appropriate for your use case."
+    GraphGroupCreationContext:
+      type: object
+      properties:
+        storageKey:
+          type: string
+          description: "Optional: If provided, we will use this identifier for the\
+            \ storage key of the created group"
+          format: uuid
+      description: Do not attempt to use this type to create a new group. This type
+        does not contain sufficient fields to create a new group.
+    GraphGroupMailAddressCreationContext:
+      properties:
+        mailAddress:
+          type: string
+          description: "This should be the mail address or the group in the source\
+            \ AD or AAD provider. Example: jamal@contoso.com Team Services will communicate\
+            \ with the source provider to fill all other fields on creation."
+      description: Use this type to create a new group using the mail address as a
+        reference to an existing group from an external AD or AAD backed provider.
+        This is the subset of GraphGroup fields required for creation of a group for
+        the AAD and AD use case.
+      allOf:
+      - $ref: '#/components/schemas/GraphGroupCreationContext'
+    GraphGroupOriginIdCreationContext:
+      properties:
+        originId:
+          type: string
+          description: "This should be the object id or sid of the group from the\
+            \ source AD or AAD provider. Example: d47d025a-ce2f-4a79-8618-e8862ade30dd\
+            \ Team Services will communicate with the source provider to fill all\
+            \ other fields on creation."
+      description: Use this type to create a new group using the OriginID as a reference
+        to an existing group from an external AD or AAD backed provider. This is the
+        subset of GraphGroup fields required for creation of a group for the AD and
+        AAD use case.
+      allOf:
+      - $ref: '#/components/schemas/GraphGroupCreationContext'
+    GraphGroupVstsCreationContext:
+      properties:
+        crossProject:
+          type: boolean
+          description: For internal use only in back compat scenarios.
+        description:
+          type: string
+          description: "Used by VSTS groups; if set this will be the group description,\
+            \ otherwise ignored"
+        descriptor:
+          type: string
+        displayName:
+          type: string
+          description: "Used by VSTS groups; if set this will be the group DisplayName,\
+            \ otherwise ignored"
+        restrictedVisibility:
+          type: boolean
+          description: For internal use only in back compat scenarios.
+        specialGroupType:
+          type: string
+          description: For internal use only in back compat scenarios.
+      description: Use this type to create a new Vsts group that is not backed by
+        an external provider.
+      allOf:
+      - $ref: '#/components/schemas/GraphGroupCreationContext'
+    GraphMember:
+      properties:
+        domain:
+          type: string
+          description: This represents the name of the container of origin for a graph member. (For MSA this is "Windows Live
+            ID", for AD the name of the domain, for AAD the tenantID of the directory, for VSTS groups the ScopeId, etc)
+        mailAddress:
+          type: string
+          description: The email address of record for a given graph member. This may be different than the principal name.
+        principalName:
+          type: string
+          description: This is the PrincipalName of this graph member from the source provider. The source provider may change
+            this field over time and it is not guaranteed to be immutable for the life of the graph member by VSTS.
+      description: ''
+      allOf:
+      - $ref: '#/components/schemas/GraphSubject'
+    GraphSubject:
+      properties:
+        legacyDescriptor:
+          type: string
+          description: '[Internal Use Only] The legacy descriptor is here in case you need to access old version IMS using
+            identity descriptor.'
+        origin:
+          type: string
+          description: The type of source provider for the origin identifier (ex:AD, AAD, MSA)
+        originId:
+          type: string
+          description: The unique identifier from the system of origin. Typically a sid, object id or Guid. Linking and unlinking
+            operations can cause this value to change for a user because the user is not backed by a different provider and
+            has a different unique id in the new provider.
+        subjectKind:
+          type: string
+          description: 'This field identifies the type of the graph subject (ex: Group, Scope, User).'
+      description: Top-level graph entity
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject while the system is running. This
+            field will uniquely identify the same graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To change this field, you must alter its
+            value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph subject.
+      description: ''
+    JsonPatchDocument:
+      description: The JSON model for JSON Patch Operations
+      allOf:
+      - type: array
+        items:
+          $ref: '#/components/schemas/JsonPatchOperation'
+    JsonPatchOperation:
+      type: object
+      properties:
+        from:
+          type: string
+          description: The path to copy from for the Move/Copy operation.
+        op:
+          type: string
+          description: The patch operation
+          enum:
+          - add
+          - remove
+          - replace
+          - move
+          - copy
+          - test
+          x-ms-enum:
+            name: Operation
+            values:
+            - value: add
+              description: ''
+            - value: remove
+              description: ''
+            - value: replace
+              description: ''
+            - value: move
+              description: ''
+            - value: copy
+              description: ''
+            - value: test
+              description: ''
+        path:
+          type: string
+          description: The path for the operation. In the case of an array, a zero based index can be used to specify the
+            position in the array (e.g. /biscuits/0/name). The "-" character can be used instead of an index to insert at
+            the end of the array (e.g. /biscuits/-).
+        value:
+          type: object
+          properties: {}
+          description: The value for the operation. This is either a primitive or a JToken.
+      description: The JSON model for a JSON Patch operation
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are readonly, we only want to expose them
+            as read only.
+      description: The class to represent a collection of REST reference links.
+    # Additional Schemas for Plugin Endpoint
+    graphgroup.GraphGroup:
+      type: object
+      properties:
+        _links:
+          type: object
+          additionalProperties: true
+        description:
+          type: string
+        descriptor:
+          type: string
+        displayName:
+          type: string
+        domain:
+          type: string
+        isCrossProject:
+          type: boolean
+        mailAddress:
+          type: string
+        origin:
+          type: string
+        originId:
+          type: string
+        principalName:
+          type: string
+        subjectKind:
+          type: string
+        url:
+          type: string
+    graphgroup.GraphGroupsResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Count after filtering (equals originalCount if no filtering)
+        numberOfFilteredOut:
+          type: integer
+          description: Number of groups filtered out (0 if no filtering)
+        originalCount:
+          type: integer
+          description: Original count from Azure DevOps API
+        value:
+          type: array
+          description: Array of graph groups
+          items:
+            $ref: '#/components/schemas/graphgroup.GraphGroup'
+  #parameters:
+  #  api-Version-preview.1:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  #  api-Version-preview.2:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the token as the password.
+      scheme: basic
+    #oauth2:
+    #  type: oauth2
+    #  flows:
+    #    authorizationCode:
+    #      authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+    #      tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+    #      scopes:
+    #        vso.graph: Grants the ability to read user, group, scope and group membership information
+    #        vso.graph_manage: Grants the ability to read user, group, scope and group membership information, and to add users,
+    #          groups and manage group memberships
+x-ms-vss-area: Graph
+x-ms-vss-resource-area-id: bb1e7ec9-e901-4b68-999a-de7012b920f8
+x-original-swagger-version: '2.0'

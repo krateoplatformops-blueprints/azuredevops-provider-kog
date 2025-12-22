@@ -1,5 +1,7 @@
 # `PullRequest` migration example
 
+## Scenario
+
 **Starting point**: `PullRequest` resource managed by Azure DevOps Provider (classic).
 **Ending point**: `PullRequest` resource managed by Azure DevOps Provider KOG.
 Note: the external resource (`PullRequest` on Azure DevOps) will be the same.
@@ -13,6 +15,10 @@ NAME                                 SHORTNAMES   APIVERSION                    
 pullrequests                                      azuredevops.krateo.io/v1alpha1        false        PullRequest
 pullrequests                                      azuredevops.ogen.krateo.io/v1alpha1   true         PullRequest
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `PullRequest` resource
 
 The **starting point** for this migration is the following example of a `PullRequest` resource managed by the Azure DevOps Provider (classic):
 ```yaml
@@ -40,7 +46,8 @@ spec:
     name: connectorconfig-sample
 ```
 
-Note that the `PullRequest` resource is referecing a `ConnectorConfig` resource, a `Project` resource, and a `GitRepository` resource, which are managed by the Azure DevOps Provider "classic".
+Note that:
+- the `PullRequest` resource is referecing a `ConnectorConfig` resource, a `Project` resource, and a `GitRepository` resource, which are managed by the Azure DevOps Provider "classic".
 
 To ensure that the old version of the resource is not reconciled while you are migrating to the new version, you should set the `krateo.io/paused: true` annotation.
 You can do this by running the following commands:
@@ -94,6 +101,8 @@ status:
 +    status: "False"
 +    type: Synced
 ```
+
+### Step 2: Create the new `PullRequest` resource
 
 Now, you can create a new `PullRequest` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../../README.md#pullrequest-schema) file of this chart.
@@ -169,6 +178,8 @@ And the output should look like this:
 NAME     AGE   READY
 pullrequest-1   10s    True
 ```
+
+### Step 3: Delete the old `PullRequest` resource
 
 At this point, you can proceed to delete the old `PullRequest` resource managed by Azure DevOps Provider (classic) (note the different API group).
 

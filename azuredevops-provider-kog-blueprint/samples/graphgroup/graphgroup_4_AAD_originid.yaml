@@ -1,0 +1,19 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: GraphGroup
+metadata:
+  name: test-graphgroup-with-aad-originid-00001
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # Reference to the configuration CR
+  configurationRef:
+    name: my-graphgroup-config
+    namespace: default
+
+  # Azure DevOps organization name
+  organization: krateo-kog
+
+  # Materialize an AAD group using the Origin ID
+  # DevOpsGroup-10
+  originId: eac25b75-e738-42b9-bf2d-224c9456e9b5

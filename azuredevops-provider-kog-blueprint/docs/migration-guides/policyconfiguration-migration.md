@@ -1,5 +1,7 @@
 # `PolicyConfiguration` migration example
 
+## Scenario
+
 Note that the name of the resource in Azure DevOps Provider KOG is `PolicyConfiguration`, while in Azure DevOps Provider (classic) it is `Policy`.
 The rationale behind this change is to be more aligned with the original naming used by Azure DevOps REST API.
 Thus, the migration involves also a change in the kind of the resource.
@@ -25,6 +27,10 @@ Output:
 NAME                                 SHORTNAMES   APIVERSION                            NAMESPACED   KIND
 policyconfigurations                              azuredevops.ogen.krateo.io/v1alpha1   true         PolicyConfiguration
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `Policy` resource
 
 The **starting point** for this migration is the following example of a `Policy` resource managed by the Azure DevOps Provider (classic):
 ```yaml
@@ -58,9 +64,9 @@ spec:
       id: "0609b952-1397-4640-95ec-e00a01b2c241"
 ```
 
-Note: the `id` field in the `type` section corresponds to the policy description: *"This policy will require a successful build has been performed before updating protected refs."*. You can find more information about the policy types in the related section of the [troubleshooting guide](../troubleshooting_guide.md#policyconfiguration)
-
-Note that the `Policy` resource is referecing a `ConnectorConfig` resource, a `Project` resource and a `GitRepository` resource, which are by the Azure DevOps Provider "classic".
+Note that:
+- the `Policy` resource is referecing a `ConnectorConfig` resource, a `Project` resource and a `GitRepository` resource, which are by the Azure DevOps Provider "classic".
+- the `id` field in the `type` section corresponds to the policy description: *"This policy will require a successful build has been performed before updating protected refs."*. You can find more information about the policy types in the related section of the [troubleshooting guide](../troubleshooting_guide.md#policyconfiguration)
 
 To ensure that the old version of the resource is not reconciled while you are migrating to the new version, you should set the `krateo.io/paused: true` annotation.
 You can do this by running the following commands:
@@ -120,6 +126,8 @@ status:
 +    status: "False"
 +    type: Synced
 ```
+
+### Step 2: Create the new `PolicyConfiguration` resource
 
 Now, you can create a new `PolicyConfiguration` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../../README.md#policyconfiguration-schema) file of this chart.
@@ -200,6 +208,8 @@ And the output should look like this:
 NAME       AGE    READY
 policy-1   10s    True
 ```
+
+### Step 3: Delete the old `Policy` resource
 
 At this point, you can proceed to delete the old `Policy` resource managed by Azure DevOps Provider (classic) (note the different API group and kind).
 

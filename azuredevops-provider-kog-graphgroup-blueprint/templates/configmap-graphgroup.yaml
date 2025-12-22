@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-graphgroup
+data:
+  graphgroup.yaml: |
+{{ tpl (.Files.Get "assets/graphgroup.yaml") . | indent 4 }}

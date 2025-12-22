@@ -1,6 +1,6 @@
 apiVersion: v2
 name: azuredevops-provider-kog-pullrequest
-description: A Helm chart for deploying the Azure DevOps KOG Pull Request.
+description: A Helm chart for deploying the Azure DevOps KOG PullRequest.
 type: application
 version: PULLREQUEST_CHART_VERSION
 appVersion: PULLREQUEST_APP_VERSION

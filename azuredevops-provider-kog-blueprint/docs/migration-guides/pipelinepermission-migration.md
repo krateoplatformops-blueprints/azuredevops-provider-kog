@@ -1,5 +1,7 @@
 # `PipelinePermission` migration example
 
+## Scenario
+
 **Starting point**: `PipelinePermission` resource managed by Azure DevOps Provider "classic".
 **Ending point**: `PipelinePermission` resource managed by Azure DevOps Provider KOG.
 Note: the external resource (`PipelinePermission` on Azure DevOps) will be the same.
@@ -14,6 +16,10 @@ NAME                                SHORTNAMES   APIVERSION                     
 pipelinepermissions                              azuredevops.ogen.krateo.io/v1alpha1   true         PipelinePermission
 pipelinepermissions                              azuredevops.krateo.io/v1alpha2        false        PipelinePermission
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `Pipeline` resource
 
 The **starting point** for this migration is the following example of a `Pipeline` resource managed by the Azure DevOps Provider "classic":
 ```yaml
@@ -43,10 +49,10 @@ spec:
     name: connectorconfig-sample
 ```
 
-Note that the `PipelinePermission` resource is referecing a `ConnectorConfig` resource, a `Environment` resource, and a `Pipeline` resource, which are managed by the Azure DevOps Provider "classic".
-
-Note that the `Pipeline` referenced in the example above is a `Pipeline` resource managed by the Azure DevOps Provider "classic".  
-However, the `PipelinePermission` resource managed by the Azure DevOps Provider KOG will work with both `Pipeline` resources managed by the Azure DevOps Provider "classic" and the Azure DevOps Provider KOG since it use the `id` of the pipeline as the reference.
+Note that:
+- the `PipelinePermission` resource is referecing a `ConnectorConfig` resource, a `Environment` resource, and a `Pipeline` resource, which are managed by the Azure DevOps Provider "classic".
+- the `Pipeline` referenced in the example above is a `Pipeline` resource managed by the Azure DevOps Provider "classic".  
+- the `PipelinePermission` resource managed by the Azure DevOps Provider KOG will work with both `Pipeline` resources managed by the Azure DevOps Provider "classic" and the Azure DevOps Provider KOG since it use the `id` of the pipeline as the reference.
 
 To ensure that the old version of the resource is not reconciled while you are migrating to the new version, you should set the `krateo.io/paused: true` annotation.
 You can do this by running the following commands:
@@ -101,6 +107,8 @@ status:
 +   status: "False"
 +   type: Synced
 ```
+
+### Step 2: Create the new `PipelinePermission` resource
 
 Now, you can create a new `PipelinePermission` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../../README.md#pipelinepermission-schema) file of this chart.
@@ -183,9 +191,11 @@ NAME                    AGE   READY
 pipeline-permission-1   61s   True
 ```
 
+### Step 3: Delete the old `PipelinePermission` resource
+
 At this point, you can proceed to delete the old `PipelinePermission` resource managed by Azure DevOps Provider "classic" (note the different API group).
 
-First, you can delete the old `Pipeline` resource managed by Azure DevOps Provider "classic":
+First, you can delete the old `PipelinePermission` resource managed by Azure DevOps Provider "classic":
 ```sh
 kubectl delete pipelinepermissions.azuredevops.krateo.io pipeline-permission-1
 ```

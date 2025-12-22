@@ -1,6 +1,6 @@
 apiVersion: v2
 name: azuredevops-provider-kog-policyconfiguration
-description: A Helm chart for deploying the Azure DevOps KOG Policy Configuration.
+description: A Helm chart for deploying the Azure DevOps KOG PolicyConfiguration.
 type: application
 version: POLICYCONFIGURATION_CHART_VERSION
 

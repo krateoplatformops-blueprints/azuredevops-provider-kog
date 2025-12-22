@@ -1,6 +1,6 @@
 apiVersion: v2
 name: azuredevops-provider-kog-repositorypermission
-description: A Helm chart for deploying the Azure DevOps KOG Repository Permission.
+description: A Helm chart for deploying the Azure DevOps KOG RepositoryPermission.
 type: application
 version: REPOSITORYPERMISSION_CHART_VERSION
 appVersion: REPOSITORYPERMISSION_APP_VERSION

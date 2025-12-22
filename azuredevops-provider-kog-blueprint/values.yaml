@@ -86,3 +86,14 @@ azuredevops-provider-kog-team-blueprint:
   # default: true
   # @schema
   enabled: true
+# @schema
+# type: object
+# description: Configuration for the GraphGroup Blueprint dependency.
+# @schema
+azuredevops-provider-kog-graphgroup-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the GraphGroup Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true

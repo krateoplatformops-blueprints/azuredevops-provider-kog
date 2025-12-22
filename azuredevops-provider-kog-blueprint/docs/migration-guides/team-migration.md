@@ -1,5 +1,7 @@
 # `Team` migration example
 
+## Scenario
+
 **Starting point**: `Team` resource managed by Azure DevOps Provider (classic).
 **Ending point**: `Team` resource managed by Azure DevOps Provider KOG.
 Note: the external resource (`Team` on Azure DevOps) will be the same.
@@ -14,6 +16,10 @@ NAME                                 SHORTNAMES   APIVERSION                    
 teams                                             azuredevops.krateo.io/v1alpha1        false        Team
 teams                                             azuredevops.ogen.krateo.io/v1alpha1   true         Team
 ```
+
+## Migration steps
+
+### Step 1: Pause and set deletion policy on the old `Team` resource
 
 The **starting point** for this migration is the following example of a `Team` resource managed by the Azure DevOps Provider (classic):
 ```yaml
@@ -37,7 +43,9 @@ spec:
     name: connectorconfig-sample
 ```
 
-Note that the `Team` resource is referecing a `ConnectorConfig` resource and a `Project` resource, which are both managed by the Azure DevOps Provider "classic".
+Note that:
+- the `Team` resource is referecing a `ConnectorConfig` resource and a `Project` resource, which are both managed by the Azure DevOps Provider "classic".
+- the field `groupRefs` is not supported in the `Team` schema of Azure DevOps Provider KOG since the Azure DevOps REST API does not directly support managing groups associated with a team. Azure DevOps Provider "classic" creates **memberships** in a implicit way inside the reconciliation loop logic of the `Team` resource, while Azure DevOps Provider KOG requires explicit management of memberships through dedicated resources. Specific resources for managing [memberships](https://learn.microsoft.com/en-us/rest/api/azure/devops/graph/memberships?view=azure-devops-rest-7.1) will likely be introduced in future versions of the Azure DevOps Provider KOG. If this functionality is critical for your use case, it may be advisable to delay the migration until such resources are available.
 
 To ensure that the old version of the resource is not reconciled while you are migrating to the new version, you should set the `krateo.io/paused: true` annotation.
 You can do this by running the following commands:
@@ -87,6 +95,8 @@ status:
 +    status: "False"
 +    type: Synced
 ```
+
+### Step 2: Create the new `Team` resource
 
 Now, you can create a new `Team` resource using the Azure DevOps Provider KOG following the new schema.
 You can find the schema in the specific section of the [README](../../../README.md#team-schema) file of this chart.
@@ -147,6 +157,8 @@ And the output should look like this:
 NAME     AGE    READY
 team-1   10s    True
 ```
+
+### Step 3: Delete the old `Team` resource
 
 At this point, you can proceed to delete the old `Team` resource managed by Azure DevOps Provider (classic) (note the different API group).
 
