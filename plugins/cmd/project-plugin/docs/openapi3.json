@@ -28,12 +28,12 @@
         ],
         "summary": "Create a project",
         "description": "Create a new project in Azure DevOps. Returns a transformed operation reference.",
-        "operationId": "create-project",
+        "operationId": "Projects_Create",
         "parameters": [
           {
             "name": "organization",
             "in": "path",
-            "description": "Organization name",
+            "description": "The name of the Azure DevOps organization.",
             "required": true,
             "schema": {
               "type": "string"
@@ -59,11 +59,11 @@
           }
         ],
         "requestBody": {
-          "description": "Project creation request",
+          "description": "The project to create.",
           "content": {
             "application/json": {
               "schema": {
-                "type": "object"
+                "$ref": "#/components/schemas/project.ProjectRequestBodyCreate"
               }
             }
           },
@@ -121,12 +121,12 @@
         ],
         "summary": "Delete a project",
         "description": "Delete an existing project in Azure DevOps. Polls the operation until complete and returns 204 No Content.",
-        "operationId": "delete-project",
+        "operationId": "Projects_Delete",
         "parameters": [
           {
             "name": "organization",
             "in": "path",
-            "description": "Organization name",
+            "description": "The name of the Azure DevOps organization.",
             "required": true,
             "schema": {
               "type": "string"
@@ -168,7 +168,7 @@
           "400": {
             "description": "Bad Request",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "string"
                 }
@@ -178,7 +178,7 @@
           "401": {
             "description": "Unauthorized",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "string"
                 }
@@ -188,7 +188,7 @@
           "404": {
             "description": "Not Found",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "string"
                 }
@@ -198,7 +198,7 @@
           "500": {
             "description": "Internal Server Error",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "string"
                 }
@@ -213,12 +213,12 @@
         ],
         "summary": "Update a project",
         "description": "Update an existing project in Azure DevOps. Polls the operation until complete and returns the updated project.",
-        "operationId": "update-project",
+        "operationId": "Projects_Update",
         "parameters": [
           {
             "name": "organization",
             "in": "path",
-            "description": "Organization name",
+            "description": "The name of the Azure DevOps organization.",
             "required": true,
             "schema": {
               "type": "string"
@@ -257,7 +257,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object"
+                "$ref": "#/components/schemas/project.ProjectRequestBodyUpdate"
               }
             }
           },
@@ -269,7 +269,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/project.ProjectResponseBody"
                 }
               }
             }
@@ -321,6 +321,156 @@
   },
   "components": {
     "schemas": {
+      "project.Capabilities": {
+        "type": "object",
+        "properties": {
+          "processTemplate": {
+            "$ref": "#/components/schemas/project.ProcessTemplate"
+          },
+          "versionControl": {
+            "$ref": "#/components/schemas/project.VersionControl"
+          }
+        }
+      },
+      "project.DefaultTeam": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "project.Link": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "project.ProcessTemplate": {
+        "type": "object",
+        "properties": {
+          "templateTypeId": {
+            "type": "string"
+          }
+        }
+      },
+      "project.ProjectLinks": {
+        "type": "object",
+        "properties": {
+          "collection": {
+            "$ref": "#/components/schemas/project.Link"
+          },
+          "self": {
+            "$ref": "#/components/schemas/project.Link"
+          },
+          "web": {
+            "$ref": "#/components/schemas/project.Link"
+          }
+        }
+      },
+      "project.ProjectRequestBodyCreate": {
+        "type": "object",
+        "properties": {
+          "abbreviation": {
+            "type": "string"
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/project.Capabilities"
+          },
+          "description": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "private",
+              "public"
+            ]
+          }
+        },
+        "description": "Azure DevOps project object in request body for creation"
+      },
+      "project.ProjectRequestBodyUpdate": {
+        "type": "object",
+        "properties": {
+          "abbreviation": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "description": "Azure DevOps project object in request body for update"
+      },
+      "project.ProjectResponseBody": {
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/project.ProjectLinks"
+          },
+          "abbreviation": {
+            "type": "string"
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/project.Capabilities"
+          },
+          "defaultTeam": {
+            "$ref": "#/components/schemas/project.DefaultTeam"
+          },
+          "defaultTeamImageUrl": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "lastUpdateTime": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "deleting",
+              "new",
+              "wellFormed",
+              "createPending",
+              "all",
+              "unchanged",
+              "deleted"
+            ]
+          },
+          "url": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "private",
+              "public"
+            ]
+          }
+        },
+        "description": "Azure DevOps project object in response body"
+      },
       "project.TransformedOperationReference": {
         "type": "object",
         "properties": {
@@ -334,6 +484,14 @@
             "type": "string"
           },
           "operationUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "project.VersionControl": {
+        "type": "object",
+        "properties": {
+          "sourceControlType": {
             "type": "string"
           }
         }

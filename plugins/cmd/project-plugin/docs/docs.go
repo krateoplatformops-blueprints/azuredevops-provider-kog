@@ -37,11 +37,11 @@ const docTemplate = `{
                     "Projects"
                 ],
                 "summary": "Create a project",
-                "operationId": "create-project",
+                "operationId": "Projects_Create",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Organization name",
+                        "description": "The name of the Azure DevOps organization.",
                         "name": "organization",
                         "in": "path",
                         "required": true
@@ -61,12 +61,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Project creation request",
+                        "description": "The project to create.",
                         "name": "project",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object"
+                            "$ref": "#/definitions/project.ProjectRequestBodyCreate"
                         }
                     }
                 ],
@@ -101,15 +101,18 @@ const docTemplate = `{
         "/plugin/project/{organization}/{projectId}": {
             "delete": {
                 "description": "Delete an existing project in Azure DevOps. Polls the operation until complete and returns 204 No Content.",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Projects"
                 ],
                 "summary": "Delete a project",
-                "operationId": "delete-project",
+                "operationId": "Projects_Delete",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Organization name",
+                        "description": "The name of the Azure DevOps organization.",
                         "name": "organization",
                         "in": "path",
                         "required": true
@@ -178,11 +181,11 @@ const docTemplate = `{
                     "Projects"
                 ],
                 "summary": "Update a project",
-                "operationId": "update-project",
+                "operationId": "Projects_Update",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Organization name",
+                        "description": "The name of the Azure DevOps organization.",
                         "name": "organization",
                         "in": "path",
                         "required": true
@@ -214,7 +217,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "object"
+                            "$ref": "#/definitions/project.ProjectRequestBodyUpdate"
                         }
                     }
                 ],
@@ -222,7 +225,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Updated project object",
                         "schema": {
-                            "type": "object"
+                            "$ref": "#/definitions/project.ProjectResponseBody"
                         }
                     },
                     "400": {
@@ -254,6 +257,156 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "project.Capabilities": {
+            "type": "object",
+            "properties": {
+                "processTemplate": {
+                    "$ref": "#/definitions/project.ProcessTemplate"
+                },
+                "versionControl": {
+                    "$ref": "#/definitions/project.VersionControl"
+                }
+            }
+        },
+        "project.DefaultTeam": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "project.Link": {
+            "type": "object",
+            "properties": {
+                "href": {
+                    "type": "string"
+                }
+            }
+        },
+        "project.ProcessTemplate": {
+            "type": "object",
+            "properties": {
+                "templateTypeId": {
+                    "type": "string"
+                }
+            }
+        },
+        "project.ProjectLinks": {
+            "type": "object",
+            "properties": {
+                "collection": {
+                    "$ref": "#/definitions/project.Link"
+                },
+                "self": {
+                    "$ref": "#/definitions/project.Link"
+                },
+                "web": {
+                    "$ref": "#/definitions/project.Link"
+                }
+            }
+        },
+        "project.ProjectRequestBodyCreate": {
+            "description": "Azure DevOps project object in request body for creation",
+            "type": "object",
+            "properties": {
+                "abbreviation": {
+                    "type": "string"
+                },
+                "capabilities": {
+                    "$ref": "#/definitions/project.Capabilities"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "visibility": {
+                    "type": "string",
+                    "enum": [
+                        "private",
+                        "public"
+                    ]
+                }
+            }
+        },
+        "project.ProjectRequestBodyUpdate": {
+            "description": "Azure DevOps project object in request body for update",
+            "type": "object",
+            "properties": {
+                "abbreviation": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "project.ProjectResponseBody": {
+            "description": "Azure DevOps project object in response body",
+            "type": "object",
+            "properties": {
+                "_links": {
+                    "$ref": "#/definitions/project.ProjectLinks"
+                },
+                "abbreviation": {
+                    "type": "string"
+                },
+                "capabilities": {
+                    "$ref": "#/definitions/project.Capabilities"
+                },
+                "defaultTeam": {
+                    "$ref": "#/definitions/project.DefaultTeam"
+                },
+                "defaultTeamImageUrl": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastUpdateTime": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "revision": {
+                    "type": "integer"
+                },
+                "state": {
+                    "type": "string",
+                    "enum": [
+                        "deleting",
+                        "new",
+                        "wellFormed",
+                        "createPending",
+                        "all",
+                        "unchanged",
+                        "deleted"
+                    ]
+                },
+                "url": {
+                    "type": "string"
+                },
+                "visibility": {
+                    "type": "string",
+                    "enum": [
+                        "private",
+                        "public"
+                    ]
+                }
+            }
+        },
         "project.TransformedOperationReference": {
             "type": "object",
             "properties": {
@@ -267,6 +420,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "operationUrl": {
+                    "type": "string"
+                }
+            }
+        },
+        "project.VersionControl": {
+            "type": "object",
+            "properties": {
+                "sourceControlType": {
                     "type": "string"
                 }
             }

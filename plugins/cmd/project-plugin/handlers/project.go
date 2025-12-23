@@ -7,21 +7,22 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/krateoplatformops/azuredevops-provider-kog/pkg/handlers"
 )
 
 const (
-	requestTimeout       = 30 * time.Second
-	contentTypeJSON      = "application/json"
-	maxPollingAttempts   = 10              // 10 attempts * 1 second = 10 seconds max
-	pollingInterval      = 1 * time.Second // Wait time between polling attempts
-	authErrorMessage     = "request rejected due to missing or invalid Basic authentication"
-	azureDevOpsBaseURL   = "https://dev.azure.com"
-	projectsAPIPath      = "_apis/projects"
-	operationsAPIPath    = "_apis/operations"
-	operationsAPIVersion = "7.2-preview" //TODO to be used
+	requestTimeout               = 30 * time.Second
+	contentTypeJSON              = "application/json"
+	maxPollingAttempts           = 10
+	pollingInterval              = 1 * time.Second // Wait time between polling attempts
+	authErrorMessage             = "request rejected due to missing or invalid Basic authentication"
+	azureDevOpsBaseURL           = "https://dev.azure.com"
+	projectsAPIPath              = "_apis/projects"
+	operationsAPIPath            = "_apis/operations"
+	operationsAPIVersionFallback = "7.2-preview"
 )
 
 // PostProject returns a handler for POST project creation requests
@@ -120,6 +121,10 @@ func buildProjectURL(organization, projectID, apiVersion string) string {
 
 // buildOperationURL constructs the Azure DevOps operation status API URL
 func buildOperationURL(organization, operationID string) string {
+	operationsAPIVersion := os.Getenv("OPERATIONS_API_VERSION")
+	if operationsAPIVersion == "" {
+		operationsAPIVersion = operationsAPIVersionFallback // Fallback Operations API version if not set
+	}
 	return fmt.Sprintf("%s/%s/%s/%s?api-version=%s", azureDevOpsBaseURL, organization, operationsAPIPath, operationID, operationsAPIVersion)
 }
 
@@ -330,7 +335,7 @@ func (h *baseHandler) handlePatchOperation(ctx context.Context, w http.ResponseW
 		return
 	}
 
-	// Unmarshal the project response into Project struct
+	// Unmarshal the project response into ProjectResponseBody struct
 	var project ProjectResponseBody
 	if err := json.Unmarshal(projectBody, &project); err != nil {
 		h.writeErrorResponse(w, http.StatusInternalServerError, fmt.Sprintf("failed to unmarshal project response: %s", err.Error()))
@@ -374,14 +379,14 @@ func (h *baseHandler) handleDeleteOperation(ctx context.Context, w http.Response
 // ServeHTTP handles POST requests for project creation
 // @Summary Create a project
 // @Description Create a new project in Azure DevOps. Returns a transformed operation reference.
-// @ID create-project
+// @ID Projects_Create
 // @Tags Projects
 // @Accept json
 // @Produce json
-// @Param organization path string true "Organization name"
+// @Param organization path string true "The name of the Azure DevOps organization."
 // @Param api-version query string true "API version (e.g., 7.2-preview.4)"
 // @Param Authorization header string true "Basic Auth header"
-// @Param project body ProjectRequestBodyCreate true "Project creation request"
+// @Param project body ProjectRequestBodyCreate true "The project to create."
 // @Success 202 {object} TransformedOperationReference "Transformed operation reference with prefixed fields"
 // @Failure 400 {string} string "Bad Request"
 // @Failure 401 {string} string "Unauthorized"
@@ -436,16 +441,16 @@ func (h *postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // ServeHTTP handles PATCH requests for project updates
 // @Summary Update a project
 // @Description Update an existing project in Azure DevOps. Polls the operation until complete and returns the updated project.
-// @ID update-project
+// @ID Projects_Update
 // @Tags Projects
 // @Accept json
 // @Produce json
-// @Param organization path string true "Organization name"
+// @Param organization path string true "The name of the Azure DevOps organization."
 // @Param projectId path string true "Project ID"
 // @Param api-version query string true "API version (e.g., 7.2-preview.4)"
 // @Param Authorization header string true "Basic Auth header"
 // @Param project body ProjectRequestBodyUpdate true "Project update request"
-// @Success 200 {object} Project "Updated project object"
+// @Success 200 {object} ProjectResponseBody "Updated project object"
 // @Failure 400 {string} string "Bad Request"
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Not Found"
@@ -494,9 +499,10 @@ func (h *patchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // ServeHTTP handles DELETE requests for project deletion
 // @Summary Delete a project
 // @Description Delete an existing project in Azure DevOps. Polls the operation until complete and returns 204 No Content.
-// @ID delete-project
+// @ID Projects_Delete
 // @Tags Projects
-// @Param organization path string true "Organization name"
+// @Produce json
+// @Param organization path string true "The name of the Azure DevOps organization."
 // @Param projectId path string true "Project ID"
 // @Param api-version query string true "API version (e.g., 7.2-preview.4)"
 // @Param Authorization header string true "Basic Auth header"

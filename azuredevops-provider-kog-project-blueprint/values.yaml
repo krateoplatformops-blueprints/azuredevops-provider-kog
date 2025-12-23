@@ -111,4 +111,6 @@ tolerations: []
 
 affinity: {}
 
-#env: {}
+env:
+  - name: OPERATIONS_API_VERSION        # Operations API is used to check the status of long-running operations such as project creation
+    value: "7.2-preview"

@@ -1,5 +1,106 @@
 basePath: /
 definitions:
+  project.Capabilities:
+    properties:
+      processTemplate:
+        $ref: '#/definitions/project.ProcessTemplate'
+      versionControl:
+        $ref: '#/definitions/project.VersionControl'
+    type: object
+  project.DefaultTeam:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    type: object
+  project.Link:
+    properties:
+      href:
+        type: string
+    type: object
+  project.ProcessTemplate:
+    properties:
+      templateTypeId:
+        type: string
+    type: object
+  project.ProjectLinks:
+    properties:
+      collection:
+        $ref: '#/definitions/project.Link'
+      self:
+        $ref: '#/definitions/project.Link'
+      web:
+        $ref: '#/definitions/project.Link'
+    type: object
+  project.ProjectRequestBodyCreate:
+    description: Azure DevOps project object in request body for creation
+    properties:
+      abbreviation:
+        type: string
+      capabilities:
+        $ref: '#/definitions/project.Capabilities'
+      description:
+        type: string
+      name:
+        type: string
+      visibility:
+        enum:
+        - private
+        - public
+        type: string
+    type: object
+  project.ProjectRequestBodyUpdate:
+    description: Azure DevOps project object in request body for update
+    properties:
+      abbreviation:
+        type: string
+      description:
+        type: string
+    type: object
+  project.ProjectResponseBody:
+    description: Azure DevOps project object in response body
+    properties:
+      _links:
+        $ref: '#/definitions/project.ProjectLinks'
+      abbreviation:
+        type: string
+      capabilities:
+        $ref: '#/definitions/project.Capabilities'
+      defaultTeam:
+        $ref: '#/definitions/project.DefaultTeam'
+      defaultTeamImageUrl:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      lastUpdateTime:
+        type: string
+      name:
+        type: string
+      revision:
+        type: integer
+      state:
+        enum:
+        - deleting
+        - new
+        - wellFormed
+        - createPending
+        - all
+        - unchanged
+        - deleted
+        type: string
+      url:
+        type: string
+      visibility:
+        enum:
+        - private
+        - public
+        type: string
+    type: object
   project.TransformedOperationReference:
     properties:
       operationId:
@@ -9,6 +110,11 @@ definitions:
       operationStatus:
         type: string
       operationUrl:
+        type: string
+    type: object
+  project.VersionControl:
+    properties:
+      sourceControlType:
         type: string
     type: object
 host: localhost:8080
@@ -32,9 +138,9 @@ paths:
       - application/json
       description: Create a new project in Azure DevOps. Returns a transformed operation
         reference.
-      operationId: create-project
+      operationId: Projects_Create
       parameters:
-      - description: Organization name
+      - description: The name of the Azure DevOps organization.
         in: path
         name: organization
         required: true
@@ -49,12 +155,12 @@ paths:
         name: Authorization
         required: true
         type: string
-      - description: Project creation request
+      - description: The project to create.
         in: body
         name: project
         required: true
         schema:
-          type: object
+          $ref: '#/definitions/project.ProjectRequestBodyCreate'
       produces:
       - application/json
       responses:
@@ -81,9 +187,9 @@ paths:
     delete:
       description: Delete an existing project in Azure DevOps. Polls the operation
         until complete and returns 204 No Content.
-      operationId: delete-project
+      operationId: Projects_Delete
       parameters:
-      - description: Organization name
+      - description: The name of the Azure DevOps organization.
         in: path
         name: organization
         required: true
@@ -103,6 +209,8 @@ paths:
         name: Authorization
         required: true
         type: string
+      produces:
+      - application/json
       responses:
         "204":
           description: No Content - project deleted successfully
@@ -130,9 +238,9 @@ paths:
       - application/json
       description: Update an existing project in Azure DevOps. Polls the operation
         until complete and returns the updated project.
-      operationId: update-project
+      operationId: Projects_Update
       parameters:
-      - description: Organization name
+      - description: The name of the Azure DevOps organization.
         in: path
         name: organization
         required: true
@@ -157,14 +265,14 @@ paths:
         name: project
         required: true
         schema:
-          type: object
+          $ref: '#/definitions/project.ProjectRequestBodyUpdate'
       produces:
       - application/json
       responses:
         "200":
           description: Updated project object
           schema:
-            type: object
+            $ref: '#/definitions/project.ProjectResponseBody'
         "400":
           description: Bad Request
           schema:
