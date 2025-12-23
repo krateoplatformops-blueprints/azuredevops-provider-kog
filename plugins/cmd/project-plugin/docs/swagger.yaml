@@ -1,0 +1,189 @@
+basePath: /
+definitions:
+  project.TransformedOperationReference:
+    properties:
+      operationId:
+        type: string
+      operationPluginId:
+        type: string
+      operationStatus:
+        type: string
+      operationUrl:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: contact@krateoplatformops.io
+    name: Krateo Support
+    url: https://krateo.io
+  description: Simple wrapper around Azure DevOps API to transform operation references
+    and handle async operations for project create/update/delete operations
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Azure DevOps Project Plugin API for Krateo Operator Generator (KOG)
+  version: "1.0"
+paths:
+  /plugin/project/{organization}:
+    post:
+      consumes:
+      - application/json
+      description: Create a new project in Azure DevOps. Returns a transformed operation
+        reference.
+      operationId: create-project
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: API version (e.g., 7.2-preview.4)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Project creation request
+        in: body
+        name: project
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Transformed operation reference with prefixed fields
+          schema:
+            $ref: '#/definitions/project.TransformedOperationReference'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create a project
+      tags:
+      - Projects
+  /plugin/project/{organization}/{projectId}:
+    delete:
+      description: Delete an existing project in Azure DevOps. Polls the operation
+        until complete and returns 204 No Content.
+      operationId: delete-project
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: API version (e.g., 7.2-preview.4)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content - project deleted successfully
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a project
+      tags:
+      - Projects
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing project in Azure DevOps. Polls the operation
+        until complete and returns the updated project.
+      operationId: update-project
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project ID
+        in: path
+        name: projectId
+        required: true
+        type: string
+      - description: API version (e.g., 7.2-preview.4)
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: Basic Auth header
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Project update request
+        in: body
+        name: project
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated project object
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update a project
+      tags:
+      - Projects
+schemes:
+- http
+swagger: "2.0"

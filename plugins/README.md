@@ -33,6 +33,9 @@ They are designed to work as a middleware between the [Rest Dynamic Controller](
 - [BuildPermission plugin](#buildpermission-plugin)
   - [GET BuildPermission](#get-buildpermission)
   - [POST BuildPermission](#post-buildpermission)
+- [Project plugin](#project-plugin)
+  - [POST Project](#post-project)
+  - [PATCH Project](#patch-project)
 - [GraphGroup plugin](#graphgroup-plugin)
   - [GET GraphGroups](#get-graphgroups)
 - [Azure DevOps API Reference](#azuredevops-api-reference)
@@ -1268,6 +1271,225 @@ POST /plugin/buildpermission/{organization}/{projectId}
   }
 }
 ```
+
+</details>
+
+---
+
+## Project plugin
+
+### POST Project
+
+**Description**:
+This endpoint creates a new project in Azure DevOps. It transforms the Azure DevOps API response to ensure compatibility with the OASGen Provider by renaming operation reference fields.
+
+<details>
+<summary><b>Why This Endpoint Exists</b></summary>
+<br/>
+
+- The standard Azure DevOps REST API returns an `OperationReference` object when creating a project (POST), containing fields like `id`, `status`, and `url`.
+- The `id` field in the `OperationReference` is the **operation ID**, not the project ID.
+- If OASGen Provider stores this operation ID in `status.id`, subsequent GET operations will fail because they expect the project ID.
+- This plugin transforms the response by renaming all operation fields:
+  - `id` → `operationId`
+  - `status` → `operationStatus`
+  - `url` → `operationUrl`
+  - `pluginId` → `operationPluginId`
+- This ensures the controller doesn't confuse operation metadata with project data, and reconciliation continues correctly once the project is created.
+- The controller will simply ignore these fields and subsequent GET requests will retrieve the actual project once it's ready.
+
+</details>
+
+<details>
+<summary><b>Request</b></summary>
+<br/>
+
+```http
+POST /plugin/project/{organization}
+```
+
+**Path parameters**:
+- `organization` (string, required): The name of the Azure DevOps organization.
+
+**Query parameters**:
+- `api-version` (string, required): The version of the Azure DevOps REST API to use. For example, `7.2-preview.4`.
+
+**Request body example**:
+```json
+{
+  "name": "my-new-project",
+  "description": "Project created via OASGen",
+  "visibility": "private",
+  "capabilities": {
+    "versioncontrol": {
+      "sourceControlType": "Git"
+    },
+    "processTemplate": {
+      "templateTypeId": "6b724908-ef14-45cf-84f8-768b5384da45"
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Response</b></summary>
+<br/>
+
+**Response status codes**:
+- `202 Accepted`: The project creation operation was queued successfully, and the transformed operation reference is returned.
+- `400 Bad Request`: The request is invalid (missing parameters or malformed body).
+- `401 Unauthorized`: The request is not authorized. Ensure that the `Authorization` header is set correctly.
+- `500 Internal Server Error`: An unexpected error occurred while processing the request.
+
+**Response body example**:
+```json
+{
+  "operationId": "f0827d89-57c2-4e59-9693-7c309b42ebbb",
+  "operationStatus": "notSet",
+  "operationUrl": "https://dev.azure.com/krateo-kog/_apis/operations/f0827d89-57c2-4e59-9693-7c309b42ebbb",
+  "operationPluginId": "12345678-1234-1234-1234-123456789abc"
+}
+```
+
+> Note: All fields are prefixed with `operation` to distinguish them from actual project fields. The project will be created asynchronously, and subsequent GET operations will retrieve the actual project once it's ready. This will prevent reconciliation issues with OASGen Provider.
+
+</details>
+
+---
+
+### PATCH Project
+
+**Description**:
+This endpoint updates an existing project in Azure DevOps. The operation is asynchronous, so this endpoint polls the update operation until it completes successfully, then fetches and returns the updated project.
+
+<details>
+<summary><b>Why This Endpoint Exists</b></summary>
+<br/>
+
+- The standard Azure DevOps REST API returns an `OperationReference` object when updating a project (PATCH), making the operation asynchronous.
+- This endpoint provides a **synchronous** update experience by automatically polling the operation status until the update is complete.
+- After the operation completes, it fetches the updated project via GET and returns the full project object.
+- This simplifies Kubernetes resource management by ensuring the project is fully updated and the latest state is returned in a single request.
+- The endpoint handles the complete lifecycle: initiates update, polls operation status, fetches updated project, and returns it.
+
+</details>
+
+<details>
+<summary><b>Request</b></summary>
+<br/>
+
+```http
+PATCH /plugin/project/{organization}/{projectId}
+```
+
+**Path parameters**:
+- `organization` (string, required): The name of the Azure DevOps organization.
+- `projectId` (string, required): The ID of the project to update.
+
+**Query parameters**:
+- `api-version` (string, required): The version of the Azure DevOps REST API to use. For example, `7.2-preview.4`.
+
+**Request body example**:
+```json
+{
+  "abbreviation": "UPN",
+  "description": "Updated description",
+}
+```
+
+</details>
+
+<details>
+<summary><b>Response</b></summary>
+<br/>
+
+**Response status codes**:
+- **200 OK**: The project was updated successfully. The response body contains the updated project object.
+- **400 Bad Request**: Missing organization or project ID in the request path, or invalid request body.
+- **401 Unauthorized**: Missing or invalid Authorization header.
+- **404 Not Found**: Project not found.
+- **500 Internal Server Error**: Failed to update project, poll operation status, or fetch updated project.
+
+**Response body example**:
+```json
+{
+  "id": "12345678-1234-1234-1234-123456789abc",
+  "name": "updated-project-name",
+  "description": "Updated description",
+  "abbreviation": "UPN",
+  "url": "https://dev.azure.com/krateo-kog/_apis/projects/12345678-1234-1234-1234-123456789abc",
+  "state": "wellFormed",
+  "revision": 42,
+  "visibility": "private",
+  "lastUpdateTime": "2025-12-23T10:30:00.000Z",
+  "_links": {
+    "self": {
+      "href": "https://dev.azure.com/krateo-kog/_apis/projects/12345678-1234-1234-1234-123456789abc"
+    },
+    "collection": {
+      "href": "https://dev.azure.com/krateo-kog/_apis"
+    },
+    "web": {
+      "href": "https://dev.azure.com/krateo-kog/updated-project-name"
+    }
+  },
+  "defaultTeam": {
+    "id": "87654321-4321-4321-4321-210987654321",
+    "name": "updated-project-name Team",
+    "url": "https://dev.azure.com/krateo-kog/_apis/projects/12345678-1234-1234-1234-123456789abc/teams/87654321-4321-4321-4321-210987654321"
+  }
+}
+```
+
+> Note: Unlike the POST operation which returns an `OperationReference`, the PATCH operation is synchronous and returns the actual updated project object once the operation completes.
+
+</details>
+
+### DELETE Project
+
+**Description**:
+This endpoint deletes an Azure DevOps project by its ID. The operation is asynchronous, so this endpoint polls the delete operation until it completes successfully.
+
+<details>
+<summary><b>Why This Endpoint Exists</b></summary>
+<br/>
+
+- The standard Azure DevOps Projects API DELETE operation returns an `OperationReference` with status `queued`, making the operation asynchronous.
+- This endpoint provides a **synchronous** delete experience by automatically polling the operation status until the deletion is complete.
+- This simplifies Kubernetes resource management by ensuring the project is fully deleted before the response is returned.
+- The endpoint handles the complete lifecycle: initiates deletion, polls operation status, and confirms completion.
+
+</details>
+
+<details>
+<summary><b>Request</b></summary>
+<br/>
+
+```http
+DELETE /plugin/project/{organization}/{projectId}
+```
+
+**Path parameters**:
+- `organization` (string, required): The name of the Azure DevOps organization.
+- `projectId` (string, required): The ID of the project to delete.
+
+**Query parameters**:
+- `api-version` (string, required): The version of the Azure DevOps REST API to use. For example, `7.2-preview.4`.
+
+</details>
+
+<details>
+<summary><b>Response</b></summary>
+<br/>
+
+**Response status codes**:
+- **204 No Content**: The project was deleted successfully. The endpoint polls the deletion operation until it reaches a final state (`succeeded`, `failed`, or `cancelled`). Once the operation completes successfully, it returns 204 No Content.
+- **400 Bad Request**: Missing organization or project ID in the request path.
+- **401 Unauthorized**: Missing or invalid Authorization header.
+- **404 Not Found**: Project not found or already deleted.
+- **500 Internal Server Error**: Failed to delete project or poll operation status.
 
 </details>
 

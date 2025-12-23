@@ -1,0 +1,219 @@
+openapi: 3.0.1
+info:
+  title: Azure DevOps Project Plugin API for Krateo Operator Generator (KOG)
+  description: Simple wrapper around Azure DevOps API to transform operation references and handle async operations for project create/update/delete operations
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Krateo Support
+    url: https://krateo.io
+    email: contact@krateoplatformops.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: "1.0"
+servers:
+  - url: http://localhost:8080/
+paths:
+  /plugin/project/{organization}:
+    post:
+      tags:
+        - Projects
+      summary: Create a project
+      description: Create a new project in Azure DevOps. Returns a transformed operation reference.
+      operationId: create-project
+      parameters:
+        - name: organization
+          in: path
+          description: Organization name
+          required: true
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.4)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Project creation request
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "202":
+          description: Transformed operation reference with prefixed fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project.TransformedOperationReference'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+      x-codegen-request-body-name: project
+  /plugin/project/{organization}/{projectId}:
+    delete:
+      tags:
+        - Projects
+      summary: Delete a project
+      description: Delete an existing project in Azure DevOps. Polls the operation until complete and returns 204 No Content.
+      operationId: delete-project
+      parameters:
+        - name: organization
+          in: path
+          description: Organization name
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.4)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content - project deleted successfully
+          content: {}
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - Projects
+      summary: Update a project
+      description: Update an existing project in Azure DevOps. Polls the operation until complete and returns the updated project.
+      operationId: update-project
+      parameters:
+        - name: organization
+          in: path
+          description: Organization name
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.4)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Project update request
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Updated project object
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+      x-codegen-request-body-name: project
+components:
+  schemas:
+    project.TransformedOperationReference:
+      type: object
+      properties:
+        operationId:
+          type: string
+        operationPluginId:
+          type: string
+        operationStatus:
+          type: string
+        operationUrl:
+          type: string
+x-original-swagger-version: "2.0"

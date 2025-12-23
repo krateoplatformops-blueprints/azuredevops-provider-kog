@@ -1,0 +1,96 @@
+kind: RestDefinition
+apiVersion: ogen.krateo.io/v1alpha1
+metadata:
+  name: azuredevops-provider-kog-project
+spec:
+  oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-project/project.yaml
+  resourceGroup: azuredevops.ogen.krateo.io
+  resource: 
+    kind: Project
+    identifiers:
+    - name
+    additionalStatusFields:
+    - id
+    - url
+    - state
+    - revision
+    excludedSpecFields:
+    #- _links
+    #- abbreviation
+    #- continuationToken
+    #- defaultTeamImageUrl
+    #- id
+    #- lastUpdateTime
+    #- revision
+    - projectId
+    #- url
+    verbsDescription:
+    - action: create
+      method: POST
+      path: /{organization}/_apis/projects
+    - action: findby
+      method: GET
+      path: /{organization}/_apis/projects
+      pagination:
+        type: continuationToken
+        continuationToken:
+          request:
+            tokenIn: query
+            tokenPath: "continuationToken"
+          response:
+            tokenIn: header
+            tokenPath: "x-ms-continuationtoken"
+    - action: get
+      method: GET
+      path: /{organization}/_apis/projects/{projectId}
+      requestFieldMapping:
+        - inPath: projectId
+          inCustomResource: status.id
+    - action: update
+      method: PATCH
+      path: /{organization}/_apis/projects/{projectId}
+      requestFieldMapping:
+        - inPath: projectId
+          inCustomResource: status.id
+    - action: delete
+      method: DELETE
+      path: /{organization}/_apis/projects/{projectId}
+      requestFieldMapping:
+        - inPath: projectId
+          inCustomResource: status.id
+    configurationFields:
+    - fromOpenAPI:
+        name: api-version
+        in: query
+      fromRestDefinition:
+        actions: ["*"] # star means all actions set in the verbsDescription above
+    - fromOpenAPI:
+        name: $skip
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]
+    - fromOpenAPI:
+        name: $top
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]
+    - fromOpenAPI:
+        name: getDefaultTeamImageUrl
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]
+    - fromOpenAPI:
+        name: includeCapabilities
+        in: query
+      fromRestDefinition:
+        actions: ["get"]
+    - fromOpenAPI:
+        name: includeHistory
+        in: query
+      fromRestDefinition:
+        actions: ["get"]
+    - fromOpenAPI:
+        name: stateFilter
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]

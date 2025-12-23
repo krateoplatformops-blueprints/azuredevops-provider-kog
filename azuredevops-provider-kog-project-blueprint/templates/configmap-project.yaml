@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-project
+data:
+  project.yaml: |
+{{ tpl (.Files.Get "assets/project.yaml") . | indent 4 }}
