@@ -119,7 +119,7 @@ helm install azuredevops-provider-kog azuredevops-provider-kog \
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  --version 1.4.0 \
+  --version 1.5.0 \
   --wait
 ```
 
@@ -178,14 +178,15 @@ As a matter of fact, currently, this chart allows you to manage the following re
 - `BuildPermission`
 - `Team`
 - `GraphGroup`
+- `Project`
 
-Other resources (`TeamProject`, `Queue`, `Environment`, etc.) can be managed using the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
+Other resources (`Queue`, `Environment`, etc.) can be managed using the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
 For example, you can create a `PipelinePermission` resource that references an `Environment` resource created by the Azure DevOps Provider (classic).
 > [!NOTE]  
 > The references used by these resources are "by id" or other Azure DevOps resource identifiers but not Kubernetes-native references. Meaning that the `PipelinePermission` resource will reference the `Environment` by its `id`, not by a Kubernetes resource name and namespace. Said `id` can be usually found in the `status` field of the `Environment` resource created by the Azure DevOps Provider (classic). An example on how to reference resource in this way is available in the [Lookup functions example](#lookup-functions-example) section below.
 
 Therefore the overall scenario is the following:
-- You should use the Azure DevOps Provider (classic) to manage resources that are not supported by this chart, such as `TeamProject`, `Queue`, `Environment`, etc.
+- You should use the Azure DevOps Provider (classic) to manage resources that are not supported by this chart, such as `Queue`, `Environment`, etc.
 - You should use the Azure DevOps Provider KOG (this chart) to manage only resources that are supported, like `GitRepository`, `Pipeline`, `PipelinePermission`, etc.
 
 Note that the following resources: 
@@ -197,6 +198,7 @@ Note that the following resources:
 - `RepositoryPermission`
 - `Team`
 - `GraphGroup` (called `Groups` with final `s` in the Azure DevOps Provider (classic))
+- `Project` (called `TeamProject` in the Azure DevOps Provider (classic))
 
 are supported by both the Azure DevOps Provider (classic) and the Azure DevOps Provider KOG and migration guides are available in the [Migration guide](./azuredevops-provider-kog-blueprint/docs/migration-guides/) folder of the `/docs` folder of the main chart.
 The migration guide explains how to migrate from the Azure DevOps Provider (classic) resources to the Azure DevOps Provider KOG resources whenever possible.
@@ -259,6 +261,7 @@ This chart supports the following resources and operations:
 | BuildPermission     | ✅   | 🚫 Not supported    | ✅     | 🚫 Not supported |
 | Team                | ✅   | ✅                  | ✅     | ✅     |
 | GraphGroup          | ✅   | ✅                  | 🚫 Not supported     | ✅     |
+| Project             | ✅   | ✅                  | ✅     | ✅     |
 
 > [!NOTE]  
 > 🚫 *"Not supported"* means that the operation is not supported by the resource (e.g., the underlying REST API does not support it and therefore the controller does not implement it), the operation is not applicable to the resource due to the nature of the resource or the operation is not implemented in this provider version.
@@ -813,7 +816,59 @@ spec:
   # VSTS group creation fields
   displayName: test1
   description: test_description
+```
 
+</details>
+
+---
+
+### Project
+
+The `Project` resource is used to manage Projects in Azure DevOps.
+
+#### Project operations
+
+- **Get**: You can retrieve information about an existing Project in Azure DevOps.
+- **Create**: You can create a new Project in Azure DevOps.
+- **Update**: You can update an existing Project in Azure DevOps (e.g., description, abbreviation).
+- **Delete**: You can delete an existing Project. This will remove the Project from Azure DevOps.
+
+#### Project schema
+
+The `Project` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/project.md).
+
+The `Project` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/project-crd.yaml).
+
+#### Project example CR
+
+An example of a `Project` resource is:
+<details>
+<summary><b> Project Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Project
+metadata:
+  name: project-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-project-config
+    namespace: default
+  organization: krateo-kog
+  name: Test-KOG-000002
+  description: "Project created via KOG, test 2"
+  visibility: private
+  capabilities:
+    versioncontrol:
+      sourceControlType: "Git"
+    processTemplate:
+      templateTypeId: "6b724908-ef14-45cf-84f8-768b5384da45" # Scrum template
+  #abbreviation: TK1 # update only field, cannot be set at creation time
 ```
 
 </details>
@@ -917,6 +972,7 @@ Currently, the supported configuration resources are:
 - `BuildPermissionConfiguration`
 - `TeamConfiguration`
 - `GraphGroupConfiguration`
+- `ProjectConfiguration`
 
 These configuration resources are used to store the authentication information (i.e., reference to the Kubernetes Secret containing the Azure DevOps PAT) and other configuration options for the resource type.
 
