@@ -24,7 +24,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/plugin/project/{organization}": {
+        "/plugin/{organization}/projects": {
             "post": {
                 "description": "Create a new project in Azure DevOps. Returns a transformed operation reference.",
                 "consumes": [
@@ -66,7 +66,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/project.ProjectRequestBodyCreate"
+                            "$ref": "#/definitions/project.ProjectRequestBodyMerged"
                         }
                     }
                 ],
@@ -98,7 +98,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/plugin/project/{organization}/{projectId}": {
+        "/plugin/{organization}/projects/{projectId}": {
             "delete": {
                 "description": "Delete an existing project in Azure DevOps. Polls the operation until complete and returns 204 No Content.",
                 "produces": [
@@ -263,7 +263,7 @@ const docTemplate = `{
                 "processTemplate": {
                     "$ref": "#/definitions/project.ProcessTemplate"
                 },
-                "versionControl": {
+                "versioncontrol": {
                     "$ref": "#/definitions/project.VersionControl"
                 }
             }
@@ -312,11 +312,11 @@ const docTemplate = `{
                 }
             }
         },
-        "project.ProjectRequestBodyCreate": {
-            "description": "Azure DevOps project object in request body for creation",
+        "project.ProjectRequestBodyMerged": {
             "type": "object",
             "properties": {
                 "abbreviation": {
+                    "description": "Only updatable field, not allowed in create",
                     "type": "string"
                 },
                 "capabilities": {
@@ -342,6 +342,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "abbreviation": {
+                    "description": "Only updatable field, not allowed in create",
                     "type": "string"
                 },
                 "description": {

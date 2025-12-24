@@ -4,7 +4,7 @@ definitions:
     properties:
       processTemplate:
         $ref: '#/definitions/project.ProcessTemplate'
-      versionControl:
+      versioncontrol:
         $ref: '#/definitions/project.VersionControl'
     type: object
   project.DefaultTeam:
@@ -35,10 +35,10 @@ definitions:
       web:
         $ref: '#/definitions/project.Link'
     type: object
-  project.ProjectRequestBodyCreate:
-    description: Azure DevOps project object in request body for creation
+  project.ProjectRequestBodyMerged:
     properties:
       abbreviation:
+        description: Only updatable field, not allowed in create
         type: string
       capabilities:
         $ref: '#/definitions/project.Capabilities'
@@ -56,6 +56,7 @@ definitions:
     description: Azure DevOps project object in request body for update
     properties:
       abbreviation:
+        description: Only updatable field, not allowed in create
         type: string
       description:
         type: string
@@ -132,7 +133,7 @@ info:
   title: Azure DevOps Project Plugin API for Krateo Operator Generator (KOG)
   version: "1.0"
 paths:
-  /plugin/project/{organization}:
+  /plugin/{organization}/projects:
     post:
       consumes:
       - application/json
@@ -160,7 +161,7 @@ paths:
         name: project
         required: true
         schema:
-          $ref: '#/definitions/project.ProjectRequestBodyCreate'
+          $ref: '#/definitions/project.ProjectRequestBodyMerged'
       produces:
       - application/json
       responses:
@@ -183,7 +184,7 @@ paths:
       summary: Create a project
       tags:
       - Projects
-  /plugin/project/{organization}/{projectId}:
+  /plugin/{organization}/projects/{projectId}:
     delete:
       description: Delete an existing project in Azure DevOps. Polls the operation
         until complete and returns 204 No Content.

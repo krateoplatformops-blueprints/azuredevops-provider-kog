@@ -97,3 +97,14 @@ azuredevops-provider-kog-graphgroup-blueprint:
   # default: true
   # @schema
   enabled: true
+# @schema
+# type: object
+# description: Configuration for the Project Blueprint dependency.
+# @schema
+azuredevops-provider-kog-project-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the Project Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true

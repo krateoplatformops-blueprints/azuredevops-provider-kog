@@ -127,40 +127,40 @@ paths:
       #x-ms-examples:
       #  ? ''
       #  : $ref: ./httpExamples/projects/GET__projects.json
-    post:
-      tags:
-      - Projects
-      description: Queues a project to be created. Use the [GetOperation](../../operations/operations/get) to periodically
-        check for create project status.
-      operationId: Projects_Create
-      parameters:
-      - name: organization
-        in: path
-        description: The name of the Azure DevOps organization.
-        required: true
-        schema:
-          type: string
-      - name: api-version
-        in: query
-        description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
-        required: true
-        schema:
-          type: string
-      requestBody:
-        description: The project to create.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TeamProject'
-        required: true
-      responses:
-        '202': # FIXED
-          description: successful operation
-          # FIXED
-          #content:
-          #  application/json:
-          #    schema:
-          #      $ref: '#/components/schemas/OperationReference'
+    #post:
+    #  tags:
+    #  - Projects
+    #  description: Queues a project to be created. Use the [GetOperation](../../operations/operations/get) to periodically
+    #    check for create project status.
+    #  operationId: Projects_Create
+    #  parameters:
+    #  - name: organization
+    #    in: path
+    #    description: The name of the Azure DevOps organization.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  - name: api-version
+    #    in: query
+    #    description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  requestBody:
+    #    description: The project to create.
+    #    content:
+    #      application/json:
+    #        schema:
+    #          $ref: '#/components/schemas/TeamProject'
+    #    required: true
+    #  responses:
+    #    '202': # FIXED
+    #      description: successful operation
+    #      # FIXED
+    #      #content:
+    #      #  application/json:
+    #      #    schema:
+    #      #      $ref: '#/components/schemas/OperationReference'
       #security:
       #- oauth2:
       #  - vso.project_manage
@@ -221,39 +221,39 @@ paths:
       #x-ms-vss-resource: projects
       #x-ms-vss-method: GetProject
       #x-ms-preview: true
-    delete:
-      tags:
-      - Projects
-      description: Queues a project to be deleted. Use the [GetOperation](../../operations/operations/get) to periodically
-        check for delete project status.
-      operationId: Projects_Delete
-      parameters:
-      - name: organization
-        in: path
-        description: The name of the Azure DevOps organization.
-        required: true
-        schema:
-          type: string
-      - name: projectId
-        in: path
-        description: The project id of the project to delete.
-        required: true
-        schema:
-          type: string
-          format: uuid
-      - name: api-version
-        in: query
-        description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OperationReference'
+    #delete:
+    #  tags:
+    #  - Projects
+    #  description: Queues a project to be deleted. Use the [GetOperation](../../operations/operations/get) to periodically
+    #    check for delete project status.
+    #  operationId: Projects_Delete
+    #  parameters:
+    #  - name: organization
+    #    in: path
+    #    description: The name of the Azure DevOps organization.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  - name: projectId
+    #    in: path
+    #    description: The project id of the project to delete.
+    #    required: true
+    #    schema:
+    #      type: string
+    #      format: uuid
+    #  - name: api-version
+    #    in: query
+    #    description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  responses:
+    #    '200':
+    #      description: successful operation
+    #      content:
+    #        application/json:
+    #          schema:
+    #            $ref: '#/components/schemas/OperationReference'
       #security:
       #- oauth2:
       #  - vso.project_manage
@@ -261,45 +261,45 @@ paths:
       #x-ms-vss-resource: projects
       #x-ms-vss-method: QueueDeleteProject
       #x-ms-preview: true
-    patch:
-      tags:
-      - Projects
-      description: Update an existing project's name, abbreviation, description, or restore a project.
-      operationId: Projects_Update
-      parameters:
-      - name: organization
-        in: path
-        description: The name of the Azure DevOps organization.
-        required: true
-        schema:
-          type: string
-      - name: projectId
-        in: path
-        description: The project id of the project to update.
-        required: true
-        schema:
-          type: string
-          format: uuid
-      - name: api-version
-        in: query
-        description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
-        required: true
-        schema:
-          type: string
-      requestBody:
-        description: The updates for the project. The state must be set to wellFormed to restore the project.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TeamProject'
-        required: true
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OperationReference'
+    #patch:
+    #  tags:
+    #  - Projects
+    #  description: Update an existing project's name, abbreviation, description, or restore a project.
+    #  operationId: Projects_Update
+    #  parameters:
+    #  - name: organization
+    #    in: path
+    #    description: The name of the Azure DevOps organization.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  - name: projectId
+    #    in: path
+    #    description: The project id of the project to update.
+    #    required: true
+    #    schema:
+    #      type: string
+    #      format: uuid
+    #  - name: api-version
+    #    in: query
+    #    description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  requestBody:
+    #    description: The updates for the project. The state must be set to wellFormed to restore the project.
+    #    content:
+    #      application/json:
+    #        schema:
+    #          $ref: '#/components/schemas/TeamProject'
+    #    required: true
+    #  responses:
+    #    '200':
+    #      description: successful operation
+    #      content:
+    #        application/json:
+    #          schema:
+    #            $ref: '#/components/schemas/OperationReference'
       #security:
       #- oauth2:
       #  - vso.project_write
@@ -308,6 +308,204 @@ paths:
       #x-ms-vss-method: UpdateProject
       #x-ms-preview: true
       #x-codegen-request-body-name: body
+  /plugin/{organization}/projects:
+    post:
+      servers:
+        - url: {{ include "project.webServiceUrl" . }}
+          description: URL of the Azure DevOps RDC plugin
+      tags:
+        - Projects
+      summary: Create a project
+      description: Create a new project in Azure DevOps. Returns a transformed operation reference.
+      operationId: Projects_Create
+      parameters:
+        - name: organization
+          in: path
+          description: The name of the Azure DevOps organization.
+          required: true
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.4)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The project to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/project.ProjectRequestBodyMerged'
+        required: true
+      responses:
+        "202":
+          description: Transformed operation reference with prefixed fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project.TransformedOperationReference'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+      x-codegen-request-body-name: project
+  /plugin/{organization}/projects/{projectId}:
+    delete:
+      servers:
+        - url: {{ include "project.webServiceUrl" . }}
+          description: URL of the Azure DevOps RDC plugin
+      tags:
+        - Projects
+      summary: Delete a project
+      description: Delete an existing project in Azure DevOps. Polls the operation until complete and returns 204 No Content.
+      operationId: Projects_Delete
+      parameters:
+        - name: organization
+          in: path
+          description: The name of the Azure DevOps organization.
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.4)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content - project deleted successfully
+          content: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+    patch:
+      servers:
+        - url: {{ include "project.webServiceUrl" . }}
+          description: URL of the Azure DevOps RDC plugin
+      tags:
+        - Projects
+      summary: Update a project
+      description: Update an existing project in Azure DevOps. Polls the operation until complete and returns the updated project.
+      operationId: Projects_Update
+      parameters:
+        - name: organization
+          in: path
+          description: The name of the Azure DevOps organization.
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.4)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Project update request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/project.ProjectRequestBodyUpdate'
+        required: true
+      responses:
+        "200":
+          description: Updated project object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project.ProjectResponseBody'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+      x-codegen-request-body-name: project
 components:
   schemas:
     OperationReference:
@@ -463,6 +661,125 @@ components:
           type: string
           description: Team REST API Url
       description: ''
+    # Schemas for plugin endpoints
+    project.Capabilities:
+      type: object
+      properties:
+        processTemplate:
+          $ref: '#/components/schemas/project.ProcessTemplate'
+        versioncontrol:
+          $ref: '#/components/schemas/project.VersionControl'
+    project.DefaultTeam:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+    project.Link:
+      type: object
+      properties:
+        href:
+          type: string
+    project.ProcessTemplate:
+      type: object
+      properties:
+        templateTypeId:
+          type: string
+    project.ProjectLinks:
+      type: object
+      properties:
+        collection:
+          $ref: '#/components/schemas/project.Link'
+        self:
+          $ref: '#/components/schemas/project.Link'
+        web:
+          $ref: '#/components/schemas/project.Link'
+    project.ProjectRequestBodyMerged:
+      type: object
+      properties:
+        abbreviation:
+          type: string
+          description: Only updatable field, not allowed in create
+        capabilities:
+          $ref: '#/components/schemas/project.Capabilities'
+        description:
+          type: string
+        name:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - private
+            - public
+    project.ProjectRequestBodyUpdate:
+      type: object
+      properties:
+        abbreviation:
+          type: string
+          description: Only updatable field, not allowed in create
+        description:
+          type: string
+      description: Azure DevOps project object in request body for update
+    project.ProjectResponseBody:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/project.ProjectLinks'
+        abbreviation:
+          type: string
+        capabilities:
+          $ref: '#/components/schemas/project.Capabilities'
+        defaultTeam:
+          $ref: '#/components/schemas/project.DefaultTeam'
+        defaultTeamImageUrl:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+        lastUpdateTime:
+          type: string
+        name:
+          type: string
+        revision:
+          type: integer
+        state:
+          type: string
+          enum:
+            - deleting
+            - new
+            - wellFormed
+            - createPending
+            - all
+            - unchanged
+            - deleted
+        url:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - private
+            - public
+      description: Azure DevOps project object in response body
+    project.TransformedOperationReference:
+      type: object
+      properties:
+        operationId:
+          type: string
+        operationPluginId:
+          type: string
+        operationStatus:
+          type: string
+        operationUrl:
+          type: string
+    project.VersionControl:
+      type: object
+      properties:
+        sourceControlType:
+          type: string
   #parameters:
   #  api-Version-preview.1:
   #    name: api-version

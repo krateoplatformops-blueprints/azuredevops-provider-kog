@@ -10,3 +10,4 @@ It acts as a umbrella chart and it includes all the other blueprints:
 - azuredevops-provider-kog-buildpermission-blueprint
 - azuredevops-provider-kog-team-blueprint
 - azuredevops-provider-kog-graphgroup-blueprint
+- azuredevops-provider-kog-project-blueprint

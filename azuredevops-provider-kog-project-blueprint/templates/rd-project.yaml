@@ -15,19 +15,12 @@ spec:
     - state
     - revision
     excludedSpecFields:
-    #- _links
-    #- abbreviation
-    #- continuationToken
-    #- defaultTeamImageUrl
-    #- id
-    #- lastUpdateTime
-    #- revision
+    - continuationToken
     - projectId
-    #- url
     verbsDescription:
     - action: create
       method: POST
-      path: /{organization}/_apis/projects
+      path: /plugin/{organization}/projects
     - action: findby
       method: GET
       path: /{organization}/_apis/projects
@@ -39,7 +32,7 @@ spec:
             tokenPath: "continuationToken"
           response:
             tokenIn: header
-            tokenPath: "x-ms-continuationtoken"
+            tokenPath: "x-ms-continuationtoken" # HTTP headers are case-insensitive
     - action: get
       method: GET
       path: /{organization}/_apis/projects/{projectId}
@@ -48,13 +41,13 @@ spec:
           inCustomResource: status.id
     - action: update
       method: PATCH
-      path: /{organization}/_apis/projects/{projectId}
+      path: /plugin/{organization}/projects/{projectId}
       requestFieldMapping:
         - inPath: projectId
           inCustomResource: status.id
     - action: delete
       method: DELETE
-      path: /{organization}/_apis/projects/{projectId}
+      path: /plugin/{organization}/projects/{projectId}
       requestFieldMapping:
         - inPath: projectId
           inCustomResource: status.id
@@ -80,6 +73,11 @@ spec:
       fromRestDefinition:
         actions: ["findby"]
     - fromOpenAPI:
+        name: stateFilter
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]
+    - fromOpenAPI:
         name: includeCapabilities
         in: query
       fromRestDefinition:
@@ -89,8 +87,4 @@ spec:
         in: query
       fromRestDefinition:
         actions: ["get"]
-    - fromOpenAPI:
-        name: stateFilter
-        in: query
-      fromRestDefinition:
-        actions: ["findby"]
+

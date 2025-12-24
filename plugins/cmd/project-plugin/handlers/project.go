@@ -386,12 +386,12 @@ func (h *baseHandler) handleDeleteOperation(ctx context.Context, w http.Response
 // @Param organization path string true "The name of the Azure DevOps organization."
 // @Param api-version query string true "API version (e.g., 7.2-preview.4)"
 // @Param Authorization header string true "Basic Auth header"
-// @Param project body ProjectRequestBodyCreate true "The project to create."
+// @Param project body ProjectRequestBodyMerged true "The project to create."
 // @Success 202 {object} TransformedOperationReference "Transformed operation reference with prefixed fields"
 // @Failure 400 {string} string "Bad Request"
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 500 {string} string "Internal Server Error"
-// @Router /plugin/project/{organization} [post]
+// @Router /plugin/{organization}/projects [post]
 func (h *postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), requestTimeout)
 	defer cancel()
@@ -412,6 +412,8 @@ func (h *postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	// Unmarshal and validate request body
+	// In the annotations, we use ProjectRequestBodyMerged to include both create and update fields,
+	// but here we only need to use and validate the create fields.
 	var projectReq ProjectRequestBodyCreate
 	if err := json.Unmarshal(body, &projectReq); err != nil {
 		h.writeErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("invalid JSON in request body: %s", err.Error()))
@@ -455,7 +457,7 @@ func (h *postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Not Found"
 // @Failure 500 {string} string "Internal Server Error"
-// @Router /plugin/project/{organization}/{projectId} [patch]
+// @Router /plugin/{organization}/projects/{projectId} [patch]
 func (h *patchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), requestTimeout)
 	defer cancel()
@@ -511,7 +513,7 @@ func (h *patchHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Not Found"
 // @Failure 500 {string} string "Internal Server Error"
-// @Router /plugin/project/{organization}/{projectId} [delete]
+// @Router /plugin/{organization}/projects/{projectId} [delete]
 func (h *deleteHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), requestTimeout)
 	defer cancel()

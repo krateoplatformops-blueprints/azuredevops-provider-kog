@@ -3,7 +3,7 @@
 ## Scenario
 
 Note that the name of the resource in Azure DevOps Provider KOG is `GraphGroup`, while in Azure DevOps Provider (classic) it is `Groups`.
-The rationale behind this change is to be more aligned with the original naming used by Azure DevOps REST API.
+The rationale behind this change is to be more aligned with the original naming used by Azure DevOps REST API endpoints.
 Thus, the migration involves also a change in the kind of the resource.
 
 **Starting point**: `Groups` resource managed by Azure DevOps Provider (classic).

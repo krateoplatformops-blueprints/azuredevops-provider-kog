@@ -66,3 +66,13 @@ dependencies:
     version: AZUREDEVOPS_PROVIDER_KOG_TEAM_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-team-blueprint.enabled
+
+  - name: azuredevops-provider-kog-graphgroup
+    version: AZUREDEVOPS_PROVIDER_KOG_GRAPHGROUP_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-graphgroup-blueprint.enabled
+
+  - name: azuredevops-provider-kog-project
+    version: AZUREDEVOPS_PROVIDER_KOG_PROJECT_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-project-blueprint.enabled

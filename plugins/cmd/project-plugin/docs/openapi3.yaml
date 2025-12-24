@@ -14,7 +14,7 @@ info:
 servers:
   - url: http://localhost:8080/
 paths:
-  /plugin/project/{organization}:
+  /plugin/{organization}/projects:
     post:
       tags:
         - Projects
@@ -45,7 +45,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/project.ProjectRequestBodyCreate'
+              $ref: '#/components/schemas/project.ProjectRequestBodyMerged'
         required: true
       responses:
         "202":
@@ -73,7 +73,7 @@ paths:
               schema:
                 type: string
       x-codegen-request-body-name: project
-  /plugin/project/{organization}/{projectId}:
+  /plugin/{organization}/projects/{projectId}:
     delete:
       tags:
         - Projects
@@ -210,7 +210,7 @@ components:
       properties:
         processTemplate:
           $ref: '#/components/schemas/project.ProcessTemplate'
-        versionControl:
+        versioncontrol:
           $ref: '#/components/schemas/project.VersionControl'
     project.DefaultTeam:
       type: object
@@ -240,11 +240,12 @@ components:
           $ref: '#/components/schemas/project.Link'
         web:
           $ref: '#/components/schemas/project.Link'
-    project.ProjectRequestBodyCreate:
+    project.ProjectRequestBodyMerged:
       type: object
       properties:
         abbreviation:
           type: string
+          description: Only updatable field, not allowed in create
         capabilities:
           $ref: '#/components/schemas/project.Capabilities'
         description:
@@ -256,12 +257,12 @@ components:
           enum:
             - private
             - public
-      description: Azure DevOps project object in request body for creation
     project.ProjectRequestBodyUpdate:
       type: object
       properties:
         abbreviation:
           type: string
+          description: Only updatable field, not allowed in create
         description:
           type: string
       description: Azure DevOps project object in request body for update

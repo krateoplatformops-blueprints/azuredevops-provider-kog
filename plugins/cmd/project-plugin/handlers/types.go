@@ -63,7 +63,7 @@ const (
 )
 
 type Capabilities struct {
-	VersionControl  VersionControl  `json:"versionControl,omitempty"`
+	VersionControl  VersionControl  `json:"versioncontrol,omitempty"`
 	ProcessTemplate ProcessTemplate `json:"processTemplate,omitempty"`
 }
 
@@ -96,7 +96,6 @@ type ProjectResponseBody struct {
 // Project represents an Azure DevOps project
 // @Description Azure DevOps project object in request body for creation
 type ProjectRequestBodyCreate struct {
-	Abbreviation string        `json:"abbreviation,omitempty"`
 	Description  string        `json:"description,omitempty"`
 	Name         string        `json:"name,omitempty"`
 	Visibility   string        `json:"visibility,omitempty" enums:"private,public"`
@@ -137,6 +136,17 @@ func (p *ProjectRequestBodyCreate) Validate() error {
 // Project represents an Azure DevOps project
 // @Description Azure DevOps project object in request body for update
 type ProjectRequestBodyUpdate struct {
-	Abbreviation string `json:"abbreviation,omitempty"`
+	Abbreviation string `json:"abbreviation,omitempty"` // Only updatable field, not allowed in create
 	Description  string `json:"description,omitempty"`
+}
+
+// This is needed to merge both create and update fields since oasgen will create the spec of the CRD starting from the request body
+// of the create operation, so we need to include the updatable fields from the update operation as well.
+// and then add logic in the handler to separate them accordingly.
+type ProjectRequestBodyMerged struct {
+	Abbreviation string        `json:"abbreviation,omitempty"` // Only updatable field, not allowed in create
+	Description  string        `json:"description,omitempty"`
+	Name         string        `json:"name,omitempty"`
+	Visibility   string        `json:"visibility,omitempty" enums:"private,public"`
+	Capabilities *Capabilities `json:"capabilities,omitempty"`
 }

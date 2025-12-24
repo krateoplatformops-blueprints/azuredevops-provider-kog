@@ -21,7 +21,7 @@
     }
   ],
   "paths": {
-    "/plugin/project/{organization}": {
+    "/plugin/{organization}/projects": {
       "post": {
         "tags": [
           "Projects"
@@ -63,7 +63,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/project.ProjectRequestBodyCreate"
+                "$ref": "#/components/schemas/project.ProjectRequestBodyMerged"
               }
             }
           },
@@ -114,7 +114,7 @@
         "x-codegen-request-body-name": "project"
       }
     },
-    "/plugin/project/{organization}/{projectId}": {
+    "/plugin/{organization}/projects/{projectId}": {
       "delete": {
         "tags": [
           "Projects"
@@ -327,7 +327,7 @@
           "processTemplate": {
             "$ref": "#/components/schemas/project.ProcessTemplate"
           },
-          "versionControl": {
+          "versioncontrol": {
             "$ref": "#/components/schemas/project.VersionControl"
           }
         }
@@ -376,11 +376,12 @@
           }
         }
       },
-      "project.ProjectRequestBodyCreate": {
+      "project.ProjectRequestBodyMerged": {
         "type": "object",
         "properties": {
           "abbreviation": {
-            "type": "string"
+            "type": "string",
+            "description": "Only updatable field, not allowed in create"
           },
           "capabilities": {
             "$ref": "#/components/schemas/project.Capabilities"
@@ -398,14 +399,14 @@
               "public"
             ]
           }
-        },
-        "description": "Azure DevOps project object in request body for creation"
+        }
       },
       "project.ProjectRequestBodyUpdate": {
         "type": "object",
         "properties": {
           "abbreviation": {
-            "type": "string"
+            "type": "string",
+            "description": "Only updatable field, not allowed in create"
           },
           "description": {
             "type": "string"

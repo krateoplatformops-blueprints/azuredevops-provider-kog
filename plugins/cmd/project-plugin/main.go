@@ -3,10 +3,10 @@ package main
 import (
 	"net/http"
 
-	project "github.com/krateoplatformops/azuredevops-provider-kog/project-plugin/handlers"
 	"github.com/krateoplatformops/azuredevops-provider-kog/pkg/handlers"
 	"github.com/krateoplatformops/azuredevops-provider-kog/pkg/health"
 	"github.com/krateoplatformops/azuredevops-provider-kog/pkg/server"
+	project "github.com/krateoplatformops/azuredevops-provider-kog/project-plugin/handlers"
 	"github.com/rs/zerolog/log"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
@@ -32,9 +32,9 @@ func main() {
 	}
 
 	// Project operations
-	srv.Mux().Handle("POST /plugin/project/{organization}", project.PostProject(opts))
-	srv.Mux().Handle("PATCH /plugin/project/{organization}/{projectId}", project.PatchProject(opts))
-	srv.Mux().Handle("DELETE /plugin/project/{organization}/{projectId}", project.DeleteProject(opts))
+	srv.Mux().Handle("POST /plugin/{organization}/projects", project.PostProject(opts))
+	srv.Mux().Handle("PATCH /plugin/{organization}/projects/{projectId}", project.PatchProject(opts))
+	srv.Mux().Handle("DELETE /plugin/{organization}/projects/{projectId}", project.DeleteProject(opts))
 
 	// Swagger UI
 	srv.Mux().Handle("/swagger/", httpSwagger.WrapHandler)

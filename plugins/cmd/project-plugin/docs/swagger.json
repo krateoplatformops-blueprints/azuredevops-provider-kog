@@ -21,7 +21,7 @@
     "host": "localhost:8080",
     "basePath": "/",
     "paths": {
-        "/plugin/project/{organization}": {
+        "/plugin/{organization}/projects": {
             "post": {
                 "description": "Create a new project in Azure DevOps. Returns a transformed operation reference.",
                 "consumes": [
@@ -63,7 +63,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/project.ProjectRequestBodyCreate"
+                            "$ref": "#/definitions/project.ProjectRequestBodyMerged"
                         }
                     }
                 ],
@@ -95,7 +95,7 @@
                 }
             }
         },
-        "/plugin/project/{organization}/{projectId}": {
+        "/plugin/{organization}/projects/{projectId}": {
             "delete": {
                 "description": "Delete an existing project in Azure DevOps. Polls the operation until complete and returns 204 No Content.",
                 "produces": [
@@ -260,7 +260,7 @@
                 "processTemplate": {
                     "$ref": "#/definitions/project.ProcessTemplate"
                 },
-                "versionControl": {
+                "versioncontrol": {
                     "$ref": "#/definitions/project.VersionControl"
                 }
             }
@@ -309,11 +309,11 @@
                 }
             }
         },
-        "project.ProjectRequestBodyCreate": {
-            "description": "Azure DevOps project object in request body for creation",
+        "project.ProjectRequestBodyMerged": {
             "type": "object",
             "properties": {
                 "abbreviation": {
+                    "description": "Only updatable field, not allowed in create",
                     "type": "string"
                 },
                 "capabilities": {
@@ -339,6 +339,7 @@
             "type": "object",
             "properties": {
                 "abbreviation": {
+                    "description": "Only updatable field, not allowed in create",
                     "type": "string"
                 },
                 "description": {

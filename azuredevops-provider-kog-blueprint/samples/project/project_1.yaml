@@ -1,0 +1,22 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Project
+metadata:
+  name: project-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-project-config
+    namespace: default
+  organization: krateo-kog
+  name: Test-KOG-000002
+  description: "Project created via KOG, test 2"
+  visibility: private
+  capabilities:
+    versioncontrol:
+      sourceControlType: "Git"
+    processTemplate:
+      templateTypeId: "6b724908-ef14-45cf-84f8-768b5384da45" # Scrum template
+  #abbreviation: TK1 # update only field, cannot be set at creation time
