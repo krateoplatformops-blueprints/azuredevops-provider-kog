@@ -107,7 +107,7 @@ apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: Team
 metadata:
   name: team-1
-  namespace: azuredevops-system
+  namespace: azuredevops-system                   # Replace with your namespace
   annotations:
     krateo.io/connector-verbose: "true"
     krateo.io/deletion-policy: orphan             # Optional: to ensure the external resource is not deleted when the resource is deleted  
@@ -148,14 +148,12 @@ spec:
 Note that you need to have already created a `TeamConfiguration` resource that contains the authentication and configuration information for the `Team` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
 
-You can check the new `Team` resource managed by Azure DevOps Provider KOG by running the following command:
+You can wait for the new `Team` resource to be ready by running the following command:
 ```sh
-kubectl get teams.azuredevops.ogen.krateo.io team-1 -n azuredevops-system
+kubectl wait teams.azuredevops.ogen.krateo.io/team-1 --for condition=Ready=True --namespace azuredevops-system --timeout=300s
 ```
-And the output should look like this:
 ```sh
-NAME     AGE    READY
-team-1   10s    True
+team.azuredevops.ogen.krateo.io/team-1 condition met
 ```
 
 ### Step 3: Delete the old `Team` resource

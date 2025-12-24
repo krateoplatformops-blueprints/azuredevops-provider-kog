@@ -181,14 +181,12 @@ spec:
 Note that you need to have already created a `PipelinePermissionConfiguration` resource that contains the authentication and configuration information for the `PipelinePermission` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
 
-You can check the new `PipelinePermission` resource managed by Azure DevOps Provider KOG by running the following command:
+You can wait for the new `PipelinePermission` resource to be ready by running the following command:
 ```sh
-kubectl get pipelinepermissions.azuredevops.ogen.krateo.io pipeline-permission-1 -n azuredevops-system
+kubectl wait pipelinepermissions.azuredevops.ogen.krateo.io/pipeline-permission-1 --for condition=Ready=True --namespace azuredevops-system --timeout=300s
 ```
-And the output should look like this:
 ```sh
-NAME                    AGE   READY
-pipeline-permission-1   61s   True
+pipelinepermission.azuredevops.ogen.krateo.io/pipeline-permission-1 condition met
 ```
 
 ### Step 3: Delete the old `PipelinePermission` resource

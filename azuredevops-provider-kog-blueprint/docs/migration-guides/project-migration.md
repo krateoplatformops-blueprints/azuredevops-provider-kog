@@ -114,11 +114,12 @@ Now, you can create a new `Project` resource using the Azure DevOps Provider KOG
 You can find the schema in the specific section of the [README](../../../README.md#project-schema) file of this chart.
 You can apply the following example:
 ```sh
+kubectl apply -f - <<EOF
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: Project
 metadata:
   name: project-1
-  namespace: default
+  namespace: azuredevops-system                           # Replace with your namespace
   annotations:
     krateo.io/connector-verbose: "true"
 spec:
@@ -146,7 +147,7 @@ See the main [README](../../../README.md#configuration) for more details about c
 
 You can wait for the new `Project` resource to be ready by running the following command:
 ```sh
-kubectl wait projects.azuredevops.ogen.krateo.io/project-1 --for condition=Ready=True --namespace default --timeout=300s
+kubectl wait projects.azuredevops.ogen.krateo.io/project-1 --for condition=Ready=True --namespace azuredevops-system --timeout=300s
 ```
 ```sh
 project.azuredevops.ogen.krateo.io/project-1 condition met

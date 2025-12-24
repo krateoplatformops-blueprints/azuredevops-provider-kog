@@ -165,14 +165,12 @@ spec:
 Note that you need to have already created a `PipelineConfiguration` resource that contains the authentication and configuration information for the `Pipeline` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
 
-You can check the new `Pipeline` resource managed by Azure DevOps Provider KOG by running the following command:
+You can wait for the new `Pipeline` resource to be ready by running the following command:
 ```sh
-kubectl get pipelines.azuredevops.ogen.krateo.io pipeline-1 -n azuredevops-system
+kubectl wait pipelines.azuredevops.ogen.krateo.io/pipeline-1 --for condition=Ready=True --namespace azuredevops-system --timeout=300s
 ```
-And the output should look like this:
-```sh
-NAME         AGE   READY
-pipeline-1   86s   True
+```
+pipeline.azuredevops.ogen.krateo.io/pipeline-1 condition met
 ```
 
 ### Step 3: Delete the old `Pipeline` resource

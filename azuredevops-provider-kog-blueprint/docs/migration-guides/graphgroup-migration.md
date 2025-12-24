@@ -125,7 +125,7 @@ apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: GraphGroup
 metadata:
   name: group-test
-  namespace: default
+  namespace: azuredevops-system           # Replace with your namespace
   annotations:
     krateo.io/connector-verbose: "true"
 spec:
@@ -178,14 +178,12 @@ spec:
 Note that you need to have already created a `GraphGroupConfiguration` resource that contains the authentication and configuration information for the `GraphGroup` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
 
-You can check the new `GraphGroup` resource managed by Azure DevOps Provider KOG by running the following command:
+You can wait for the new `GraphGroup` resource to be ready by running the following command:
 ```sh
-kubectl get graphgroups.azuredevops.ogen.krateo.io group-test -n azuredevops-system
+kubectl wait graphgroups.azuredevops.ogen.krateo.io/group-test --for condition=Ready=True --namespace azuredevops-system --timeout=300s
 ```
-And the output should look like this:
 ```sh
-NAME         AGE    READY
-group-test   10s    True
+graphgroup.azuredevops.ogen.krateo.io/group-test condition met
 ```
 
 #### Step 3: Delete the old `Groups` resource
