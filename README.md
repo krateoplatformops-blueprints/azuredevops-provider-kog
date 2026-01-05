@@ -119,7 +119,7 @@ helm install azuredevops-provider-kog azuredevops-provider-kog \
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  --version 1.4.0 \
+  --version 1.5.0 \
   --wait
 ```
 
