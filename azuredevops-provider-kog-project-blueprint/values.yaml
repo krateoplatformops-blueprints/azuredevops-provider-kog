@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/krateoplatformops-blueprints/azuredevops-provider-kog/project-plugin
-  pullPolicy: IfNotPresent
+  repository: leovice/project-plugin
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""

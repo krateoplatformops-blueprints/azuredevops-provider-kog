@@ -2,8 +2,8 @@ apiVersion: v2
 name: azuredevops-provider-kog-project
 description: A Helm chart for deploying the Azure DevOps KOG Project.
 type: application
-version: PROJECT_CHART_VERSION
-appVersion: PROJECT_APP_VERSION
+version: 1.0.0
+#appVersion: PROJECT_APP_VERSION
 
 home: https://krateo.io
 icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"

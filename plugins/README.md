@@ -1281,7 +1281,7 @@ POST /plugin/buildpermission/{organization}/{projectId}
 ### POST Project
 
 **Description**:
-This endpoint creates a new project in Azure DevOps. It transforms the Azure DevOps API response to ensure compatibility with the OASGen Provider by renaming operation reference fields.
+This endpoint creates a new project in Azure DevOps. It transforms the Azure DevOps API response to disambiguate operation metadata from project data, preventing reconciliation issues with OASGen Provider.
 
 <details>
 <summary><b>Why This Endpoint Exists</b></summary>
@@ -1294,7 +1294,6 @@ This endpoint creates a new project in Azure DevOps. It transforms the Azure Dev
   - `id` → `operationId`
   - `status` → `operationStatus`
   - `url` → `operationUrl`
-  - `pluginId` → `operationPluginId`
 - This ensures the controller doesn't confuse operation metadata with project data, and reconciliation continues correctly once the project is created.
 - The controller will simply ignore these fields and subsequent GET requests will retrieve the actual project once it's ready.
 

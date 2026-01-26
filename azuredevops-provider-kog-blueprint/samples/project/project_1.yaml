@@ -1,7 +1,7 @@
 apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: Project
 metadata:
-  name: project-1
+  name: project-1-test
   namespace: default
   annotations:
     krateo.io/connector-verbose: "true"
@@ -11,8 +11,8 @@ spec:
     name: my-project-config
     namespace: default
   organization: krateo-kog
-  name: Test-KOG-000002
-  description: "Project created via KOG, test 2"
+  name: project-1-test
+  description: "Project created via KOG, test"
   visibility: private
   capabilities:
     versioncontrol:
