@@ -29,6 +29,7 @@ The resources in Kubernetes are the **source of truth** for the corresponding Az
   - [BuildPermission](#buildpermission)
   - [Team](#team)
   - [GraphGroup](#graphgroup)
+  - [User](#user)
 - [Authentication](#authentication)
 - [Configuration](#configuration)
   - [Configuration resources](#configuration-resources)
@@ -261,6 +262,7 @@ This chart supports the following resources and operations:
 | BuildPermission     | ✅   | 🚫 Not supported    | ✅     | 🚫 Not supported |
 | Team                | ✅   | ✅                  | ✅     | ✅     |
 | GraphGroup          | ✅   | ✅                  | 🚫 Not supported     | ✅     |
+| User                | ✅   | ✅                  | 🚫 Not supported     | ✅     |
 | Project             | ✅   | ✅                  | ✅     | ✅     |
 
 > [!NOTE]  
@@ -816,6 +818,60 @@ spec:
   # VSTS group creation fields
   displayName: test1
   description: test_description
+```
+
+</details>
+
+---
+
+### User
+
+The `User` resource is used to manage users (Graph Users) in Azure DevOps. It allows you to materialize existing AAD or MSA users into the Azure DevOps organization.
+
+> **Note**: Users created through this resource are not active in the organization unless they have been explicitly assigned a parent group at creation time (via `groupDescriptors` configuration field) or have signed in and been autolicensed through AAD group memberships.
+
+#### User operations
+
+- **Get**: You can retrieve information about an existing user in Azure DevOps.
+- **Create**: You can materialize an existing AAD or MSA user into the Azure DevOps organization. Three creation methods are supported: by principal name (UPN), by mail address, or by origin ID.
+- **Delete**: You can disable an existing user. The user will still be visible, but membership checks will return false.
+
+> **Note**: Update is not supported because the Azure DevOps API uses a polymorphic `GraphUserUpdateContext` which is not directly supported by OASGen Provider.
+
+#### User schema
+
+The `User` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/user.md).
+
+The `User` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/user-crd.yaml).
+
+#### User example CR
+
+An example of a `User` resource (creating a user by principal name):
+<details>
+<summary><b> User Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: User
+metadata:
+  name: user-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-user-config
+    namespace: default
+  organization: krateo-kog
+  # Use principalName to materialize a user by UPN (User Principal Name)
+  principalName: jamal@contoso.com
+  # Alternatively, use mailAddress to materialize by email:
+  # mailAddress: jamal@contoso.com
+  # Or use origin + originId to materialize by Origin ID:
+  # origin: aad
+  # originId: d47d025a-ce2f-4a79-8618-e8862ade30dd
 ```
 
 </details>
