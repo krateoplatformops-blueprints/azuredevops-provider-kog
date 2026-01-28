@@ -1,11 +1,33 @@
 # @schema
 # type: object
+# description: Configuration for the BuildPermission Blueprint dependency.
+# @schema
+azuredevops-provider-kog-buildpermission-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the BuildPermission Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
 # description: Configuration for the GitRepository Blueprint dependency.
 # @schema
 azuredevops-provider-kog-gitrepository-blueprint:
   # @schema
   # type: boolean
   # description: Enable the GitRepository Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
+# description: Configuration for the GraphGroup Blueprint dependency.
+# @schema
+azuredevops-provider-kog-graphgroup-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the GraphGroup Blueprint dependency.
   # default: true
   # @schema
   enabled: true
@@ -33,23 +55,34 @@ azuredevops-provider-kog-pipelinepermission-blueprint:
   enabled: true
 # @schema
 # type: object
-# description: Configuration for the PullRequest Blueprint dependency.
-# @schema
-azuredevops-provider-kog-pullrequest-blueprint:
-  # @schema
-  # type: boolean
-  # description: Enable the PullRequest Blueprint dependency.
-  # default: true
-  # @schema
-  enabled: true
-# @schema
-# type: object
 # description: Configuration for the PolicyConfiguration Blueprint dependency.
 # @schema
 azuredevops-provider-kog-policyconfiguration-blueprint:
   # @schema
   # type: boolean
   # description: Enable the PolicyConfiguration Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
+# description: Configuration for the Project Blueprint dependency.
+# @schema
+azuredevops-provider-kog-project-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the Project Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
+# description: Configuration for the PullRequest Blueprint dependency.
+# @schema
+azuredevops-provider-kog-pullrequest-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the PullRequest Blueprint dependency.
   # default: true
   # @schema
   enabled: true
@@ -66,17 +99,6 @@ azuredevops-provider-kog-repositorypermission-blueprint:
   enabled: true
 # @schema
 # type: object
-# description: Configuration for the BuildPermission Blueprint dependency.
-# @schema
-azuredevops-provider-kog-buildpermission-blueprint:
-  # @schema
-  # type: boolean
-  # description: Enable the BuildPermission Blueprint dependency.
-  # default: true
-  # @schema
-  enabled: true
-# @schema
-# type: object
 # description: Configuration for the Team Blueprint dependency.
 # @schema
 azuredevops-provider-kog-team-blueprint:
@@ -88,23 +110,12 @@ azuredevops-provider-kog-team-blueprint:
   enabled: true
 # @schema
 # type: object
-# description: Configuration for the GraphGroup Blueprint dependency.
+# description: Configuration for the User Blueprint dependency.
 # @schema
-azuredevops-provider-kog-graphgroup-blueprint:
+azuredevops-provider-kog-user-blueprint:
   # @schema
   # type: boolean
-  # description: Enable the GraphGroup Blueprint dependency.
-  # default: true
-  # @schema
-  enabled: true
-# @schema
-# type: object
-# description: Configuration for the Project Blueprint dependency.
-# @schema
-azuredevops-provider-kog-project-blueprint:
-  # @schema
-  # type: boolean
-  # description: Enable the Project Blueprint dependency.
+  # description: Enable the User Blueprint dependency.
   # default: true
   # @schema
   enabled: true
