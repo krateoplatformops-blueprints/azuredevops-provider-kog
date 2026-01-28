@@ -127,7 +127,7 @@ spec:
   # required: reference to a Configuration CR in the cluster
   configurationRef:
     name: my-user-config
-    namespace: default
+    namespace: azuredevops-system
   organization: krateo-kog
 
   # Use either mailAddress, principalName, or origin + originId to identify the user.
@@ -149,7 +149,7 @@ See the main [README](../../../README.md#configuration) for more details about c
 
 You can wait for the new `User` resource to be ready by running the following command:
 ```sh
-kubectl wait users.azuredevops.ogen.krateo.io/user-test --for condition=Ready=True --namespace default --timeout=300s
+kubectl wait users.azuredevops.ogen.krateo.io/user-test --for condition=Ready=True --namespace azuredevops-system --timeout=300s
 ```
 ```sh
 users.azuredevops.ogen.krateo.io/user-test condition met

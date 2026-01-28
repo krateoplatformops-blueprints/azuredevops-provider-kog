@@ -13,6 +13,7 @@ Currently, the Azure DevOps Provider KOG supports the following resources:
 - `Team`
 - `GraphGroup`
 - `Project`
+- `User`
 
 Therefore, currently, Azure DevOps Provider KOG **is not a drop-in replacement** for the Azure DevOps Provider (classic), but it is a new provider that supports another set of resources.
 
