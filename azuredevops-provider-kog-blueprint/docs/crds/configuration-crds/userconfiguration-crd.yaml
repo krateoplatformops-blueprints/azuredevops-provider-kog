@@ -3,11 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: "2026-01-27T17:32:58Z"
-  generation: 1
   name: userconfigurations.azuredevops.ogen.krateo.io
-  resourceVersion: "2595407"
-  uid: 4825a6e6-c36f-4812-b2a7-0a9c75971728
 spec:
   conversion:
     strategy: None
