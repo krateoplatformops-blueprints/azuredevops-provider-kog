@@ -2,8 +2,7 @@ apiVersion: v2
 name: azuredevops-provider-kog-user
 description: A Helm chart for deploying the Azure DevOps KOG User.
 type: application
-version: 0.0.1
-#version: USER_CHART_VERSION
+version: USER_CHART_VERSION
 
 home: https://krateo.io
 icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
