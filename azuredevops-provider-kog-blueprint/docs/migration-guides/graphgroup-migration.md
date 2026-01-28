@@ -59,7 +59,7 @@ spec:
 
 Note that:
 - the `Groups` resource is referecing a `ConnectorConfig` resource and a `Project` resource, which are both managed by the Azure DevOps Provider "classic".
-- the field `groupRefs` is not supported in the `GraphGroup` schema of Azure DevOps Provider KOG since it maps directly the Azure DevOps REST API and therefore uses the field `groupDescriptors` to add the new group as a member of existing groups.
+- the field `groupRefs` is not supported in the `GraphGroup` schema of Azure DevOps Provider KOG since it maps directly the Azure DevOps REST API.
 - Azure DevOps Provider "classic" creates **memberships** in a implicit way inside the reconciliation loop logic of the `Groups` resource, while Azure DevOps Provider KOG requires explicit management of memberships through dedicated resources. Specific resources for managing [memberships](https://learn.microsoft.com/en-us/rest/api/azure/devops/graph/memberships?view=azure-devops-rest-7.1) will likely be introduced in future versions of the Azure DevOps Provider KOG. If this functionality is critical for your use case, it may be advisable to delay the migration until such resources are available.
 
 To ensure that the old version of the resource is not reconciled while you are migrating to the new version, you should set the `krateo.io/paused: true` annotation.
@@ -144,36 +144,13 @@ spec:
   # Scope descriptor referencing the project
   # This creates the group at the project level instead of organization level
   # curl -X GET "https://vssps.dev.azure.com/krateo-kog/_apis/graph/descriptors/99837031-4e4e-4753-9a47-73fcc4cba766?api-version=7.2-preview.1" \
-  scopeDescriptor: scp.OWI1OGY0OTQtY2Y1OC00Mjg2LWEyYTItZmUxNTNmNzZhNzVl
-  
-  # groupDescriptors is used to add the new group as a member of existing groups, comma separated
-  # can be found in the status of existing GraphGroup resources or Groups resources managed by Azure DevOps Provider (classic)
-  groupDescriptors: "vssgp.Uy0xLTktMTU1MTM3NDI0NS0yMzgyNjQzNzU1LTExODE2NjQzMjMtMzEwNTYzNjM2Ni00MjA0NjczODI2LTEtNjU2MTUwMTQzLTM3NTk4OTk3MTItMjIxMjU1NjYyMi0yMzI3NjU1NTkz"                         
+  scopeDescriptor: scp.OWI1OGY0OTQtY2Y1OC00Mjg2LWEyYTItZmUxNTNmNzZhNzVl                     
 EOF
 ```
 
 Note that: 
 - `groupName` in the old `Groups` resource is mapped to `displayName` in the new `GraphGroup` resource which is aligned with the Azure DevOps REST API which uses `displayName` to define the name of a VSTS group.
 - `scopeDescriptor` is used to define the scope where the group will be created. In this case, it is set to a project scope descriptor, so the group will be created at the project level. You can retrieve the scope descriptor of a project by using the Azure DevOps REST API. Currently there is not a resource in Azure DevOps Provider KOG representing descriptors, so you need to retrieve it manually.
-- `groupDescriptors` is used to add the new group as a member of existing groups. Group descriptors can be found in the status of existing `GraphGroup` resources or `Groups` resources managed by Azure DevOps Provider (classic).
-
-In order to dynamically retrieve the `groupDescriptors`, you can use a Helm `lookup` function.
-
-An example of how to use a Helm `lookup` function to retrieve the `groupDescriptors` dynamically is shown below.
-In this case the context is a Helm chart, so the `lookup` function is used to retrieve the `GraphGroup` resource by its name and namespace, and then the `groupDescriptors` are accessed from the status of that resource.
-```yaml
-{{- $existingGroup := lookup "azuredevops.ogen.krateo.io/v1alpha1" "GraphGroup" .Release.Namespace (.Values.existingGroup.name | lower) }}
-{{- if and $existingGroup $existingGroup.status $existingGroup.status.descriptor }}
-
-apiVersion: azuredevops.ogen.krateo.io/v1alpha1
-kind: GraphGroup
-spec:
-...
-  groupDescriptors: "{{ $existingGroup.status.descriptor }}"  # Dynamically retrieve the groupDescriptors
-...
-
-{{- end }}
-```
 
 Note that you need to have already created a `GraphGroupConfiguration` resource that contains the authentication and configuration information for the `GraphGroup` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
