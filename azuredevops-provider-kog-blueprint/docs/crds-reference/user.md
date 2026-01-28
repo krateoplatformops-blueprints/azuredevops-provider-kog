@@ -98,13 +98,6 @@ Resource Types:
         </td>
         <td>true</td>
       </tr><tr>
-        <td><b>groupDescriptors</b></td>
-        <td>string</td>
-        <td>
-          PARAMETER: query - A comma separated list of descriptors of groups you want the graph user to join<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
         <td><b>mailAddress</b></td>
         <td>string</td>
         <td>
@@ -282,13 +275,6 @@ A reference to the Configuration CR that holds all the needed configuration for 
         <td>string</td>
         <td>
           This field identifies the type of the graph subject (ex: Group, Scope, User).<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>test_not_existent_field</b></td>
-        <td>string</td>
-        <td>
-          <br/>
         </td>
         <td>false</td>
       </tr><tr>

@@ -3,11 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: "2026-01-27T17:32:56Z"
-  generation: 1
   name: users.azuredevops.ogen.krateo.io
-  resourceVersion: "2595398"
-  uid: 783b1516-03cc-45d3-bb0a-6278dffca355
 spec:
   conversion:
     strategy: None
@@ -67,10 +63,6 @@ spec:
                 required:
                 - name
                 type: object
-              groupDescriptors:
-                description: 'PARAMETER: query - A comma separated list of descriptors
-                  of groups you want the graph user to join'
-                type: string
               mailAddress:
                 description: 'This should be the mail address of the user in the source
                   AD or AAD provider. Example: Jamal.Hartnett@contoso.com Team Services
@@ -206,8 +198,6 @@ spec:
                 description: 'This field identifies the type of the graph subject
                   (ex: Group, Scope, User).'
                 type: string
-              test_not_existent_field:
-                type: string
               url:
                 description: This url is the full route to the source resource of
                   this graph subject.
@@ -218,26 +208,3 @@ spec:
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    categories:
-    - user
-    - restresources
-    - rr
-    kind: User
-    listKind: UserList
-    plural: users
-    singular: user
-  conditions:
-  - lastTransitionTime: "2026-01-27T17:32:56Z"
-    message: no conflicts found
-    reason: NoConflicts
-    status: "True"
-    type: NamesAccepted
-  - lastTransitionTime: "2026-01-27T17:32:56Z"
-    message: the initial names have been accepted
-    reason: InitialNamesAccepted
-    status: "True"
-    type: Established
-  storedVersions:
-  - v1alpha1

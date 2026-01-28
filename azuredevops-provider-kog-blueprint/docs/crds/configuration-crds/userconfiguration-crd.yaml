@@ -129,26 +129,3 @@ spec:
     served: true
     storage: true
     subresources: {}
-status:
-  acceptedNames:
-    categories:
-    - user
-    - restconfigs
-    - rc
-    kind: UserConfiguration
-    listKind: UserConfigurationList
-    plural: userconfigurations
-    singular: userconfiguration
-  conditions:
-  - lastTransitionTime: "2026-01-27T17:32:58Z"
-    message: no conflicts found
-    reason: NoConflicts
-    status: "True"
-    type: NamesAccepted
-  - lastTransitionTime: "2026-01-27T17:32:58Z"
-    message: the initial names have been accepted
-    reason: InitialNamesAccepted
-    status: "True"
-    type: Established
-  storedVersions:
-  - v1alpha1
