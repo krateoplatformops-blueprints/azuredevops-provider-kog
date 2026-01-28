@@ -119,13 +119,6 @@ Resource Types:
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>groupDescriptors</b></td>
-        <td>string</td>
-        <td>
-          PARAMETER: query - A comma separated list of descriptors referencing groups you want the graph group to join<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
         <td><b>mailAddress</b></td>
         <td>string</td>
         <td>
