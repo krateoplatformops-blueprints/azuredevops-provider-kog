@@ -232,8 +232,7 @@ paths:
       #x-ms-examples:
       #  ? ''
       #  : $ref: ./httpExamples/Users/DeleteUserAAD.json
-    # PATCH endpoint commented out - polymorphic GraphUserUpdateContext not supported by OASGen Provider
-    # Update functionality would require a plugin/middleware to handle the polymorphic update context
+    # PATCH endpoint commented out - currently not supported
     # patch:
     #   tags:
     #   - Users
