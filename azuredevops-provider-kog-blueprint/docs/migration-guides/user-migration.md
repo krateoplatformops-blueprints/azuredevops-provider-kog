@@ -143,6 +143,7 @@ EOF
 
 Note that: 
 - `user.name` in the old `Users` resource is mapped to either `mailAddress`, `principalName`, or `origin` + `originId` in the new `User` resource depending on how the user is identified. In this example, we are using `mailAddress`.
+- with the respect to the old `Users` resource (Azure DevOps Provider "classic"), the new `User` resource does not support using the name corresponding to the `displayName` field of API responses (e.g., "D421a46a2-30c7-4271-97ce-0b61e436596d Build Service (krateo-kog)"). This is due to the fact that `displayName` is not available in the API request for creating a user, so it is not part of the spec fields of the CR. The Azure DevOps Provider "classic" has custom reconcile logic to handle this case, while Azure DevOps Provider KOG strictly maps the API schema.
 
 Note that you need to have already created a `UserConfiguration` resource that contains the authentication and configuration information for the `User` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
