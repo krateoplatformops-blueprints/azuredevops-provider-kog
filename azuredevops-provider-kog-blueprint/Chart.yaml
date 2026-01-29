@@ -27,10 +27,20 @@ annotations:
   krateoSupportedVersion: ">= 2.7.0"
 
 dependencies:
-  - name: azuredevops-provider-kog-gitrepository # the name of the dependency chart
+  - name: azuredevops-provider-kog-buildpermission
+    version: AZUREDEVOPS_PROVIDER_KOG_BUILDPERMISSION_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-buildpermission-blueprint.enabled
+
+  - name: azuredevops-provider-kog-gitrepository
     version: AZUREDEVOPS_PROVIDER_KOG_GITREPOSITORY_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-gitrepository-blueprint.enabled
+
+  - name: azuredevops-provider-kog-graphgroup
+    version: AZUREDEVOPS_PROVIDER_KOG_GRAPHGROUP_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-graphgroup-blueprint.enabled
 
   - name: azuredevops-provider-kog-pipeline
     version: AZUREDEVOPS_PROVIDER_KOG_PIPELINE_BLUEPRINT_VERSION
@@ -42,32 +52,32 @@ dependencies:
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-pipelinepermission-blueprint.enabled
 
-  - name: azuredevops-provider-kog-pullrequest
-    version: AZUREDEVOPS_PROVIDER_KOG_PULLREQUEST_BLUEPRINT_VERSION
-    repository: https://marketplace.krateo.io
-    condition: azuredevops-provider-kog-pullrequest-blueprint.enabled
-
   - name: azuredevops-provider-kog-policyconfiguration
     version: AZUREDEVOPS_PROVIDER_KOG_POLICYCONFIGURATION_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-policyconfiguration-blueprint.enabled
+
+  - name: azuredevops-provider-kog-project
+    version: AZUREDEVOPS_PROVIDER_KOG_PROJECT_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-project-blueprint.enabled
+
+  - name: azuredevops-provider-kog-pullrequest
+    version: AZUREDEVOPS_PROVIDER_KOG_PULLREQUEST_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-pullrequest-blueprint.enabled
 
   - name: azuredevops-provider-kog-repositorypermission
     version: AZUREDEVOPS_PROVIDER_KOG_REPOSITORYPERMISSION_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-repositorypermission-blueprint.enabled
 
-  - name: azuredevops-provider-kog-buildpermission
-    version: AZUREDEVOPS_PROVIDER_KOG_BUILDPERMISSION_BLUEPRINT_VERSION
-    repository: https://marketplace.krateo.io
-    condition: azuredevops-provider-kog-buildpermission-blueprint.enabled
-
   - name: azuredevops-provider-kog-team
     version: AZUREDEVOPS_PROVIDER_KOG_TEAM_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-team-blueprint.enabled
 
-  - name: azuredevops-provider-kog-graphgroup
-    version: AZUREDEVOPS_PROVIDER_KOG_GRAPHGROUP_BLUEPRINT_VERSION
+  - name: azuredevops-provider-kog-user
+    version: AZUREDEVOPS_PROVIDER_KOG_USER_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io
-    condition: azuredevops-provider-kog-graphgroup-blueprint.enabled
+    condition: azuredevops-provider-kog-user-blueprint.enabled
