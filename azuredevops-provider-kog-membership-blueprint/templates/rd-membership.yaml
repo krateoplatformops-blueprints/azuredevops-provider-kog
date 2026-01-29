@@ -1,0 +1,36 @@
+kind: RestDefinition
+apiVersion: ogen.krateo.io/v1alpha1
+metadata:
+  name: {{ .Release.Name }}-membership
+spec:
+  oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-membership/membership.yaml
+  resourceGroup: azuredevops.ogen.krateo.io
+  resource:
+    kind: Membership
+    # The membership is uniquely identified by subjectDescriptor + containerDescriptor (both in spec from path params).
+    additionalStatusFields:
+    - memberDescriptor   # The descriptor of the member (same as subjectDescriptor but different naming in response)
+    - containerDescriptor # The descriptor of the container (group/team)
+    - _links
+    excludedSpecFields:
+    # No fields to exclude - all path params should be in spec
+    # organization, subjectDescriptor, containerDescriptor all come from path params and should be in spec
+    verbsDescription:
+    # Note: No findby action: we have both identifiers (subjectDescriptor + containerDescriptor) upfront
+    # so we can use get directly from the first reconciliation
+    # Note: No update action: memberships cannot be updated, only created or deleted
+    - action: get
+      method: GET
+      path: /{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}
+    - action: create
+      method: PUT
+      path: /{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}
+    - action: delete
+      method: DELETE
+      path: /{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}
+    configurationFields:
+    - fromOpenAPI:
+        name: api-version
+        in: query
+      fromRestDefinition:
+        actions: ["*"] # Common among all actions

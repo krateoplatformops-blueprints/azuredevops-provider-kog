@@ -30,6 +30,7 @@ The resources in Kubernetes are the **source of truth** for the corresponding Az
   - [Team](#team)
   - [GraphGroup](#graphgroup)
   - [User](#user)
+  - [Membership](#membership)
 - [Authentication](#authentication)
 - [Configuration](#configuration)
   - [Configuration resources](#configuration-resources)
@@ -866,6 +867,65 @@ spec:
   organization: krateo-kog
   
   mailAddress: jamal@contoso.com
+```
+
+</details>
+
+---
+
+### Membership
+
+The `Membership` resource is used to manage Graph memberships in Azure DevOps. A membership represents a relationship between a **member** (user, group, or team) and a **container** (group or team).
+
+#### Membership operations
+
+- **Get**: You can retrieve information about an existing membership in Azure DevOps.
+- **Create**: You can create a new membership between a subject and a container. The PUT operation is idempotent (creating an existing membership will succeed).
+- **Delete**: You can delete an existing membership.
+
+> **Note**: Update is not supported - memberships have no updateable fields. To change a membership, delete and recreate it.
+
+#### Membership types
+
+The Membership resource can represent different types of relationships:
+
+| Member Type | Container Type | Description |
+|-------------|----------------|-------------|
+| User | Group | Add a user to a group |
+| User | Team | Add a user to a team |
+| Group | Group | Nested groups (add a group as member of another group) |
+| Team | Group | Add a team as member of a group |
+
+#### Membership schema
+
+The `Membership` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/membership.md).
+
+The `Membership` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/membership-crd.yaml).
+
+#### Membership example CR
+
+An example of a `Membership` resource (adding a user to a group):
+<details>
+<summary><b> Membership Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Membership
+metadata:
+  name: my-membership
+  namespace: default
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-membership-config
+    namespace: default
+  # Azure DevOps organization name
+  organization: krateo-kog
+  # User descriptor (the member being added)
+  subjectDescriptor: aad.MTllODY4MjEtOGRhNC03ZmQzLTliMjgtMjQ1ZGQ5NzRjYzZk
+  # Group descriptor (the container receiving the member)
+  containerDescriptor: vssgp.Uy0xLTktMTU1MTM3NDI0NS0yMjczNzQxNDA2LTI5OTIzNzM1NjktMjMwNTc2OTA2OS0xMTY1NDU1MzA1LTEtMjAzNjA2NjYyMS0xOTk3OTIzMzk3LTI5Nzk2ODIwMzUtNzY4NTMwMTY4
 ```
 
 </details>
