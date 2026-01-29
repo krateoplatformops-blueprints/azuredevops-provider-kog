@@ -1,0 +1,471 @@
+openapi: 3.0.1
+info:
+  title: Graph
+  description: ''
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.2-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://vssps.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Users
+paths:
+  /{organization}/_apis/graph/users:
+    get:
+      tags:
+      - Users
+      description: "Get a list of all users in a given scope.\n\nSince the list of users may be large, results are returned\
+        \ in pages of users.  If there are more results\n than can be returned in a single page, the result set will contain\
+        \ a continuation token for retrieval of the\n next set of results."
+      operationId: Users_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subjectTypes
+        in: query
+        description: "A comma separated list of user subject subtypes to reduce the retrieved results, e.g. msa, aad, svc (service identity), imp (imported identity), etc."
+        schema:
+          type: string
+      - name: continuationToken
+        in: query
+        description: An opaque data blob that allows the next page of data to resume immediately after where the previous
+          page ended. The only reliable way to know if there is more data left is the presence of a continuation token.
+        schema:
+          type: string
+      - name: scopeDescriptor
+        in: query
+        description: Specify a non-default scope (collection, project) to search for users.
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-MS-ContinuationToken:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GraphUser'
+      #security:
+      #- oauth2:
+      #  - vso.graph
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: users
+      #x-ms-vss-method: ListUsers
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/Users/GetAllUsers.json
+    post:
+      tags:
+      - Users
+      description: "Materialize an existing AAD or MSA user into the ADO account.\n\nNOTE: Created users are not active in\
+        \ an account unless they have been explicitly assigned a parent group at creation time or have signed in\n  and been\
+        \ autolicensed through AAD group memberships.\n\n Adding a user to an account is required before the user can be added\
+        \ to ADO groups or assigned an asset.\n\n The body of the request must be a derived type of GraphUserCreationContext:\n\
+        \  * GraphUserMailAddressCreationContext - Create a new user using the mail address as a reference to an existing\
+        \ user from an external AD or AAD backed provider.\n  * GraphUserOriginIdCreationContext - Create a new user using\
+        \ the OriginID as a reference to an existing user from an external AD or AAD backed provider.\n  * GraphUserPrincipalNameCreationContext\
+        \ - Create a new user using the principal name as a reference to an existing user from an external AD or AAD backed\
+        \ provider.\n\n If the user to be added corresponds to a user that was previously deleted, then that user will be\
+        \ restored.\n\n Optionally, you can add the newly created user as a member of an existing ADO group and/or specify\
+        \ a custom storage key for the user."
+      operationId: Users_Create
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: groupDescriptors
+        in: query
+        description: A comma separated list of descriptors of groups you want the graph user to join
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: The subset of the full graph user used to uniquely find the graph subject in an external provider.
+        content:
+          application/json:
+            schema:
+              # $ref: '#/components/schemas/GraphUserCreationContext'  # Fixed: changed to unified schema
+              $ref: '#/components/schemas/GraphUserCreationContextUnified'
+        required: true
+      responses:
+        #'200':
+        '201': # Fixed: changed response code from 200 to 201
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraphUser'
+      #security:
+      #- oauth2:
+      #  - vso.graph_manage
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: users
+      #x-ms-vss-method: CreateUser
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  Add an AAD user by UPN:
+      #    $ref: ./httpExamples/Users/CreateUserAAD.json
+      #  Add a MSA user by UPN:
+      #    $ref: ./httpExamples/Users/CreateUserMSA.json
+      #  Add an AAD user by OID:
+      #    $ref: ./httpExamples/Users/MaterializeAADUserByOID.json
+      #  Add an AAD user as member of a group:
+      #    $ref: ./httpExamples/Users/MaterializeAADUserByOIDAsMember.json
+      #  Add an AAD user with a custom storage key:
+      #    $ref: ./httpExamples/Users/MaterializeAADUserByOIDWithStorageKey.json
+      #x-codegen-request-body-name: body
+  /{organization}/_apis/graph/users/{userDescriptor}:
+    get:
+      tags:
+      - Users
+      description: Get a user by its descriptor.
+      operationId: Users_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: userDescriptor
+        in: path
+        description: The descriptor of the desired user.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraphUser'
+      #security:
+      #- oauth2:
+      #  - vso.graph
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: users
+      #x-ms-vss-method: GetUser
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/Users/GetUserAAD.json
+    delete:
+      tags:
+      - Users
+      description: 'Disables a user.
+
+
+        The user will still be visible, but membership checks for the user will return false.'
+      operationId: Users_Delete
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: userDescriptor
+        in: path
+        description: The descriptor of the user to delete.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        #'200':
+        '204': # Fixed: changed response code from 200 to 204
+          description: successful operation
+          content: {}
+      #security:
+      #- oauth2:
+      #  - vso.graph_manage
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: users
+      #x-ms-vss-method: DeleteUser
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/Users/DeleteUserAAD.json
+    # PATCH endpoint commented out - currently not supported
+    # patch:
+    #   tags:
+    #   - Users
+    #   description: 'Map an existing user to a different user.
+    #
+    #     The body of the request must be a derived type of GraphUserUpdateContext:
+    #      * GraphUserOriginIdUpdateContext - Map an existing user in an account, to an existing user
+    #        from an external AD or AAD backed provider using the OriginId as a reference.'
+    #   operationId: Users_Update
+    #   parameters:
+    #   - name: organization
+    #     in: path
+    #     description: The name of the Azure DevOps organization.
+    #     required: true
+    #     schema:
+    #       type: string
+    #   - name: userDescriptor
+    #     in: path
+    #     description: The descriptor of the user to update
+    #     required: true
+    #     schema:
+    #       type: string
+    #   - name: api-version
+    #     in: query
+    #     description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+    #     required: true
+    #     schema:
+    #       type: string
+    #   requestBody:
+    #     description: The subset of the full graph user used to uniquely find the graph subject in an external provider.
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/GraphUserUpdateContext'
+    #     required: true
+    #   responses:
+    #     '200':
+    #       description: successful operation
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/GraphUser'
+    #   security:
+    #   - oauth2:
+    #     - vso.graph_manage
+    #   x-ms-docs-override-version: 7.2-preview.1
+    #   x-ms-vss-resource: users
+    #   x-ms-vss-method: UpdateUser
+    #   x-ms-preview: true
+    #   x-codegen-request-body-name: body
+components:
+  schemas:
+    AadGraphMember:
+      properties:
+        directoryAlias:
+          type: string
+          description: The short, generally unique name for the user in the backing directory. For AAD users, this corresponds
+            to the mail nickname, which is often but not necessarily similar to the part of the user's mail address before
+            the @ sign. For GitHub users, this corresponds to the GitHub user handle.
+        isDeletedInOrigin:
+          type: boolean
+          description: When true, the group has been deleted in the identity provider
+        metaType:
+          type: string
+          description: The meta type of the user in the origin, such as "member", "guest", etc. See UserMetaType for the set
+            of possible values.
+      description: ''
+      allOf:
+      - $ref: '#/components/schemas/GraphMember'
+    GraphMember:
+      properties:
+        domain:
+          type: string
+          description: This represents the name of the container of origin for a graph member. (For MSA this is "Windows Live
+            ID", for AD the name of the domain, for AAD the tenantID of the directory, for VSTS groups the ScopeId, etc)
+        mailAddress:
+          type: string
+          description: The email address of record for a given graph member. This may be different than the principal name.
+        principalName:
+          type: string
+          description: This is the PrincipalName of this graph member from the source provider. The source provider may change
+            this field over time and it is not guaranteed to be immutable for the life of the graph member by VSTS.
+      description: ''
+      allOf:
+      - $ref: '#/components/schemas/GraphSubject'
+    GraphSubject:
+      properties:
+        legacyDescriptor:
+          type: string
+          description: '[Internal Use Only] The legacy descriptor is here in case you need to access old version IMS using
+            identity descriptor.'
+        origin:
+          type: string
+          description: The type of source provider for the origin identifier (ex:AD, AAD, MSA)
+        originId:
+          type: string
+          description: The unique identifier from the system of origin. Typically a sid, object id or Guid. Linking and unlinking
+            operations can cause this value to change for a user because the user is not backed by a different provider and
+            has a different unique id in the new provider.
+        subjectKind:
+          type: string
+          description: 'This field identifies the type of the graph subject (ex: Group, Scope, User).'
+      description: Top-level graph entity
+      allOf:
+      - $ref: '#/components/schemas/GraphSubjectBase'
+    GraphSubjectBase:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        descriptor:
+          type: string
+          description: The descriptor is the primary way to reference the graph subject while the system is running. This
+            field will uniquely identify the same graph subject across both Accounts and Organizations.
+        displayName:
+          type: string
+          description: This is the non-unique display name of the graph subject. To change this field, you must alter its
+            value in the source provider.
+        url:
+          type: string
+          description: This url is the full route to the source resource of this graph subject.
+      description: ''
+    GraphUser:
+      description: ''
+      allOf:
+      - $ref: '#/components/schemas/AadGraphMember'
+    GraphUserCreationContext:
+      type: object
+      properties:
+        storageKey:
+          type: string
+          description: 'Optional: If provided, we will use this identifier for the storage key of the created user'
+          format: uuid
+      description: Do not attempt to use this type to create a new user. Use one of the subclasses instead. This type does
+        not contain sufficient fields to create a new user.
+    GraphUserCreationContextUnified:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/GraphUserMailAddressCreationContext'
+      - $ref: '#/components/schemas/GraphUserOriginIdCreationContext'
+      - $ref: '#/components/schemas/GraphUserPrincipalNameCreationContext'
+      description: "Unified creation context supporting multiple user creation scenarios:\
+        \ AAD/AD users via mail address (use mailAddress), via origin ID (use origin+originId),\
+        \ or via principal name/UPN (use principalName). Provide the fields appropriate\
+        \ for your use case."
+    GraphUserMailAddressCreationContext:
+      properties:
+        mailAddress:
+          type: string
+          description: "This should be the mail address of the user in the source AD or AAD provider.\
+            \ Example: Jamal.Hartnett@contoso.com Team Services will communicate with the\
+            \ source provider to fill all other fields on creation."
+      description: Use this type to create a new user using the mail address as a
+        reference to an existing user from an external AD or AAD backed provider.
+        This is the subset of GraphUser fields required for creation of a GraphUser
+        for the AD and AAD use case when looking up the user by its mail address in
+        the backing provider.
+      allOf:
+      - $ref: '#/components/schemas/GraphUserCreationContext'
+    GraphUserOriginIdCreationContext:
+      properties:
+        origin:
+          type: string
+          description: "This should be the name of the origin provider. Example: github.com"
+        originId:
+          type: string
+          description: "This should be the object id or sid of the user from the source\
+            \ AD or AAD provider. Example: d47d025a-ce2f-4a79-8618-e8862ade30dd Team\
+            \ Services will communicate with the source provider to fill all other\
+            \ fields on creation."
+      description: Use this type to create a new user using the OriginID as a reference
+        to an existing user from an external AD or AAD backed provider. This is the
+        subset of GraphUser fields required for creation of a GraphUser for the AD
+        and AAD use case when looking up the user by its unique ID in the backing
+        provider.
+      allOf:
+      - $ref: '#/components/schemas/GraphUserCreationContext'
+    GraphUserPrincipalNameCreationContext:
+      properties:
+        principalName:
+          type: string
+          description: "This should be the principal name or upn of the user in the\
+            \ source AD or AAD provider. Example: jamal@contoso.com Team Services\
+            \ will communicate with the source provider to fill all other fields on\
+            \ creation."
+      description: Use this type to create a new user using the principal name as
+        a reference to an existing user from an external AD or AAD backed provider.
+        This is the subset of GraphUser fields required for creation of a GraphUser
+        for the AD and AAD use case when looking up the user by its principal name
+        in the backing provider.
+      allOf:
+      - $ref: '#/components/schemas/GraphUserCreationContext'
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are readonly, we only want to expose them
+            as read only.
+      description: The class to represent a collection of REST reference links.
+  #parameters:
+  #  api-Version-preview.1:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  #  api-Version-preview.2:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the token as the password.
+      scheme: basic
+    #oauth2:
+    #  type: oauth2
+    #  flows:
+    #    authorizationCode:
+    #      authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+    #      tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+    #      scopes:
+    #        vso.graph: Grants the ability to read user, group, scope and group membership information
+    #        vso.graph_manage: Grants the ability to read user, group, scope and group membership information, and to add users,
+    #          groups and manage group memberships
+x-ms-vss-area: Graph
+x-ms-vss-resource-area-id: bb1e7ec9-e901-4b68-999a-de7012b920f8
+x-original-swagger-version: '2.0'

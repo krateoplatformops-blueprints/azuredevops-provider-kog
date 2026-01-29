@@ -113,7 +113,7 @@ apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: PullRequest
 metadata:
   name: pullrequest-1
-  namespace: default
+  namespace: azuredevops-system                  # Replace with your namespace
   annotations:
     krateo.io/connector-verbose: "true"
     krateo.io/deletion-policy: orphan             # Optional: to ensure the external resource is not deleted when the resource is deleted
@@ -169,14 +169,12 @@ spec:
 Note that you need to have already created a `PullRequestConfiguration` resource that contains the authentication and configuration information for the `PullRequest` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
 
-You can check the new `PullRequest` resource managed by Azure DevOps Provider KOG by running the following command:
+You can wait for the new `PullRequest` resource to be ready by running the following command:
 ```sh
-kubectl get pullrequests.azuredevops.ogen.krateo.io pullrequest-1 -n azuredevops-system
+kubectl wait pullrequests.azuredevops.ogen.krateo.io/pullrequest-1 --for condition=Ready=True --namespace azuredevops-system --timeout=300s
 ```
-And the output should look like this:
 ```sh
-NAME     AGE   READY
-pullrequest-1   10s    True
+pullrequest.azuredevops.ogen.krateo.io/pullrequest-1 condition met
 ```
 
 ### Step 3: Delete the old `PullRequest` resource

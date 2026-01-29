@@ -1,0 +1,84 @@
+kind: RestDefinition
+apiVersion: ogen.krateo.io/v1alpha1
+metadata:
+  name: azuredevops-provider-kog-user
+spec:
+  oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-user/user.yaml
+  resourceGroup: azuredevops.ogen.krateo.io
+  resource:
+    kind: User
+    identifiers:
+    - principalName # The UPN is unique per user within the organization, so we can use it as an identifier.
+    - mailAddress
+    - originId
+    additionalStatusFields:
+    - descriptor # Technical identifier used by get and delete actions
+    - domain
+    - origin
+    - originId
+    - subjectKind
+    - displayName
+    - directoryAlias
+    - metaType
+    - legacyDescriptor
+    - url
+    - _links
+    excludedSpecFields:
+    - userDescriptor       # Populated from status.descriptor after creation using requestFieldMapping, not available at create time
+    - continuationToken    # Managed by the pagination section below
+    - groupDescriptors     # Cannot be used in this resource since groupDescriptors are not returned by AzureDevops API responses, so reconciliation will not detect drift. Use Membership resource instead.
+    verbsDescription:
+    - action: findby
+      method: GET
+      path: /{organization}/_apis/graph/users
+      identifiersMatchPolicy: OR
+      pagination:
+        type: continuationToken
+        continuationToken:
+          request:
+            tokenIn: query
+            tokenPath: "continuationToken"
+          response:
+            tokenIn: header
+            tokenPath: "X-MS-ContinuationToken"
+    - action: get
+      method: GET
+      path: /{organization}/_apis/graph/users/{userDescriptor}
+      requestFieldMapping:
+        - inPath: userDescriptor
+          inCustomResource: status.descriptor
+    - action: create
+      method: POST
+      path: /{organization}/_apis/graph/users
+    - action: delete
+      method: DELETE
+      path: /{organization}/_apis/graph/users/{userDescriptor}
+      requestFieldMapping:
+        - inPath: userDescriptor
+          inCustomResource: status.descriptor
+    # Note: update action (PATCH) is not included because the Azure DevOps API uses
+    # polymorphic GraphUserUpdateContext which is not directly supported by OASGen Provider.
+    configurationFields:
+    - fromOpenAPI:
+        name: api-version
+        in: query
+      fromRestDefinition:
+        actions: ["*"] # Common among all actions
+    - fromOpenAPI:
+        name: subjectTypes
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]
+    - fromOpenAPI:
+        name: scopeDescriptor
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]
+    #- fromOpenAPI:
+    #    name: groupDescriptors
+    #    in: query
+    #  fromRestDefinition:
+    #    actions: ["create"]
+    # Note: subjectTypes is recommended to be set (e.g., "aad") to filter the findby results
+    # and improve performance, as the organization may contain hundreds of system/build users.
+    # scopeDescriptor allows specifying a non-default scope to search for users.

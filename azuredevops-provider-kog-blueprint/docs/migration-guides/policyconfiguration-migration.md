@@ -138,7 +138,7 @@ apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: PolicyConfiguration
 metadata:
   name: policy-1
-  namespace: azuredevops-system
+  namespace: azuredevops-system                   # Replace with your namespace
   annotations:
     krateo.io/connector-verbose: "true"
     krateo.io/deletion-policy: orphan             # Optional: to ensure the external resource is not deleted when the resource is deleted
@@ -199,14 +199,12 @@ spec:
 Note that you need to have already created a `PolicyConfigurationConfiguration` resource that contains the authentication and configuration information for the `PolicyConfiguration` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
 
-You can check the new `PolicyConfiguration` resource managed by Azure DevOps Provider KOG by running the following command:
+You can wait for the new `PolicyConfiguration` resource to be ready by running the following command:
 ```sh
-kubectl get policyconfigurations.azuredevops.ogen.krateo.io repo-1 -n azuredevops-system
+kubectl wait policyconfigurations.azuredevops.ogen.krateo.io/policy-1 --for condition=Ready=True --namespace azuredevops-system --timeout=300s
 ```
-And the output should look like this:
 ```sh
-NAME       AGE    READY
-policy-1   10s    True
+policyconfiguration.azuredevops.ogen.krateo.io/policy-1 condition met
 ```
 
 ### Step 3: Delete the old `Policy` resource

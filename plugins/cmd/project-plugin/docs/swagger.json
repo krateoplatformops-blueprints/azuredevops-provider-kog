@@ -1,0 +1,434 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Simple wrapper around Azure DevOps API to transform operation references and handle async operations for project create/update/delete operations",
+        "title": "Azure DevOps Project Plugin API for Krateo Operator Generator (KOG)",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Krateo Support",
+            "url": "https://krateo.io",
+            "email": "contact@krateoplatformops.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/plugin/{organization}/projects": {
+            "post": {
+                "description": "Create a new project in Azure DevOps. Returns a transformed operation reference.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Create a project",
+                "operationId": "Projects_Create",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The name of the Azure DevOps organization.",
+                        "name": "organization",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "API version (e.g., 7.2-preview.4)",
+                        "name": "api-version",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Basic Auth header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The project to create.",
+                        "name": "project",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/project.ProjectRequestBodyMerged"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Transformed operation reference with prefixed fields",
+                        "schema": {
+                            "$ref": "#/definitions/project.TransformedOperationReference"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/plugin/{organization}/projects/{projectId}": {
+            "delete": {
+                "description": "Delete an existing project in Azure DevOps. Polls the operation until complete and returns 204 No Content.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Delete a project",
+                "operationId": "Projects_Delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The name of the Azure DevOps organization.",
+                        "name": "organization",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "API version (e.g., 7.2-preview.4)",
+                        "name": "api-version",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Basic Auth header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content - project deleted successfully"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update an existing project in Azure DevOps. Polls the operation until complete and returns the updated project.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Update a project",
+                "operationId": "Projects_Update",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "The name of the Azure DevOps organization.",
+                        "name": "organization",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Project ID",
+                        "name": "projectId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "API version (e.g., 7.2-preview.4)",
+                        "name": "api-version",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Basic Auth header",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Project update request",
+                        "name": "project",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/project.ProjectRequestBodyUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated project object",
+                        "schema": {
+                            "$ref": "#/definitions/project.ProjectResponseBody"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "project.Capabilities": {
+            "type": "object",
+            "properties": {
+                "processTemplate": {
+                    "$ref": "#/definitions/project.ProcessTemplate"
+                },
+                "versioncontrol": {
+                    "$ref": "#/definitions/project.VersionControl"
+                }
+            }
+        },
+        "project.DefaultTeam": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "project.Link": {
+            "type": "object",
+            "properties": {
+                "href": {
+                    "type": "string"
+                }
+            }
+        },
+        "project.ProcessTemplate": {
+            "type": "object",
+            "properties": {
+                "templateTypeId": {
+                    "type": "string"
+                }
+            }
+        },
+        "project.ProjectLinks": {
+            "type": "object",
+            "properties": {
+                "collection": {
+                    "$ref": "#/definitions/project.Link"
+                },
+                "self": {
+                    "$ref": "#/definitions/project.Link"
+                },
+                "web": {
+                    "$ref": "#/definitions/project.Link"
+                }
+            }
+        },
+        "project.ProjectRequestBodyMerged": {
+            "type": "object",
+            "properties": {
+                "abbreviation": {
+                    "description": "Only updatable field, not allowed in create",
+                    "type": "string"
+                },
+                "capabilities": {
+                    "$ref": "#/definitions/project.Capabilities"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "visibility": {
+                    "type": "string",
+                    "enum": [
+                        "private",
+                        "public"
+                    ]
+                }
+            }
+        },
+        "project.ProjectRequestBodyUpdate": {
+            "description": "Azure DevOps project object in request body for update",
+            "type": "object",
+            "properties": {
+                "abbreviation": {
+                    "description": "Only updatable field, not allowed in create",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            }
+        },
+        "project.ProjectResponseBody": {
+            "description": "Azure DevOps project object in response body",
+            "type": "object",
+            "properties": {
+                "_links": {
+                    "$ref": "#/definitions/project.ProjectLinks"
+                },
+                "abbreviation": {
+                    "type": "string"
+                },
+                "capabilities": {
+                    "$ref": "#/definitions/project.Capabilities"
+                },
+                "defaultTeam": {
+                    "$ref": "#/definitions/project.DefaultTeam"
+                },
+                "defaultTeamImageUrl": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastUpdateTime": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "revision": {
+                    "type": "integer"
+                },
+                "state": {
+                    "type": "string",
+                    "enum": [
+                        "deleting",
+                        "new",
+                        "wellFormed",
+                        "createPending",
+                        "all",
+                        "unchanged",
+                        "deleted"
+                    ]
+                },
+                "url": {
+                    "type": "string"
+                },
+                "visibility": {
+                    "type": "string",
+                    "enum": [
+                        "private",
+                        "public"
+                    ]
+                }
+            }
+        },
+        "project.TransformedOperationReference": {
+            "type": "object",
+            "properties": {
+                "operationId": {
+                    "type": "string"
+                },
+                "operationPluginId": {
+                    "type": "string"
+                },
+                "operationStatus": {
+                    "type": "string"
+                },
+                "operationUrl": {
+                    "type": "string"
+                }
+            }
+        },
+        "project.VersionControl": {
+            "type": "object",
+            "properties": {
+                "sourceControlType": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

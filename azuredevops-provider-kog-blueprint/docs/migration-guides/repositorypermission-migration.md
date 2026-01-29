@@ -121,7 +121,7 @@ apiVersion: azuredevops.ogen.krateo.io/v1alpha1
 kind: RepositoryPermission
 metadata:
   name: repository-permission-1
-  namespace: default
+  namespace: azuredevops-system                   # Replace with your namespace
   annotations:
     krateo.io/connector-verbose: "true"
     krateo.io/deletion-policy: orphan             # Optional: to ensure the external resource is not deleted when the resource is deleted  
@@ -176,14 +176,12 @@ spec:
 Note that you need to have already created a `RepositoryPermissionConfiguration` resource that contains the authentication and configuration information for the `RepositoryPermission` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
 
-You can check the new `RepositoryPermission` resource managed by Azure DevOps Provider KOG by running the following command:
+You can wait for the new `RepositoryPermission` resource to be ready by running the following command:
 ```sh
-kubectl get repositorypermissions.azuredevops.ogen.krateo.io repository-permission-1 -n azuredevops-system
+kubectl wait repositorypermissions.azuredevops.ogen.krateo.io/repository-permission-1 --for condition=Ready=True --namespace azuredevops-system --timeout=300s
 ```
-And the output should look like this:
 ```sh
-NAME              AGE    READY
-repository-permission-1   10s    True
+repositorypermission.azuredevops.ogen.krateo.io/repository-permission-1 condition met
 ```
 
 ### Step 3: Delete the old `RepositoryPermission` resource

@@ -73,10 +73,6 @@ spec:
                 description: Used by VSTS groups; if set this will be the group DisplayName,
                   otherwise ignored
                 type: string
-              groupDescriptors:
-                description: 'PARAMETER: query - A comma separated list of descriptors
-                  referencing groups you want the graph group to join'
-                type: string
               mailAddress:
                 description: 'This should be the mail address or the group in the
                   source AD or AAD provider. Example: jamal@contoso.com Team Services

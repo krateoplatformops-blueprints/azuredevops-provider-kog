@@ -1,0 +1,21 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: User
+metadata:
+  name: user-2
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+    krateo.io/deletion-policy: "orphan"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-user-config
+    namespace: default
+  organization: krateo-kog
+
+  # Use either mailAddress, principalName, or origin + originId to identify the user.
+
+  #principalName: "" # "This should be the principal name or upn of the user in the source AD or AAD provider.
+
+  origin: "vsts" # "This should be the name of the origin provider. Example: github.com"
+  originId: "2d021ccb-8dc9-46dc-b855-a60a46c1916c" # "This should be the object id or sid of the user from the source AD or AAD provider. Example: d47d025a-ce2f-4a79-8618-e8862ade30dd Team Services will communicate with the source provider to fill all other fields on creation."

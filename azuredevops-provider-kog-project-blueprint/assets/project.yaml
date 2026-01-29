@@ -1,0 +1,834 @@
+openapi: 3.0.1
+info:
+  title: Core
+  description: ''
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.2-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Projects
+  description: DO NOT REMOVE. Used in TfsDeleteProject.exe to determine whether soft-delete is enabled.
+paths:
+  /{organization}/_apis/projects:
+    get:
+      tags:
+      - Projects
+      description: Get all projects in the organization that the authenticated user has access to.
+      operationId: Projects_List
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: stateFilter
+        in: query
+        description: 'Filter on team projects in a specific team project state (default: WellFormed).'
+        schema:
+          type: string
+          enum:
+          - deleting
+          - new
+          - wellFormed
+          - createPending
+          - all
+          - unchanged
+          - deleted
+          #x-ms-enum:
+          #  name: ProjectState
+          #  values:
+          #  - value: deleting
+          #    description: Project is in the process of being deleted.
+          #  - value: new
+          #    description: Project is in the process of being created.
+          #  - value: wellFormed
+          #    description: Project is completely created and ready to use.
+          #  - value: createPending
+          #    description: Project has been queued for creation, but the process has not yet started.
+          #  - value: all
+          #    description: All projects regardless of state except Deleted.
+          #  - value: unchanged
+          #    description: Project has not been changed.
+          #  - value: deleted
+          #    description: Project has been deleted.
+        #x-ms-enum:
+        #  name: ProjectState
+        #  values:
+        #  - value: deleting
+        #    description: Project is in the process of being deleted.
+        #  - value: new
+        #    description: Project is in the process of being created.
+        #  - value: wellFormed
+        #    description: Project is completely created and ready to use.
+        #  - value: createPending
+        #    description: Project has been queued for creation, but the process has not yet started.
+        #  - value: all
+        #    description: All projects regardless of state except Deleted.
+        #  - value: unchanged
+        #    description: Project has not been changed.
+        #  - value: deleted
+        #    description: Project has been deleted.
+      - name: $top
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: $skip
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: continuationToken
+        in: query
+        description: Pointer that shows how many projects already been fetched.
+        schema:
+          type: integer
+          format: int32
+      - name: getDefaultTeamImageUrl
+        in: query
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamProjectReference'
+      #security:
+      #- oauth2:
+      #  - vso.profile
+      #  - vso.project
+      #x-ms-docs-override-version: 7.2-preview.4
+      #x-ms-vss-resource: projects
+      #x-ms-vss-method: GetProjects
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/projects/GET__projects.json
+    #post:
+    #  tags:
+    #  - Projects
+    #  description: Queues a project to be created. Use the [GetOperation](../../operations/operations/get) to periodically
+    #    check for create project status.
+    #  operationId: Projects_Create
+    #  parameters:
+    #  - name: organization
+    #    in: path
+    #    description: The name of the Azure DevOps organization.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  - name: api-version
+    #    in: query
+    #    description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  requestBody:
+    #    description: The project to create.
+    #    content:
+    #      application/json:
+    #        schema:
+    #          $ref: '#/components/schemas/TeamProject'
+    #    required: true
+    #  responses:
+    #    '202': # FIXED
+    #      description: successful operation
+    #      # FIXED
+    #      #content:
+    #      #  application/json:
+    #      #    schema:
+    #      #      $ref: '#/components/schemas/OperationReference'
+      #security:
+      #- oauth2:
+      #  - vso.project_manage
+      #x-ms-docs-override-version: 7.2-preview.4
+      #x-ms-vss-resource: projects
+      #x-ms-vss-method: QueueCreateProject
+      #x-ms-preview: true
+      #x-ms-examples:
+      #  ? ''
+      #  : $ref: ./httpExamples/projects/POST__projects.json
+      #x-codegen-request-body-name: body
+  /{organization}/_apis/projects/{projectId}:
+    get:
+      tags:
+      - Projects
+      description: Get project with the specified id or name, optionally including capabilities.
+      operationId: Projects_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: projectId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: includeCapabilities
+        in: query
+        description: 'Include capabilities (such as source control) in the team project result (default: false).'
+        schema:
+          type: boolean
+      - name: includeHistory
+        in: query
+        description: Search within renamed projects (that had such name in the past).
+        schema:
+          type: boolean
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamProject'
+      #security:
+      #- oauth2:
+      #  - vso.profile
+      #  - vso.project
+      #x-ms-docs-override-version: 7.2-preview.4
+      #x-ms-vss-resource: projects
+      #x-ms-vss-method: GetProject
+      #x-ms-preview: true
+    #delete:
+    #  tags:
+    #  - Projects
+    #  description: Queues a project to be deleted. Use the [GetOperation](../../operations/operations/get) to periodically
+    #    check for delete project status.
+    #  operationId: Projects_Delete
+    #  parameters:
+    #  - name: organization
+    #    in: path
+    #    description: The name of the Azure DevOps organization.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  - name: projectId
+    #    in: path
+    #    description: The project id of the project to delete.
+    #    required: true
+    #    schema:
+    #      type: string
+    #      format: uuid
+    #  - name: api-version
+    #    in: query
+    #    description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  responses:
+    #    '200':
+    #      description: successful operation
+    #      content:
+    #        application/json:
+    #          schema:
+    #            $ref: '#/components/schemas/OperationReference'
+      #security:
+      #- oauth2:
+      #  - vso.project_manage
+      #x-ms-docs-override-version: 7.2-preview.4
+      #x-ms-vss-resource: projects
+      #x-ms-vss-method: QueueDeleteProject
+      #x-ms-preview: true
+    #patch:
+    #  tags:
+    #  - Projects
+    #  description: Update an existing project's name, abbreviation, description, or restore a project.
+    #  operationId: Projects_Update
+    #  parameters:
+    #  - name: organization
+    #    in: path
+    #    description: The name of the Azure DevOps organization.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  - name: projectId
+    #    in: path
+    #    description: The project id of the project to update.
+    #    required: true
+    #    schema:
+    #      type: string
+    #      format: uuid
+    #  - name: api-version
+    #    in: query
+    #    description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  requestBody:
+    #    description: The updates for the project. The state must be set to wellFormed to restore the project.
+    #    content:
+    #      application/json:
+    #        schema:
+    #          $ref: '#/components/schemas/TeamProject'
+    #    required: true
+    #  responses:
+    #    '200':
+    #      description: successful operation
+    #      content:
+    #        application/json:
+    #          schema:
+    #            $ref: '#/components/schemas/OperationReference'
+      #security:
+      #- oauth2:
+      #  - vso.project_write
+      #x-ms-docs-override-version: 7.2-preview.4
+      #x-ms-vss-resource: projects
+      #x-ms-vss-method: UpdateProject
+      #x-ms-preview: true
+      #x-codegen-request-body-name: body
+  /plugin/{organization}/projects:
+    post:
+      servers:
+        - url: {{ include "project.webServiceUrl" . }}
+          description: URL of the Azure DevOps RDC plugin
+      tags:
+        - Projects
+      summary: Create a project
+      description: Create a new project in Azure DevOps. Returns a transformed operation reference.
+      operationId: Projects_Create
+      parameters:
+        - name: organization
+          in: path
+          description: The name of the Azure DevOps organization.
+          required: true
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.4)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The project to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/project.ProjectRequestBodyMerged'
+        required: true
+      responses:
+        "202":
+          description: Transformed operation reference with prefixed fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project.TransformedOperationReference'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+      x-codegen-request-body-name: project
+  /plugin/{organization}/projects/{projectId}:
+    delete:
+      servers:
+        - url: {{ include "project.webServiceUrl" . }}
+          description: URL of the Azure DevOps RDC plugin
+      tags:
+        - Projects
+      summary: Delete a project
+      description: Delete an existing project in Azure DevOps. Polls the operation until complete and returns 204 No Content.
+      operationId: Projects_Delete
+      parameters:
+        - name: organization
+          in: path
+          description: The name of the Azure DevOps organization.
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.4)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content - project deleted successfully
+          content: {}
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+    patch:
+      servers:
+        - url: {{ include "project.webServiceUrl" . }}
+          description: URL of the Azure DevOps RDC plugin
+      tags:
+        - Projects
+      summary: Update a project
+      description: Update an existing project in Azure DevOps. Polls the operation until complete and returns the updated project.
+      operationId: Projects_Update
+      parameters:
+        - name: organization
+          in: path
+          description: The name of the Azure DevOps organization.
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: api-version
+          in: query
+          description: API version (e.g., 7.2-preview.4)
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: Basic Auth header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Project update request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/project.ProjectRequestBodyUpdate'
+        required: true
+      responses:
+        "200":
+          description: Updated project object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/project.ProjectResponseBody'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: string
+      x-codegen-request-body-name: project
+components:
+  schemas:
+    OperationReference:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the operation.
+          format: uuid
+        pluginId:
+          type: string
+          description: Unique identifier for the plugin.
+          format: uuid
+        status:
+          type: string
+          description: The current status of the operation.
+          enum:
+          - notSet
+          - queued
+          - inProgress
+          - cancelled
+          - succeeded
+          - failed
+          #x-ms-enum:
+          #  name: OperationStatus
+          #  values:
+          #  - value: notSet
+          #    description: The operation does not have a status set.
+          #  - value: queued
+          #    description: The operation has been queued.
+          #  - value: inProgress
+          #    description: The operation is in progress.
+          #  - value: cancelled
+          #    description: The operation was cancelled by the user.
+          #  - value: succeeded
+          #    description: The operation completed successfully.
+          #  - value: failed
+          #    description: The operation completed with a failure.
+        url:
+          type: string
+          description: URL to get the full operation object.
+      description: Reference for an async operation.
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are readonly, we only want to expose them
+            as read only.
+      description: The class to represent a collection of REST reference links.
+    TeamProject:
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        capabilities:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: string
+          description: Set of capabilities this project has (such as process template & version control).
+        defaultTeam:
+          $ref: '#/components/schemas/WebApiTeamRef'
+      description: Represents a Team Project object.
+      allOf:
+      - $ref: '#/components/schemas/TeamProjectReference'
+    TeamProjectReference:
+      type: object
+      properties:
+        abbreviation:
+          type: string
+          description: Project abbreviation.
+        defaultTeamImageUrl:
+          type: string
+          description: Url to default team identity image.
+        description:
+          type: string
+          description: The project's description (if any).
+        id:
+          type: string
+          description: Project identifier.
+          format: uuid
+        lastUpdateTime:
+          type: string
+          description: Project last update time.
+          format: date-time
+        name:
+          type: string
+          description: Project name.
+        revision:
+          type: integer
+          description: Project revision.
+          format: int64
+        state:
+          type: string
+          description: Project state.
+          enum:
+          - deleting
+          - new
+          - wellFormed
+          - createPending
+          - all
+          - unchanged
+          - deleted
+          #x-ms-enum:
+          #  name: ProjectState
+          #  values:
+          #  - value: deleting
+          #    description: Project is in the process of being deleted.
+          #  - value: new
+          #    description: Project is in the process of being created.
+          #  - value: wellFormed
+          #    description: Project is completely created and ready to use.
+          #  - value: createPending
+          #    description: Project has been queued for creation, but the process has not yet started.
+          #  - value: all
+          #    description: All projects regardless of state except Deleted.
+          #  - value: unchanged
+          #    description: Project has not been changed.
+          #  - value: deleted
+          #    description: Project has been deleted.
+        url:
+          type: string
+          description: Url to the full version of the object.
+        visibility:
+          type: string
+          description: Project visibility.
+          enum:
+          - private
+          - public
+          #x-ms-enum:
+          #  name: ProjectVisibility
+          #  values:
+          #  - value: private
+          #    description: The project is only visible to users with explicit access.
+          #  - value: public
+          #    description: The project is visible to all.
+      description: Represents a shallow reference to a TeamProject.
+    WebApiTeamRef:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Team (Identity) Guid. A Team Foundation ID.
+          format: uuid
+        name:
+          type: string
+          description: Team name
+        url:
+          type: string
+          description: Team REST API Url
+      description: ''
+    # Schemas for plugin endpoints
+    project.Capabilities:
+      type: object
+      properties:
+        processTemplate:
+          $ref: '#/components/schemas/project.ProcessTemplate'
+        versioncontrol:
+          $ref: '#/components/schemas/project.VersionControl'
+    project.DefaultTeam:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+    project.Link:
+      type: object
+      properties:
+        href:
+          type: string
+    project.ProcessTemplate:
+      type: object
+      properties:
+        templateTypeId:
+          type: string
+    project.ProjectLinks:
+      type: object
+      properties:
+        collection:
+          $ref: '#/components/schemas/project.Link'
+        self:
+          $ref: '#/components/schemas/project.Link'
+        web:
+          $ref: '#/components/schemas/project.Link'
+    project.ProjectRequestBodyMerged:
+      type: object
+      properties:
+        abbreviation:
+          type: string
+          description: Only updatable field, not allowed in create
+        capabilities:
+          $ref: '#/components/schemas/project.Capabilities'
+        description:
+          type: string
+        name:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - private
+            - public
+    project.ProjectRequestBodyUpdate:
+      type: object
+      properties:
+        abbreviation:
+          type: string
+          description: Only updatable field, not allowed in create
+        description:
+          type: string
+      description: Azure DevOps project object in request body for update
+    project.ProjectResponseBody:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/project.ProjectLinks'
+        abbreviation:
+          type: string
+        capabilities:
+          $ref: '#/components/schemas/project.Capabilities'
+        defaultTeam:
+          $ref: '#/components/schemas/project.DefaultTeam'
+        defaultTeamImageUrl:
+          type: string
+        description:
+          type: string
+        id:
+          type: string
+        lastUpdateTime:
+          type: string
+        name:
+          type: string
+        revision:
+          type: integer
+        state:
+          type: string
+          enum:
+            - deleting
+            - new
+            - wellFormed
+            - createPending
+            - all
+            - unchanged
+            - deleted
+        url:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - private
+            - public
+      description: Azure DevOps project object in response body
+    project.TransformedOperationReference:
+      type: object
+      properties:
+        operationId:
+          type: string
+        operationPluginId:
+          type: string
+        operationStatus:
+          type: string
+        operationUrl:
+          type: string
+    project.VersionControl:
+      type: object
+      properties:
+        sourceControlType:
+          type: string
+  #parameters:
+  #  api-Version-preview.1:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  #  api-Version-preview.2:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  #  api-Version-preview.3:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.3' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  #  api-Version-preview.4:
+  #    name: api-version
+  #    in: query
+  #    description: Version of the API to use.  This should be set to '7.2-preview.4' to use this version of the api.
+  #    required: true
+  #    schema:
+  #      type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the token as the password.
+      scheme: basic
+    #oauth2:
+    #  type: oauth2
+    #  flows:
+    #    authorizationCode:
+    #      authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+    #      tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+    #      scopes:
+    #        vso.profile: Grants the ability to read your profile, accounts, collections, projects, teams, and other top-level
+    #          organizational artifacts.
+    #        vso.project: Grants the ability to read projects and teams.
+    #        vso.project_manage: Grants the ability to create, read, update, and delete projects and teams.
+    #        vso.project_write: Grants the ability to read and update projects and teams.
+    #        vso.work: Grants the ability to read work items, queries, boards, area and iterations paths, and other work item
+    #          tracking related metadata. Also grants the ability to execute queries, search work items and to receive notifications
+    #          about work item events via service hooks.
+x-ms-vss-area: Core
+x-ms-vss-resource-area-id: 79134c72-4a58-4b42-976c-04e7115f32bf
+x-original-swagger-version: '2.0'

@@ -14,6 +14,7 @@ Note that the changes are made to **comply with some requirements** of the OASGe
 - [BuildPermission](#buildpermission)
 - [Team](#team)
 - [GraphGroup](#graphgroup)
+- [Project](#project)
 
 ## `GitRepository`
 
@@ -226,7 +227,7 @@ allow:
 
 **Transformations**: 
 - Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
-- File is pruned to only include the endpoints and schemas relevant to Team resource.
+- File is pruned to only include the endpoints and schemas relevant to GraphGroup resource.
 
 **List of change made to the OpenAPI Specification (OAS)**:
 - Created new schema `GraphGroupCreationContextUnified` for the request body of the `create` operation.
@@ -240,24 +241,38 @@ allow:
 
 ## `Project`
 
-NOT YET AVAILABLE ON THE CHART
-WORK IN PROGRESS
+**Version**: "7.2-preview.4"
+**Original specification file**:
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/core/7.2/core.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/core/7.2/core.json
 
-"7.2-preview.4"
-https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/core/7.2/core.json
-https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/core/7.2/core.json
+**Transformations**: 
+- Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
+- File is pruned to only include the endpoints and schemas relevant to Team resource.
 
+**List of change made to the OpenAPI Specification (OAS)**:
+- Commented out the `POST /{organization}/_apis/projects`, `PATCH /{organization}/_apis/projects/{projectId}` and `DELETE /{organization}/_apis/projects/{projectId}` endpoints since a plugin is used to manage those operations to handle the asynchronous nature of Project creation, update and deletion in Azure DevOps.
 - Commented out the `components.parameters` section at root level as it just to inform about api versions.
-
-200 to 202 in create (it is actually returning 202)
-
 - Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
 - Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
 - Commented out the `components.parameters` section at root level as it just to inform about api versions.
 
 ## `User`
 
-NOT YET AVAILABLE ON THE CHART
-WORK IN PROGRESS
+**Version**: 7.2-preview.1
+**Original specification file**:
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/graph/7.2/graph.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/a69e0a84db58a99dc4243957289b6d825dcb2af0/specification/graph/7.2/graph.json
 
-TODO
+**Transformations**: 
+- Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
+- File is pruned to only include the endpoints and schemas relevant to User resource.
+
+**List of change made to the OpenAPI Specification (OAS)**:
+- Created new schema `GraphUserCreationContextUnified` for the request body of the `create` operation.
+- Commented out the `PATCH /{organization}/_apis/graph/users/{userDescriptor}` endpoint as it is currently not supported.
+- Changed the status code for the `create` operation from `200` to `201` since the Azure DevOps REST API actually returns a `201 Created` status code when a User is created successfully.
+- Changed the status code for the `delete` operation from `200` to `204` since the Azure DevOps REST API actually returns a `204 No Content` status code when a User is deleted successfully.
+- Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
+- Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
+- Commented out the `components.parameters` section at root level as it just to inform about api versions.

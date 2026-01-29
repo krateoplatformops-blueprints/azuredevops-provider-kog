@@ -138,14 +138,12 @@ spec:
 Note that you need to have already created a `GitRepositoryConfiguration` resource that contains the authentication and configuration information for the `GitRepository` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
 
-You can check the new `GitRepository` resource managed by Azure DevOps Provider KOG by running the following command:
+You can wait for the new `GitRepository` resource to be ready by running the following command:
 ```sh
-kubectl get gitrepositories.azuredevops.ogen.krateo.io gitrepository-1 -n azuredevops-system
+kubectl wait gitrepositories.azuredevops.ogen.krateo.io/gitrepository-1 --for condition=Ready=True --namespace azuredevops-system --timeout=300s
 ```
-And the output should look like this:
 ```sh
-NAME              AGE    READY
-gitrepository-1   10s    True
+gitrepository.azuredevops.ogen.krateo.io/gitrepository-1 condition met
 ```
 
 #### Step 3: Delete the old `GitRepository` resource

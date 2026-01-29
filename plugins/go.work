@@ -6,6 +6,7 @@ use (
 	./cmd/graphgroup-plugin
 	./cmd/pipeline-plugin
 	./cmd/pipelinepermission-plugin
+	./cmd/project-plugin
 	./cmd/pullrequest-plugin
 	./cmd/repositorypermission-plugin
 	./pkg

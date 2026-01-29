@@ -12,6 +12,8 @@ Currently, the Azure DevOps Provider KOG supports the following resources:
 - `BuildPermission`
 - `Team`
 - `GraphGroup`
+- `Project`
+- `User`
 
 Therefore, currently, Azure DevOps Provider KOG **is not a drop-in replacement** for the Azure DevOps Provider (classic), but it is a new provider that supports another set of resources.
 
@@ -36,3 +38,4 @@ Therefore, currently, Azure DevOps Provider KOG **is not a drop-in replacement**
 - [RepositoryPermission migration example](repositorypermission-migration.md)
 - [Team migration example](team-migration.md)
 - [GraphGroup migration example](graphgroup-migration.md)
+- [Project migration example](project-migration.md)

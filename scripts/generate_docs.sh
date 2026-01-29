@@ -190,7 +190,8 @@ for BLUEPRINT_DIR in "${BLUEPRINT_DIRS[@]}"; do
 
       # The RestDefinition name follows the pattern: $RELEASE_NAME-$RESOURCE_NAME
       # TODO: maybe a more robust way to determine the RD name?
-      REST_DEF_NAME="${RELEASE_NAME}-${RESOURCE_NAME}"
+      #REST_DEF_NAME="${RELEASE_NAME}-${RESOURCE_NAME}"
+      REST_DEF_NAME="azuredevops-provider-kog-${RESOURCE_NAME}"
       
       echo "Waiting for RestDefinition '$REST_DEF_NAME' to be ready..."
       if ! kubectl wait restdefinition.ogen.krateo.io "$REST_DEF_NAME" \
@@ -295,3 +296,6 @@ echo "Final cleanup of namespace '$RELEASE_NAMESPACE'..."
 kubectl delete namespace "$RELEASE_NAMESPACE" --ignore-not-found=true
 
 echo "Documentation generation complete."
+
+# todo: clean metatdata from generated crds
+# todo: remove status from generated crds

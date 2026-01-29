@@ -27,6 +27,7 @@ spec:
     - crossProject          # legacy field
     - restrictedVisibility  # legacy field
     - specialGroupType      # legacy field
+    - groupDescriptors      # Cannot be used in this resource since groupDescriptors are not returned by AzureDevops API responses, so reconciliation will not detect drift. Use Membership resource instead.
     verbsDescription:
     - action: findby
       method: GET
