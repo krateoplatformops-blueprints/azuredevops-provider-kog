@@ -120,7 +120,7 @@ helm install azuredevops-provider-kog azuredevops-provider-kog \
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  --version 1.5.0 \
+  --version 1.6.0 \
   --wait
 ```
 
@@ -180,6 +180,7 @@ As a matter of fact, currently, this chart allows you to manage the following re
 - `Team`
 - `GraphGroup`
 - `Project`
+- `User`
 
 Other resources (`Queue`, `Environment`, etc.) can be managed using the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
 For example, you can create a `PipelinePermission` resource that references an `Environment` resource created by the Azure DevOps Provider (classic).
