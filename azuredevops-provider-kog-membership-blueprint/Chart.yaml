@@ -2,7 +2,7 @@ apiVersion: v2
 name: azuredevops-provider-kog-membership
 description: A Helm chart for deploying the Azure DevOps KOG Membership.
 type: application
-version: 0.1.0
+version: MEMBERSHIP_CHART_VERSION
 
 home: https://krateo.io
 icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
