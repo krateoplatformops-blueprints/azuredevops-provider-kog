@@ -1,0 +1,14 @@
+apiVersion: v2
+name: azuredevops-provider-kog-environment
+description: A Helm chart for deploying the Azure DevOps KOG Environment.
+type: application
+version: 0.1.0
+
+home: https://krateo.io
+icon: "https://github.com/krateoplatformops/krateo/blob/main/docs/media/logo.svg"
+keywords:
+  - generator
+sources:
+  - https://github.com/krateoplatformops-blueprints/azuredevops-provider-kog/tree/main/azuredevops-provider-kog-environment-blueprint
+annotations:
+  krateoSupportedVersion: ">= 2.7.0"
