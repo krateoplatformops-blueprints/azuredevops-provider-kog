@@ -182,6 +182,7 @@ As a matter of fact, currently, this chart allows you to manage the following re
 - `GraphGroup`
 - `Project`
 - `User`
+- `Membership`
 
 Other resources (`Queue`, `Environment`, etc.) can be managed using the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
 For example, you can create a `PipelinePermission` resource that references an `Environment` resource created by the Azure DevOps Provider (classic).
@@ -200,6 +201,7 @@ Note that the following resources:
 - `PolicyConfiguration` (called `Policy` in the Azure DevOps Provider (classic))
 - `RepositoryPermission`
 - `Team`
+- `Membership`
 - `GraphGroup` (called `Groups` with final `s` in the Azure DevOps Provider (classic))
 - `Project` (called `TeamProject` in the Azure DevOps Provider (classic))
 
@@ -266,6 +268,7 @@ This chart supports the following resources and operations:
 | GraphGroup          | ✅   | ✅                  | 🚫 Not supported     | ✅     |
 | User                | ✅   | ✅                  | 🚫 Not supported     | ✅     |
 | Project             | ✅   | ✅                  | ✅     | ✅     |
+| Membership          | ✅   | ✅                  | 🚫 Not supported     | ✅     |
 
 > [!NOTE]  
 > 🚫 *"Not supported"* means that the operation is not supported by the resource (e.g., the underlying REST API does not support it and therefore the controller does not implement it), the operation is not applicable to the resource due to the nature of the resource or the operation is not implemented in this provider version.

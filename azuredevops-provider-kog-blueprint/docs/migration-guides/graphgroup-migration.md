@@ -151,6 +151,9 @@ EOF
 Note that: 
 - `groupName` in the old `Groups` resource is mapped to `displayName` in the new `GraphGroup` resource which is aligned with the Azure DevOps REST API which uses `displayName` to define the name of a VSTS group.
 - `scopeDescriptor` is used to define the scope where the group will be created. In this case, it is set to a project scope descriptor, so the group will be created at the project level. You can retrieve the scope descriptor of a project by using the Azure DevOps REST API. Currently there is not a resource in Azure DevOps Provider KOG representing descriptors, so you need to retrieve it manually.
+- the field `groupRefs` is not supported in the `GraphGroup` schema of Azure DevOps Provider KOG since it maps directly the Azure DevOps REST API.
+- Azure DevOps Provider "classic" creates **memberships** in a implicit way inside the reconciliation loop logic of the `Groups` resource, while Azure DevOps Provider KOG requires explicit management of memberships through dedicated resources.
+For this reason, you will need to manually create `Membership` resources, see the section about [Memberships](../../../README.md#membership) in the main README for more details.
 
 Note that you need to have already created a `GraphGroupConfiguration` resource that contains the authentication and configuration information for the `GraphGroup` resource.
 See the main [README](../../../README.md#configuration) for more details about configuration resources.
