@@ -1,7 +1,7 @@
 kind: RestDefinition
 apiVersion: ogen.krateo.io/v1alpha1
 metadata:
-  name: {{ .Release.Name }}-team
+  name: azuredevops-provider-kog-team
 spec:
   oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-team/team.yaml
   resourceGroup: azuredevops.ogen.krateo.io
@@ -11,6 +11,12 @@ spec:
     - name # Within the same project the name of a team must be unique therefore we can use it as identifier
     additionalStatusFields:
     - id
+    - identity.isActive
+    - identity.isContainer
+    - identity.providerDisplayName
+    - identity.subjectDescriptor
+    - projectName
+    - url
     excludedSpecFields:
     - teamId
     - id

@@ -122,8 +122,30 @@ spec:
                 description: 'Team (Identity) Guid. A Team Foundation ID. (format:
                   uuid)'
                 type: string
+              identity:
+                properties:
+                  isActive:
+                    description: True if the identity has a membership in any Azure
+                      Devops group in the organization.
+                    type: boolean
+                  isContainer:
+                    description: True if the identity is a group.
+                    type: boolean
+                  providerDisplayName:
+                    description: The display name for the identity as specified by
+                      the source identity provider.
+                    type: string
+                  subjectDescriptor:
+                    description: Subject descriptor of a Graph entity.
+                    type: string
+                type: object
               name:
                 description: Team name
+                type: string
+              projectName:
+                type: string
+              url:
+                description: Team REST API Url
                 type: string
             type: object
         type: object

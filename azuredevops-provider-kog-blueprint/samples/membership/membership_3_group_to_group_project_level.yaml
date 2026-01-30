@@ -1,0 +1,26 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Membership
+metadata:
+  name: test-membership-group-to-group
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # Reference to the configuration CR
+  configurationRef:
+    name: my-membership-config
+    namespace: default
+
+  # Azure DevOps organization name
+  organization: krateo-kog
+
+  # Group descriptor (the member being added - nested group)
+  # This is the descriptor of the group you want to add as a member of another group
+  # You can get group descriptors from the Graph API: GET /{organization}/_apis/graph/groups
+  # Example: [project-1-classic]\child_group group being added to another group
+  subjectDescriptor: vssgp.Uy0xLTktMTU1MTM3NDI0NS0yNDk5MDQxNDM1LTE0ODk5OTUzMzAtMjcyODU5MDg2OS0xMDY0NzQwNzAyLTEtMTI1NzcxOTkzNy02MTE5MTk5NDAtMzAyOTIwNTU3Mi00MjE0ODE4NjAx
+
+  # Group descriptor (the container receiving the member)
+  # This is the descriptor of the parent group
+  # Example: [project-1-classic]\parent_group group descriptor
+  containerDescriptor: vssgp.Uy0xLTktMTU1MTM3NDI0NS0yNDk5MDQxNDM1LTE0ODk5OTUzMzAtMjcyODU5MDg2OS0xMDY0NzQwNzAyLTEtMjUzMjI3OTg1Mi0yOTcxNzE2Njc4LTI0NDcyMjE4MDEtOTU5NDY1MTAz

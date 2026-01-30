@@ -1,0 +1,27 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Membership
+metadata:
+  name: test-membership-team-to-group
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+    krateo.io/deletion-policy: "orphan"
+spec:
+  # Reference to the configuration CR
+  configurationRef:
+    name: my-membership-config
+    namespace: default
+
+  # Azure DevOps organization name
+  organization: krateo-kog
+
+  # Team descriptor (the member being added)
+  # This is the descriptor of the team you want to add to the group
+  # You can get team descriptors from the Graph API: GET /{organization}/_apis/graph/teams
+  # Example: [project-1-classic]\Team-KOG-00001
+  subjectDescriptor: vssgp.Uy0xLTktMTU1MTM3NDI0NS04Mjk0NTczMDUtMTMxMzc1NTk3NS0yNTg4Mzc0MDEyLTMzMDE2ODA5OTgtMS0yMTUzMTEwMDQwLTIwMzM5MTM0MTEtMjUyNzIzNzE4Ny03OTUxNjI5Nzg
+
+  # Group descriptor (the container receiving the member)
+  # This is the descriptor of the parent group
+  # Example: [project-1-classic]\parent_group group descriptor
+  containerDescriptor: vssgp.Uy0xLTktMTU1MTM3NDI0NS0yNDk5MDQxNDM1LTE0ODk5OTUzMzAtMjcyODU5MDg2OS0xMDY0NzQwNzAyLTEtMjUzMjI3OTg1Mi0yOTcxNzE2Njc4LTI0NDcyMjE4MDEtOTU5NDY1MTAz

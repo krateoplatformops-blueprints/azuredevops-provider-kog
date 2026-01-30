@@ -187,10 +187,31 @@ A reference to the Configuration CR that holds all the needed configuration for 
         </td>
         <td>false</td>
       </tr><tr>
+        <td><b><a href="#teamstatusidentity">identity</a></b></td>
+        <td>object</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
         <td><b>name</b></td>
         <td>string</td>
         <td>
           Team name<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>projectName</b></td>
+        <td>string</td>
+        <td>
+          <br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>url</b></td>
+        <td>string</td>
+        <td>
+          Team REST API Url<br/>
         </td>
         <td>false</td>
       </tr></tbody>
@@ -251,6 +272,54 @@ a resource at any point in time.<br/>
         <td>
           A Message containing details about this condition's last transition from
 one status to another, if any.<br/>
+        </td>
+        <td>false</td>
+      </tr></tbody>
+</table>
+
+
+### Team.status.identity
+<sup><sup>[↩ Parent](#teamstatus)</sup></sup>
+
+
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody><tr>
+        <td><b>isActive</b></td>
+        <td>boolean</td>
+        <td>
+          True if the identity has a membership in any Azure Devops group in the organization.<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>isContainer</b></td>
+        <td>boolean</td>
+        <td>
+          True if the identity is a group.<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>providerDisplayName</b></td>
+        <td>string</td>
+        <td>
+          The display name for the identity as specified by the source identity provider.<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b>subjectDescriptor</b></td>
+        <td>string</td>
+        <td>
+          Subject descriptor of a Graph entity.<br/>
         </td>
         <td>false</td>
       </tr></tbody>

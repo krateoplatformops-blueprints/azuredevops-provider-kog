@@ -1,6 +1,6 @@
 # Membership Samples
 
-This folder contains sample YAML files for managing Azure DevOps Graph memberships using the Krateo OASGen Provider.
+This folder contains sample YAML files for managing Azure DevOps Graph memberships using the OASGen Provider.
 
 ## Overview
 
@@ -19,34 +19,14 @@ The same Membership resource can represent different types of relationships:
 
 ## Prerequisites
 
-1. Deploy the Membership RestDefinition using the `azuredevops-provider-kog-membership` Helm chart
+1. Membership RestDefinition is installed in the cluster
 2. Create a MembershipConfiguration CR with authentication details
-3. Obtain the descriptors for the member and container:
-   - User descriptors: `GET /{organization}/_apis/graph/users`
-   - Group descriptors: `GET /{organization}/_apis/graph/groups`
-   - Team descriptors: Teams are represented as groups with specific characteristics
+3. Obtain the descriptors for the member and container
 
 ## Sample Files
 
 - `membership_1_user_to_group.yaml` - Add a user to a group
-- `membership_2_group_to_group.yaml` - Add a group as member of another group (nested groups)
-
-## Getting Descriptors
-
-### Get User Descriptor
-```bash
-curl -u ":<PAT_TOKEN>" \
-  "https://vssps.dev.azure.com/{organization}/_apis/graph/users?subjectTypes=aad&api-version=7.2-preview.1"
-```
-
-### Get Group Descriptor
-```bash
-curl -u ":<PAT_TOKEN>" \
-  "https://vssps.dev.azure.com/{organization}/_apis/graph/groups?api-version=7.2-preview.1"
-```
-
-## Important Notes
-
-- **No update operation**: Memberships cannot be updated. To change a membership, delete and recreate it.
-- **Idempotent creation**: Creating a membership that already exists will succeed (returns 201).
-- **Both descriptors required**: You must specify both `subjectDescriptor` (member) and `containerDescriptor` (container).
+- `membership_2_group_to_team.yaml` - Add a group to a team
+- `membership_3_group_to_group_project_level.yaml` - Add a group to another group at the project level
+- `membership_4_group_to_group_organization_level.yaml` - Add a group to another group at the organization level
+- `membership_5_team_to_group.yaml` - Add a team to a group

@@ -1,7 +1,7 @@
 kind: RestDefinition
 apiVersion: ogen.krateo.io/v1alpha1
 metadata:
-  name: {{ .Release.Name }}-membership
+  name: azuredevops-provider-kog-membership
 spec:
   oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-membership/membership.yaml
   resourceGroup: azuredevops.ogen.krateo.io
