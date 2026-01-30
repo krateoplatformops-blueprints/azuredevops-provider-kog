@@ -883,8 +883,6 @@ The `Membership` resource is used to manage Graph memberships in Azure DevOps. A
 - **Create**: You can create a new membership between a subject and a container. The PUT operation is idempotent (creating an existing membership will succeed).
 - **Delete**: You can delete an existing membership.
 
-> **Note**: Update is not supported - memberships have no updateable fields. To change a membership, delete and recreate it.
-
 #### Membership types
 
 The Membership resource can represent different types of relationships:
