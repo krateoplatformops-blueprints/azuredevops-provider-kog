@@ -12,9 +12,6 @@ spec:
     - memberDescriptor   # The descriptor of the member (same as subjectDescriptor but different naming in response)
     - containerDescriptor # The descriptor of the container (group/team)
     - _links
-    excludedSpecFields:
-    # No fields to exclude - all path params should be in spec
-    # organization, subjectDescriptor, containerDescriptor all come from path params and should be in spec
     verbsDescription:
     # Note: No findby action: we have both identifiers (subjectDescriptor + containerDescriptor) upfront
     # so we can use get directly from the first reconciliation
