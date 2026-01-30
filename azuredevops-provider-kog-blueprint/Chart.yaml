@@ -42,6 +42,11 @@ dependencies:
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-graphgroup-blueprint.enabled
 
+  - name: azuredevops-provider-kog-membership
+    version: AZUREDEVOPS_PROVIDER_KOG_MEMBERSHIP_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-membership-blueprint.enabled
+
   - name: azuredevops-provider-kog-pipeline
     version: AZUREDEVOPS_PROVIDER_KOG_PIPELINE_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io

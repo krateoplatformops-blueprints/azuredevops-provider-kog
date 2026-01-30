@@ -8,12 +8,12 @@ Packages:
 
 Resource Types:
 
-- [Team](#team)
+- [Membership](#membership)
 
 
 
 
-## Team
+## Membership
 <sup><sup>[↩ Parent](#azuredevopsogenkrateoiov1alpha1 )</sup></sup>
 
 
@@ -41,7 +41,7 @@ Resource Types:
       <tr>
       <td><b>kind</b></td>
       <td>string</td>
-      <td>Team</td>
+      <td>Membership</td>
       <td>true</td>
       </tr>
       <tr>
@@ -50,14 +50,14 @@ Resource Types:
       <td>Refer to the Kubernetes API documentation for the fields of the `metadata` field.</td>
       <td>true</td>
       </tr><tr>
-        <td><b><a href="#teamspec">spec</a></b></td>
+        <td><b><a href="#membershipspec">spec</a></b></td>
         <td>object</td>
         <td>
           <br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b><a href="#teamstatus">status</a></b></td>
+        <td><b><a href="#membershipstatus">status</a></b></td>
         <td>object</td>
         <td>
           <br/>
@@ -67,8 +67,8 @@ Resource Types:
 </table>
 
 
-### Team.spec
-<sup><sup>[↩ Parent](#team)</sup></sup>
+### Membership.spec
+<sup><sup>[↩ Parent](#membership)</sup></sup>
 
 
 
@@ -84,10 +84,17 @@ Resource Types:
         </tr>
     </thead>
     <tbody><tr>
-        <td><b><a href="#teamspecconfigurationref">configurationRef</a></b></td>
+        <td><b><a href="#membershipspecconfigurationref">configurationRef</a></b></td>
         <td>object</td>
         <td>
           A reference to the Configuration CR that holds all the needed configuration for this resource. OASGen Provider added this field automatically.<br/>
+        </td>
+        <td>true</td>
+      </tr><tr>
+        <td><b>containerDescriptor</b></td>
+        <td>string</td>
+        <td>
+          PARAMETER: path - A descriptor to the container in the relationship.<br/>
         </td>
         <td>true</td>
       </tr><tr>
@@ -98,32 +105,18 @@ Resource Types:
         </td>
         <td>true</td>
       </tr><tr>
-        <td><b>projectId</b></td>
+        <td><b>subjectDescriptor</b></td>
         <td>string</td>
         <td>
-          (format: uuid)<br/>
+          PARAMETER: path - A descriptor to the child subject in the relationship.<br/>
         </td>
         <td>true</td>
-      </tr><tr>
-        <td><b>description</b></td>
-        <td>string</td>
-        <td>
-          Team description<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>name</b></td>
-        <td>string</td>
-        <td>
-          Team name<br/>
-        </td>
-        <td>false</td>
       </tr></tbody>
 </table>
 
 
-### Team.spec.configurationRef
-<sup><sup>[↩ Parent](#teamspec)</sup></sup>
+### Membership.spec.configurationRef
+<sup><sup>[↩ Parent](#membershipspec)</sup></sup>
 
 
 
@@ -156,8 +149,8 @@ A reference to the Configuration CR that holds all the needed configuration for 
 </table>
 
 
-### Team.status
-<sup><sup>[↩ Parent](#team)</sup></sup>
+### Membership.status
+<sup><sup>[↩ Parent](#membership)</sup></sup>
 
 
 
@@ -173,53 +166,66 @@ A reference to the Configuration CR that holds all the needed configuration for 
         </tr>
     </thead>
     <tbody><tr>
-        <td><b><a href="#teamstatusconditionsindex">conditions</a></b></td>
+        <td><b><a href="#membershipstatus_links">_links</a></b></td>
+        <td>object</td>
+        <td>
+          The class to represent a collection of REST reference links.<br/>
+        </td>
+        <td>false</td>
+      </tr><tr>
+        <td><b><a href="#membershipstatusconditionsindex">conditions</a></b></td>
         <td>[]object</td>
         <td>
           Conditions of the resource.<br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>id</b></td>
-        <td>string</td>
-        <td>
-          Team (Identity) Guid. A Team Foundation ID. (format: uuid)<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b><a href="#teamstatusidentity">identity</a></b></td>
-        <td>object</td>
-        <td>
-          <br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>name</b></td>
-        <td>string</td>
-        <td>
-          Team name<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>projectName</b></td>
+        <td><b>containerDescriptor</b></td>
         <td>string</td>
         <td>
           <br/>
         </td>
         <td>false</td>
       </tr><tr>
-        <td><b>url</b></td>
+        <td><b>memberDescriptor</b></td>
         <td>string</td>
         <td>
-          Team REST API Url<br/>
+          <br/>
         </td>
         <td>false</td>
       </tr></tbody>
 </table>
 
 
-### Team.status.conditions[index]
-<sup><sup>[↩ Parent](#teamstatus)</sup></sup>
+### Membership.status._links
+<sup><sup>[↩ Parent](#membershipstatus)</sup></sup>
+
+
+
+The class to represent a collection of REST reference links.
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+        </tr>
+    </thead>
+    <tbody><tr>
+        <td><b>links</b></td>
+        <td>object</td>
+        <td>
+          The readonly view of the links.  Because Reference links are readonly, we only want to expose them as read only.<br/>
+        </td>
+        <td>false</td>
+      </tr></tbody>
+</table>
+
+
+### Membership.status.conditions[index]
+<sup><sup>[↩ Parent](#membershipstatus)</sup></sup>
 
 
 
@@ -272,54 +278,6 @@ a resource at any point in time.<br/>
         <td>
           A Message containing details about this condition's last transition from
 one status to another, if any.<br/>
-        </td>
-        <td>false</td>
-      </tr></tbody>
-</table>
-
-
-### Team.status.identity
-<sup><sup>[↩ Parent](#teamstatus)</sup></sup>
-
-
-
-
-
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Description</th>
-            <th>Required</th>
-        </tr>
-    </thead>
-    <tbody><tr>
-        <td><b>isActive</b></td>
-        <td>boolean</td>
-        <td>
-          True if the identity has a membership in any Azure Devops group in the organization.<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>isContainer</b></td>
-        <td>boolean</td>
-        <td>
-          True if the identity is a group.<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>providerDisplayName</b></td>
-        <td>string</td>
-        <td>
-          The display name for the identity as specified by the source identity provider.<br/>
-        </td>
-        <td>false</td>
-      </tr><tr>
-        <td><b>subjectDescriptor</b></td>
-        <td>string</td>
-        <td>
-          Subject descriptor of a Graph entity.<br/>
         </td>
         <td>false</td>
       </tr></tbody>

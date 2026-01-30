@@ -33,6 +33,17 @@ azuredevops-provider-kog-graphgroup-blueprint:
   enabled: true
 # @schema
 # type: object
+# description: Configuration for the Membership Blueprint dependency.
+# @schema
+azuredevops-provider-kog-membership-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the Membership Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
 # description: Configuration for the Pipeline Blueprint dependency.
 # @schema
 azuredevops-provider-kog-pipeline-blueprint:

@@ -1,0 +1,28 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Membership
+metadata:
+  name: test-membership-user-to-group
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+    krateo.io/deletion-policy: "orphan"
+spec:
+  # Reference to the configuration CR
+  configurationRef:
+    name: my-membership-config
+    namespace: default
+
+  # Azure DevOps organization name
+  organization: krateo-kog
+
+  # User descriptor (the member being added)
+  # This is the descriptor of the user you want to add to the group
+  # You can get user descriptors from the Graph API: GET /{organization}/_apis/graph/users
+  # Example: Matteo Gastaldello's descriptor
+  subjectDescriptor: aad.MTllODY4MjEtOGRhNC03ZmQzLTliMjgtMjQ1ZGQ5NzRjYzZk
+
+  # Group descriptor (the container receiving the member)
+  # This is the descriptor of the group you want to add the user to
+  # You can get group descriptors from the Graph API: GET /{organization}/_apis/graph/groups
+  # Example: Contributors [test1] group descriptor
+  containerDescriptor: vssgp.Uy0xLTktMTU1MTM3NDI0NS0yMjczNzQxNDA2LTI5OTIzNzM1NjktMjMwNTc2OTA2OS0xMTY1NDU1MzA1LTEtMjAzNjA2NjYyMS0xOTk3OTIzMzk3LTI5Nzk2ODIwMzUtNzY4NTMwMTY4

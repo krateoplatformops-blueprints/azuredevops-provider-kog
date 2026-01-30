@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-membership
+data:
+  membership.yaml: |
+{{ tpl (.Files.Get "assets/membership.yaml") . | indent 4 }}

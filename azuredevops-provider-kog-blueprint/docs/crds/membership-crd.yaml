@@ -3,20 +3,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  name: teams.azuredevops.ogen.krateo.io
+  name: memberships.azuredevops.ogen.krateo.io
 spec:
   conversion:
     strategy: None
   group: azuredevops.ogen.krateo.io
   names:
     categories:
-    - team
+    - membership
     - restresources
     - rr
-    kind: Team
-    listKind: TeamList
-    plural: teams
-    singular: team
+    kind: Membership
+    listKind: MembershipList
+    plural: memberships
+    singular: membership
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -63,25 +63,35 @@ spec:
                 required:
                 - name
                 type: object
-              description:
-                description: Team description
-                type: string
-              name:
-                description: Team name
+              containerDescriptor:
+                description: 'PARAMETER: path - A descriptor to the container in the
+                  relationship.'
                 type: string
               organization:
                 description: 'PARAMETER: path - The name of the Azure DevOps organization.'
                 type: string
-              projectId:
-                description: '(format: uuid)'
+              subjectDescriptor:
+                description: 'PARAMETER: path - A descriptor to the child subject
+                  in the relationship.'
                 type: string
             required:
             - configurationRef
+            - containerDescriptor
             - organization
-            - projectId
+            - subjectDescriptor
             type: object
           status:
             properties:
+              _links:
+                description: The class to represent a collection of REST reference
+                  links.
+                properties:
+                  links:
+                    description: The readonly view of the links.  Because Reference
+                      links are readonly, we only want to expose them as read only.
+                    type: object
+                    x-kubernetes-preserve-unknown-fields: true
+                type: object
               conditions:
                 description: Conditions of the resource.
                 items:
@@ -118,34 +128,9 @@ spec:
                   - type
                   type: object
                 type: array
-              id:
-                description: 'Team (Identity) Guid. A Team Foundation ID. (format:
-                  uuid)'
+              containerDescriptor:
                 type: string
-              identity:
-                properties:
-                  isActive:
-                    description: True if the identity has a membership in any Azure
-                      Devops group in the organization.
-                    type: boolean
-                  isContainer:
-                    description: True if the identity is a group.
-                    type: boolean
-                  providerDisplayName:
-                    description: The display name for the identity as specified by
-                      the source identity provider.
-                    type: string
-                  subjectDescriptor:
-                    description: Subject descriptor of a Graph entity.
-                    type: string
-                type: object
-              name:
-                description: Team name
-                type: string
-              projectName:
-                type: string
-              url:
-                description: Team REST API Url
+              memberDescriptor:
                 type: string
             type: object
         type: object

@@ -1,0 +1,278 @@
+openapi: 3.0.1
+info:
+  title: Graph
+  description: ''
+  termsOfService: https://go.microsoft.com/fwlink/?LinkId=329770
+  contact:
+    name: nugetvss
+    email: nugetvss@microsoft.com
+  license:
+    name: MICROSOFT SOFTWARE LICENSE TERMS
+    url: https://go.microsoft.com/fwlink/?LinkId=329770
+  version: 7.2-preview
+externalDocs:
+  description: Azure DevOps REST APIs
+  url: https://aka.ms/azure-devops-rest-apis
+servers:
+- url: https://vssps.dev.azure.com/
+security:
+- accessToken: []
+tags:
+- name: Avatars
+- name: Descriptors
+- name: Groups
+- name: Memberships
+- name: Membership States
+- name: Provider Info
+- name: Request Access
+- name: Service Principals
+- name: Storage Keys
+- name: Subject Lookup
+- name: Subject Query
+- name: Users
+paths:
+  /{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}:
+    get:
+      tags:
+      - Memberships
+      description: Get a membership relationship between a container and subject.
+      operationId: Memberships_Get
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subjectDescriptor
+        in: path
+        description: A descriptor to the child subject in the relationship.
+        required: true
+        schema:
+          type: string
+      - name: containerDescriptor
+        in: path
+        description: A descriptor to the container in the relationship.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraphMembership'
+      security:
+      - oauth2:
+        - vso.graph
+      x-ms-docs-override-version: 7.2-preview.1
+      x-ms-vss-resource: memberships
+      x-ms-vss-method: GetMembership
+      x-ms-preview: true
+      # x-ms-examples:
+      #   For a User:
+      #     $ref: ./httpExamples/Memberships/GetMembershipUser.json
+      #   For a Group:
+      #     $ref: ./httpExamples/Memberships/GetMembershipVSTSGroup.json
+    put:
+      tags:
+      - Memberships
+      description: Create a new membership between a container and subject.
+      operationId: Memberships_Add
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subjectDescriptor
+        in: path
+        description: A descriptor to a group or user that can be the child subject in the relationship.
+        required: true
+        schema:
+          type: string
+      - name: containerDescriptor
+        in: path
+        description: A descriptor to a group that can be the container in the relationship.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        #'200':
+        '201': # FIXED - API actually returns 201 on create
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraphMembership'
+      security:
+      - oauth2:
+        - vso.graph_manage
+      x-ms-docs-override-version: 7.2-preview.1
+      x-ms-vss-resource: memberships
+      x-ms-vss-method: AddMembership
+      x-ms-preview: true
+      # x-ms-examples:
+      #   ? ''
+      #   : $ref: ./httpExamples/Memberships/CreateMembershipVSTSGroup.json
+    delete:
+      tags:
+      - Memberships
+      description: Deletes a membership between a container and subject.
+      operationId: Memberships_Remove Membership
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subjectDescriptor
+        in: path
+        description: A descriptor to a group or user that is the child subject in the relationship.
+        required: true
+        schema:
+          type: string
+      - name: containerDescriptor
+        in: path
+        description: A descriptor to a group that is the container in the relationship.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          content: {}
+      security:
+      - oauth2:
+        - vso.graph_manage
+      x-ms-docs-override-version: 7.2-preview.1
+      x-ms-vss-resource: memberships
+      x-ms-vss-method: RemoveMembership
+      x-ms-preview: true
+      # x-ms-examples:
+      #   ? ''
+      #   : $ref: ./httpExamples/Memberships/DeleteMembershipUser.json
+    head:
+      tags:
+      - Memberships
+      description: Check to see if a membership relationship between a container and subject exists.
+      operationId: Memberships_Check Membership Existence
+      parameters:
+      - name: organization
+        in: path
+        description: The name of the Azure DevOps organization.
+        required: true
+        schema:
+          type: string
+      - name: subjectDescriptor
+        in: path
+        description: The group or user that is a child subject of the relationship.
+        required: true
+        schema:
+          type: string
+      - name: containerDescriptor
+        in: path
+        description: The group that is the container in the relationship.
+        required: true
+        schema:
+          type: string
+      - name: api-version
+        in: query
+        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The operation succeeded. Membership exists.
+          content: {}
+        '404':
+          description: Membership does not exist.
+          content: {}
+      security:
+      - oauth2:
+        - vso.graph
+      x-ms-docs-override-version: 7.2-preview.1
+      x-ms-vss-resource: memberships
+      x-ms-vss-method: CheckMembershipExistence
+      x-ms-preview: true
+      # x-ms-examples:
+      #   ? ''
+      #   : $ref: ./httpExamples/Memberships/CheckMembershipExistenceUser.json
+components:
+  schemas:
+    GraphMembership:
+      type: object
+      properties:
+        _links:
+          $ref: '#/components/schemas/ReferenceLinks'
+        containerDescriptor:
+          type: string
+        memberDescriptor:
+          type: string
+      description: Relationship between a container and a member
+    ReferenceLinks:
+      type: object
+      properties:
+        links:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: The readonly view of the links.  Because Reference links are readonly, we only want to expose them
+            as read only.
+      description: The class to represent a collection of REST reference links.
+  parameters:
+    api-Version-preview.1:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
+      required: true
+      schema:
+        type: string
+    api-Version-preview.2:
+      name: api-version
+      in: query
+      description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
+      required: true
+      schema:
+        type: string
+  securitySchemes:
+    accessToken:
+      type: http
+      description: Personal access token. Use any value for the user name and the token as the password.
+      scheme: basic
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://app.vssps.visualstudio.com/oauth2/authorize&response_type=Assertion
+          tokenUrl: https://app.vssps.visualstudio.com/oauth2/token?client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
+          scopes:
+            vso.graph: Grants the ability to read user, group, scope and group membership information
+            vso.graph_manage: Grants the ability to read user, group, scope and group membership information, and to add users,
+              groups and manage group memberships
+x-ms-vss-area: Graph
+x-ms-vss-resource-area-id: bb1e7ec9-e901-4b68-999a-de7012b920f8
+x-original-swagger-version: '2.0'

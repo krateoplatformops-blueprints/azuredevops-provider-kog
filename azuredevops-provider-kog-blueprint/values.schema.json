@@ -44,6 +44,20 @@
       "title": "azuredevops-provider-kog-graphgroup-blueprint",
       "type": "object"
     },
+    "azuredevops-provider-kog-membership-blueprint": {
+      "additionalProperties": false,
+      "description": "Configuration for the Membership Blueprint dependency.",
+      "properties": {
+        "enabled": {
+          "default": true,
+          "description": "Enable the Membership Blueprint dependency.",
+          "title": "enabled",
+          "type": "boolean"
+        }
+      },
+      "title": "azuredevops-provider-kog-membership-blueprint",
+      "type": "object"
+    },
     "azuredevops-provider-kog-pipeline-blueprint": {
       "additionalProperties": false,
       "description": "Configuration for the Pipeline Blueprint dependency.",

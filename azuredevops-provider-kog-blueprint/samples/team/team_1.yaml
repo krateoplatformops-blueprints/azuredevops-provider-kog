@@ -5,6 +5,7 @@ metadata:
   namespace: default
   annotations:
     krateo.io/connector-verbose: "true"
+    krateo.io/deletion-policy: "orphan"
 spec:
   # required: reference to a Configuration CR in the cluster
   configurationRef:
