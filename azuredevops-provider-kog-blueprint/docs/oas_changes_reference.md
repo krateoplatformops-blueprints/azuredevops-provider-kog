@@ -17,6 +17,7 @@ Note that the changes are made to **comply with some requirements** of the OASGe
 - [Project](#project)
 - [User](#user)
 - [Membership](#membership)
+- [Environment](#environment)
 
 ## `GitRepository`
 
@@ -292,6 +293,24 @@ allow:
 
 **List of change made to the OpenAPI Specification (OAS)**:
 - Changed the status code for the `create` operation from `200` to `201` since the Azure DevOps REST API actually returns a `201 Created` status code when a User is created successfully.
+- Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
+- Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
+- Commented out the `components.parameters` section at root level as it just to inform about api versions.
+
+## `Environment`
+
+**Version**: 7.2-preview.1
+**Original specification file**:
+- Link: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/master/specification/environments/7.2/environments.json
+- Permalink: https://github.com/MicrosoftDocs/vsts-rest-api-specs/blob/eca8bf9e190633aa1c3c2877b74c5a13aa9d4b89/specification/environments/7.2/environments.json
+
+**Transformations**: 
+- Original file is converted from JSON to YAML and from Swagger 2.0 to OpenAPI 3.0.1 with the following tool: https://editor.swagger.io/
+- File is pruned to only include the endpoints and schemas relevant to Environment resource.
+
+**List of change made to the OpenAPI Specification (OAS)**:
+- Changed the status code for the `create` operation from `200` to `201` since the Azure DevOps REST API actually returns a `201 Created` status code when a User is created successfully.
+- Renamed 'project' to 'projectId' to avoid naming collision with the 'project' field in the response body (ProjectReference object). The path parameter is a string, while the response field is an object, causing comparison failures in the controller.
 - Commented out the `oauth2` security scheme since it not supported by OASGen Provider and Rest Dynamic Controller while authentication is handled at the root level of the file and with basic auth scheme.
 - Commented out `x-ms-*` items as they are specific to Microsoft internal tooling.
 - Commented out the `components.parameters` section at root level as it just to inform about api versions.
