@@ -1,0 +1,16 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Environment
+metadata:
+  name: environment-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-environment-config
+    namespace: default
+  organization: krateo-kog
+  projectId: project-1-classic
+  name: env-kog-001
+  description: "Environment created via KOG"

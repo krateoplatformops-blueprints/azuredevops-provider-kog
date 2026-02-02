@@ -121,7 +121,7 @@ helm install azuredevops-provider-kog azuredevops-provider-kog \
   --repo https://marketplace.krateo.io \
   --namespace <release-namespace> \
   --create-namespace \
-  --version 1.7.0 \
+  --version 1.9.0 \
   --wait
 ```
 
@@ -182,15 +182,18 @@ As a matter of fact, currently, this chart allows you to manage the following re
 - `GraphGroup`
 - `Project`
 - `User`
+- `Environment`
 
-Other resources (`Queue`, `Environment`, etc.) can be managed using the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
-For example, you can create a `PipelinePermission` resource that references an `Environment` resource created by the Azure DevOps Provider (classic).
+Other resources (`Queue`, `Feed`, etc.) can be managed using the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
+You can still use the resources created by the Azure DevOps Provider (classic) in the resources created by this chart.
+For example, you can create a `PipelinePermission` resource (from this chart) that references an `Environment` resource created by the Azure DevOps Provider (classic).
 > [!NOTE]  
 > The references used by these resources are "by id" or other Azure DevOps resource identifiers but not Kubernetes-native references. Meaning that the `PipelinePermission` resource will reference the `Environment` by its `id`, not by a Kubernetes resource name and namespace. Said `id` can be usually found in the `status` field of the `Environment` resource created by the Azure DevOps Provider (classic). An example on how to reference resource in this way is available in the [Lookup functions example](#lookup-functions-example) section below.
 
 Therefore the overall scenario is the following:
-- You should use the Azure DevOps Provider (classic) to manage resources that are not supported by this chart, such as `Queue`, `Environment`, etc.
+- You should use the Azure DevOps Provider (classic) to manage resources that are not supported by this chart, such as `Queue`, `Feed`, etc.
 - You should use the Azure DevOps Provider KOG (this chart) to manage only resources that are supported, like `GitRepository`, `Pipeline`, `PipelinePermission`, etc.
+- You can still use and reference resources created by the Azure DevOps Provider (classic) in the resources created by this chart, but not vice-versa (see next section for details).
 
 Note that the following resources: 
 - `GitRepository`
@@ -200,11 +203,14 @@ Note that the following resources:
 - `PolicyConfiguration` (called `Policy` in the Azure DevOps Provider (classic))
 - `RepositoryPermission`
 - `Team`
+- `Membership`
 - `GraphGroup` (called `Groups` with final `s` in the Azure DevOps Provider (classic))
 - `Project` (called `TeamProject` in the Azure DevOps Provider (classic))
+- `User`
+- `Environment`
 
 are supported by both the Azure DevOps Provider (classic) and the Azure DevOps Provider KOG and migration guides are available in the [Migration guide](./azuredevops-provider-kog-blueprint/docs/migration-guides/) folder of the `/docs` folder of the main chart.
-The migration guide explains how to migrate from the Azure DevOps Provider (classic) resources to the Azure DevOps Provider KOG resources whenever possible.
+The migration guides explain how to migrate from the Azure DevOps Provider (classic) resources to the Azure DevOps Provider KOG resources whenever possible.
 
 ### One-way retro-compatibility
 
@@ -266,6 +272,8 @@ This chart supports the following resources and operations:
 | GraphGroup          | ✅   | ✅                  | 🚫 Not supported     | ✅     |
 | User                | ✅   | ✅                  | 🚫 Not supported     | ✅     |
 | Project             | ✅   | ✅                  | ✅     | ✅     |
+| Membership          | ✅   | ✅                  | 🚫 Not supported     | ✅     |
+| Environment         | ✅   | ✅                  | ✅     | ✅     |
 
 > [!NOTE]  
 > 🚫 *"Not supported"* means that the operation is not supported by the resource (e.g., the underlying REST API does not support it and therefore the controller does not implement it), the operation is not applicable to the resource due to the nature of the resource or the operation is not implemented in this provider version.
@@ -981,6 +989,55 @@ spec:
 
 </details>
 
+---
+
+### Environment
+
+The `Environment` resource is used to manage Environments in Azure DevOps.
+
+#### Environment operations
+
+- **Get**: You can retrieve information about an existing Environment in Azure DevOps.
+- **Create**: You can create a new Environment in Azure DevOps.
+- **Update**: You can update an existing Environment in Azure DevOps.
+- **Delete**: You can delete an existing Environment. This will remove the Environment from Azure DevOps.
+
+#### Environment schema
+
+The `Environment` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/environment.md).
+
+The `Environment` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/environment-crd.yaml).
+
+#### Environment example CR
+
+An example of a `Environment` resource is:
+<details>
+<summary><b> Environment Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: Environment
+metadata:
+  name: environment-1
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-environment-config
+    namespace: default
+  organization: krateo-kog
+  projectId: project-1-classic
+  name: env-kog-001
+  description: "Environment created via KOG"
+```
+
+</details>
+
+---
+
 ## Authentication
 
 The authentication to the Azure DevOps REST API is managed using **2 resources** (both are required):
@@ -1081,8 +1138,11 @@ Currently, the supported configuration resources are:
 - `TeamConfiguration`
 - `GraphGroupConfiguration`
 - `ProjectConfiguration`
+- `UserConfiguration`
+- `MembershipConfiguration`
+- `EnvironmentConfiguration`
 
-These configuration resources are used to store the authentication information (i.e., reference to the Kubernetes Secret containing the Azure DevOps PAT) and other configuration options for the resource type.
+These configuration resources are used to store the **authentication information** (i.e., reference to the Kubernetes Secret containing the Azure DevOps PAT) and other **configuration options** for the resource type.
 
 You can find examples of these configuration resources in the [`/samples/configs`](./azuredevops-provider-kog-blueprint/samples/configuration-crs/) folder of the chart.
 Note that in the case of this chart, the **configuration resources are not created automatically** during the installation of the chart, so you need to create them manually before creating any resources that reference them.
@@ -1091,6 +1151,11 @@ Note that a single configuration resource can be used by multiple resources of t
 For example, you can create a single `GitRepositoryConfiguration` resource and reference it in multiple `GitRepository` resources.
 
 As examplified in the examples in the folder [`/samples/configs`](./azuredevops-provider-kog-blueprint/samples/configuration-crs/), in the case of this provider, the configuration resources are used to specify the API versions to be used for each operation (create, update, delete, get, findby) for the specific resource type.
+
+### Deletion policy
+
+By default, when you delete a resource (e.g., `GitRepository`, `Pipeline`, `PipelinePermission`) from the Kubernetes cluster, the corresponding resource in Azure DevOps is also deleted.
+However, you can change this behavior by setting the `krateo.io/deletion-policy` annotation in the metadata of the resource to the value `"orphan"`.
 
 ### Verbose logging
 

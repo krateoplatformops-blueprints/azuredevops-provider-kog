@@ -18,18 +18,7 @@ servers:
 security:
 - accessToken: []
 tags:
-- name: Avatars
-- name: Descriptors
-- name: Groups
 - name: Memberships
-- name: Membership States
-- name: Provider Info
-- name: Request Access
-- name: Service Principals
-- name: Storage Keys
-- name: Subject Lookup
-- name: Subject Query
-- name: Users
 paths:
   /{organization}/_apis/graph/memberships/{subjectDescriptor}/{containerDescriptor}:
     get:
@@ -69,13 +58,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GraphMembership'
-      security:
-      - oauth2:
-        - vso.graph
-      x-ms-docs-override-version: 7.2-preview.1
-      x-ms-vss-resource: memberships
-      x-ms-vss-method: GetMembership
-      x-ms-preview: true
+      #security:
+      #- oauth2:
+      #  - vso.graph
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: memberships
+      #x-ms-vss-method: GetMembership
+      #x-ms-preview: true
       # x-ms-examples:
       #   For a User:
       #     $ref: ./httpExamples/Memberships/GetMembershipUser.json
@@ -119,13 +108,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GraphMembership'
-      security:
-      - oauth2:
-        - vso.graph_manage
-      x-ms-docs-override-version: 7.2-preview.1
-      x-ms-vss-resource: memberships
-      x-ms-vss-method: AddMembership
-      x-ms-preview: true
+      #security:
+      #- oauth2:
+      #  - vso.graph_manage
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: memberships
+      #x-ms-vss-method: AddMembership
+      #x-ms-preview: true
       # x-ms-examples:
       #   ? ''
       #   : $ref: ./httpExamples/Memberships/CreateMembershipVSTSGroup.json
@@ -163,63 +152,16 @@ paths:
         '200':
           description: successful operation
           content: {}
-      security:
-      - oauth2:
-        - vso.graph_manage
-      x-ms-docs-override-version: 7.2-preview.1
-      x-ms-vss-resource: memberships
-      x-ms-vss-method: RemoveMembership
-      x-ms-preview: true
+      #security:
+      #- oauth2:
+      #  - vso.graph_manage
+      #x-ms-docs-override-version: 7.2-preview.1
+      #x-ms-vss-resource: memberships
+      #x-ms-vss-method: RemoveMembership
+      #x-ms-preview: true
       # x-ms-examples:
       #   ? ''
       #   : $ref: ./httpExamples/Memberships/DeleteMembershipUser.json
-    head:
-      tags:
-      - Memberships
-      description: Check to see if a membership relationship between a container and subject exists.
-      operationId: Memberships_Check Membership Existence
-      parameters:
-      - name: organization
-        in: path
-        description: The name of the Azure DevOps organization.
-        required: true
-        schema:
-          type: string
-      - name: subjectDescriptor
-        in: path
-        description: The group or user that is a child subject of the relationship.
-        required: true
-        schema:
-          type: string
-      - name: containerDescriptor
-        in: path
-        description: The group that is the container in the relationship.
-        required: true
-        schema:
-          type: string
-      - name: api-version
-        in: query
-        description: Version of the API to use.  This should be set to '7.2-preview.1' to use this version of the api.
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: The operation succeeded. Membership exists.
-          content: {}
-        '404':
-          description: Membership does not exist.
-          content: {}
-      security:
-      - oauth2:
-        - vso.graph
-      x-ms-docs-override-version: 7.2-preview.1
-      x-ms-vss-resource: memberships
-      x-ms-vss-method: CheckMembershipExistence
-      x-ms-preview: true
-      # x-ms-examples:
-      #   ? ''
-      #   : $ref: ./httpExamples/Memberships/CheckMembershipExistenceUser.json
 components:
   schemas:
     GraphMembership:

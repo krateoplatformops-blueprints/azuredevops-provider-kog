@@ -1,0 +1,68 @@
+kind: RestDefinition
+apiVersion: ogen.krateo.io/v1alpha1
+metadata:
+  name: azuredevops-provider-kog-environment
+spec:
+  oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-environment/environment.yaml
+  resourceGroup: azuredevops.ogen.krateo.io
+  resource:
+    kind: Environment
+    identifiers:
+    - name                  # Within the same project the name of an environment must be unique, so we can use it as identifier
+    additionalStatusFields:
+    - id                    # Needed for get/update/delete operations via requestFieldMapping
+    excludedSpecFields:
+    - environmentId         # Server-generated, mapped from status.id via requestFieldMapping
+    - continuationToken     # Managed by the pagination section below
+    verbsDescription:
+    - action: findby
+      method: GET
+      path: /{organization}/{projectId}/_apis/pipelines/environments
+      pagination:
+        type: continuationToken
+        continuationToken:
+          request:
+            tokenIn: query
+            tokenPath: "continuationToken"
+          response:
+            tokenIn: header
+            tokenPath: "X-Ms-Continuationtoken"
+    - action: get
+      method: GET
+      path: /{organization}/{projectId}/_apis/pipelines/environments/{environmentId}
+      requestFieldMapping:
+        - inPath: environmentId
+          inCustomResource: status.id
+    - action: create
+      method: POST
+      path: /{organization}/{projectId}/_apis/pipelines/environments
+    - action: update
+      method: PATCH
+      path: /{organization}/{projectId}/_apis/pipelines/environments/{environmentId}
+      requestFieldMapping:
+        - inPath: environmentId
+          inCustomResource: status.id
+    - action: delete
+      method: DELETE
+      path: /{organization}/{projectId}/_apis/pipelines/environments/{environmentId}
+      requestFieldMapping:
+        - inPath: environmentId
+          inCustomResource: status.id
+    configurationFields:
+    - fromOpenAPI:
+        name: api-version
+        in: query
+      fromRestDefinition:
+        actions: ["*"] # Common among all actions
+    - fromOpenAPI:
+        name: $top
+        in: query
+      fromRestDefinition:
+        actions:
+        - findby
+    - fromOpenAPI:
+        name: expands
+        in: query
+      fromRestDefinition:
+        actions:
+        - get

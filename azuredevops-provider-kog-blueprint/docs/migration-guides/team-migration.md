@@ -45,7 +45,8 @@ spec:
 
 Note that:
 - the `Team` resource is referecing a `ConnectorConfig` resource and a `Project` resource, which are both managed by the Azure DevOps Provider "classic".
-- the field `groupRefs` is not supported in the `Team` schema of Azure DevOps Provider KOG since the Azure DevOps REST API does not directly support managing groups associated with a team. Azure DevOps Provider "classic" creates **memberships** in a implicit way inside the reconciliation loop logic of the `Team` resource, while Azure DevOps Provider KOG requires explicit management of memberships through dedicated resources. Specific resources for managing [memberships](https://learn.microsoft.com/en-us/rest/api/azure/devops/graph/memberships?view=azure-devops-rest-7.1) will likely be introduced in future versions of the Azure DevOps Provider KOG. If this functionality is critical for your use case, it may be advisable to delay the migration until such resources are available.
+- the field `groupRefs` is not supported in the `Team` schema of Azure DevOps Provider KOG since the Azure DevOps REST API does not directly support managing groups associated with a team. Azure DevOps Provider "classic" creates **memberships** in a implicit way inside the reconciliation loop logic of the `Team` resource, while Azure DevOps Provider KOG requires explicit management of memberships through dedicated resources. 
+For this reason, you will need to manually create `Membership` resources, see the section about [Memberships](../../../README.md#membership) in the main README for more details.
 
 To ensure that the old version of the resource is not reconciled while you are migrating to the new version, you should set the `krateo.io/paused: true` annotation.
 You can do this by running the following commands:

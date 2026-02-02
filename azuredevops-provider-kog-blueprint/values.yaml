@@ -11,6 +11,17 @@ azuredevops-provider-kog-buildpermission-blueprint:
   enabled: true
 # @schema
 # type: object
+# description: Configuration for the Environment Blueprint dependency.
+# @schema
+azuredevops-provider-kog-environment-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the Environment Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true
+# @schema
+# type: object
 # description: Configuration for the GitRepository Blueprint dependency.
 # @schema
 azuredevops-provider-kog-gitrepository-blueprint:

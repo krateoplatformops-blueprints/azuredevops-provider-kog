@@ -32,6 +32,11 @@ dependencies:
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-buildpermission-blueprint.enabled
 
+  - name: azuredevops-provider-kog-environment
+    version: AZUREDEVOPS_PROVIDER_KOG_ENVIRONMENT_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-environment-blueprint.enabled
+
   - name: azuredevops-provider-kog-gitrepository
     version: AZUREDEVOPS_PROVIDER_KOG_GITREPOSITORY_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io
