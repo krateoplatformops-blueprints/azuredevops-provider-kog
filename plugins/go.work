@@ -9,5 +9,6 @@ use (
 	./cmd/project-plugin
 	./cmd/pullrequest-plugin
 	./cmd/repositorypermission-plugin
+	./cmd/variablegroup-plugin
 	./pkg
 )

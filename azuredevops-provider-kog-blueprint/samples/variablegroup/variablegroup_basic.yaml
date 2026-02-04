@@ -1,0 +1,51 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: VariableGroup
+metadata:
+  name: my-vargroup-basic
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+    krateo.io/deletion-policy: "delete" # Can be "delete" or "orphan"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-variablegroup-config
+    namespace: default
+
+  # Organization name
+  organization: krateo-kog
+
+  #project: "5e8a8687-5bb2-41ff-896f-3e6d45776fc9" # Project ID
+  project: project-1-classic
+
+  # Variable group name (identifier - must be unique within the project)
+  name: MyBasicVariableGroup
+
+  # Optional description
+  description: "A basic variable group created via Krateo KOG"
+
+  # Type of variable group (usually "Vsts" for Azure DevOps)
+  type: "Vsts"
+
+  # Variables defined in the group
+  variables:
+    API_URL:
+      value: "https://api.example.com"
+      isSecret: false
+      isReadOnly: false
+    DATABASE_NAME:
+      value: "production_db"
+      isSecret: false
+      isReadOnly: true
+    API_KEY:
+      value: "secret-key-placeholder"
+      isSecret: true  # This variable will be masked in UI
+      isReadOnly: false
+
+  # Project references: which projects can use this variable group
+  variableGroupProjectReferences:
+    - name: "MyBasicVariableGroup" # required, name shown in the UI, this should be the same as spec.name
+      #description: "A basic variable group created via Krateo KOG"  # not required, description shown in the UI, if set, this should be the same as spec.description
+      projectReference: # either id or name can be used to reference the project
+        #id: "5e8a8687-5bb2-41ff-896f-3e6d45776fc9"  # Project ID
+        name: "project-1-classic"  # Project name

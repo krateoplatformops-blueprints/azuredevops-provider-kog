@@ -1,0 +1,267 @@
+basePath: /
+definitions:
+  variablegroup.IdentityRef:
+    properties:
+      descriptor:
+        type: string
+      displayName:
+        type: string
+      id:
+        type: string
+      uniqueName:
+        type: string
+      url:
+        type: string
+    type: object
+  variablegroup.ProjectReference:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  variablegroup.VariableGroup:
+    properties:
+      createdBy:
+        $ref: '#/definitions/variablegroup.IdentityRef'
+      createdOn:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      isShared:
+        type: boolean
+      modifiedBy:
+        $ref: '#/definitions/variablegroup.IdentityRef'
+      modifiedOn:
+        type: string
+      name:
+        type: string
+      providerData:
+        additionalProperties: true
+        type: object
+      type:
+        type: string
+      variableGroupProjectReferences:
+        items:
+          $ref: '#/definitions/variablegroup.VariableGroupProjectReference'
+        type: array
+      variables:
+        additionalProperties:
+          $ref: '#/definitions/variablegroup.VariableValue'
+        type: object
+    type: object
+  variablegroup.VariableGroupListResponse:
+    properties:
+      count:
+        type: integer
+      value:
+        items:
+          $ref: '#/definitions/variablegroup.VariableGroup'
+        type: array
+    type: object
+  variablegroup.VariableGroupParameters:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      providerData:
+        additionalProperties: true
+        type: object
+      type:
+        type: string
+      variableGroupProjectReferences:
+        items:
+          $ref: '#/definitions/variablegroup.VariableGroupProjectReference'
+        type: array
+      variables:
+        additionalProperties:
+          $ref: '#/definitions/variablegroup.VariableValue'
+        type: object
+    type: object
+  variablegroup.VariableGroupProjectReference:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      projectReference:
+        $ref: '#/definitions/variablegroup.ProjectReference'
+    type: object
+  variablegroup.VariableValue:
+    properties:
+      isReadOnly:
+        type: boolean
+      isSecret:
+        type: boolean
+      value:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: contact@krateoplatformops.io
+    name: Krateo Support
+    url: https://krateo.io
+  description: Simple wrapper around Azure DevOps API to handle VariableGroup delete
+    operation with projectIds extraction
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Azure DevOps VariableGroup Plugin API for Krateo Operator Generator (KOG)
+  version: "1.0"
+paths:
+  /plugin/{organization}/{project}/variablegroups:
+    post:
+      consumes:
+      - application/json
+      description: Retrieves all variable groups for a project from Azure DevOps.
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name or ID
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: API version
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: CR spec forwarded by RDC; used to patch the matching item
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/variablegroup.VariableGroupParameters'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List response with normalised items
+          schema:
+            $ref: '#/definitions/variablegroup.VariableGroupListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List variable groups (plugin)
+      tags:
+      - VariableGroup
+  /plugin/{organization}/{project}/variablegroups/{groupId}:
+    delete:
+      description: Deletes a variable group from Azure DevOps by calling the organisation-level
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project ID (used as projectIds query param for the ADO delete
+          endpoint)
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Variable group ID
+        in: path
+        name: groupId
+        required: true
+        type: string
+      - description: API version
+        in: query
+        name: api-version
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content – variable group deleted
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a variable group (plugin)
+      tags:
+      - VariableGroup
+    post:
+      consumes:
+      - application/json
+      description: Retrieves a variable group by ID from Azure DevOps, then patches
+        secret
+      parameters:
+      - description: Organization name
+        in: path
+        name: organization
+        required: true
+        type: string
+      - description: Project name or ID
+        in: path
+        name: project
+        required: true
+        type: string
+      - description: Variable group ID
+        in: path
+        name: groupId
+        required: true
+        type: string
+      - description: API version
+        in: query
+        name: api-version
+        required: true
+        type: string
+      - description: CR spec forwarded by RDC; used to restore secret variable values
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/variablegroup.VariableGroupParameters'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Variable group with normalised booleans and patched secrets
+          schema:
+            $ref: '#/definitions/variablegroup.VariableGroup'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get a variable group (plugin)
+      tags:
+      - VariableGroup
+schemes:
+- http
+swagger: "2.0"

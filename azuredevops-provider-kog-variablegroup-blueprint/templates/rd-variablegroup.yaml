@@ -1,0 +1,93 @@
+kind: RestDefinition
+apiVersion: ogen.krateo.io/v1alpha1
+metadata:
+  name: azuredevops-provider-kog-variablegroup
+spec:
+  oasPath: configmap://{{ .Release.Namespace }}/{{ .Release.Name }}-variablegroup/variablegroup.yaml
+  resourceGroup: azuredevops.ogen.krateo.io
+  resource:
+    kind: VariableGroup
+    identifiers:
+    - name # Within the same project, the name of a variable group must be unique, so we can use it as an identifier
+    additionalStatusFields:
+    - id
+    - createdBy.id
+    - createdBy.displayName
+    - createdOn
+    - modifiedBy.id
+    - modifiedBy.displayName
+    - modifiedOn
+    - isShared
+    excludedSpecFields:
+    - groupId
+    - groupIds # indicated as required but actually not needed in findby
+
+    verbsDescription:
+    - action: create
+      method: POST
+      path: /{organization}/_apis/distributedtask/variablegroups
+
+    - action: findby
+      method: POST
+      path: /plugin/{organization}/{project}/variablegroups
+
+    - action: get
+      method: POST
+      path: /plugin/{organization}/{project}/variablegroups/{groupId}
+      requestFieldMapping:
+        - inPath: groupId
+          inCustomResource: status.id
+    
+    #- action: update
+    #  method: PUT
+    #  path: /{organization}/_apis/distributedtask/variablegroups/{groupId}
+    #  requestFieldMapping:
+    #    - inPath: groupId
+    #      inCustomResource: status.id
+    
+    #- action: delete
+    #  method: DELETE
+    #  path: /plugin/{organization}/{project}/variablegroups/{groupId} # plugin endpoint
+    #  requestFieldMapping:
+    #    - inPath: groupId
+    #      inCustomResource: status.id
+    
+    
+    configurationFields:
+    - fromOpenAPI:
+        name: api-version
+        in: query
+      fromRestDefinition:
+        actions: ["*"] # Common among all actions
+    
+    #- fromOpenAPI:
+    #    name: groupName
+    #    in: query
+    #  fromRestDefinition:
+    #    actions: ["findby"]
+    #- fromOpenAPI:
+    #    name: actionFilter
+    #    in: query
+    #  fromRestDefinition:
+    #    actions: ["findby"]
+    #- fromOpenAPI:
+    #    name: $top
+    #    in: query
+    #  fromRestDefinition:
+    #    actions: ["findby"]
+    #- fromOpenAPI:
+    #    name: continuationToken
+    #    in: query
+    #  fromRestDefinition:
+    #    actions: ["findby"]
+    #- fromOpenAPI:
+    #    name: queryOrder
+    #    in: query
+    #  fromRestDefinition:
+    #    actions: ["findby"]
+    
+    - fromOpenAPI:
+        name: loadSecrets
+        in: query
+      fromRestDefinition:
+        actions: ["findby"]

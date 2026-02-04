@@ -1,0 +1,93 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: VariableGroup
+metadata:
+  name: my-vargroup-advanced
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+    krateo.io/deletion-policy: "delete"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-variablegroup-config
+    namespace: default
+
+  # Organization name
+  organization: krateo-kog
+
+  # Project path parameter
+  project: "5e8a8687-5bb2-41ff-896f-3e6d45776fc9" # Project ID
+
+  # Variable group name (identifier - must be unique within the project)
+  name: MyAdvancedVariableGroup
+
+  # Optional description
+  description: "An advanced variable group with multiple variables and secrets"
+
+  # Type of variable group
+  type: "Vsts"
+
+  # Variables defined in the group
+  variables:
+    # Application configuration
+    APP_ENV:
+      value: "production"
+      isSecret: false
+      isReadOnly: false
+    APP_PORT:
+      value: "8080"
+      isSecret: false
+      isReadOnly: false
+    APP_DEBUG:
+      value: "false"
+      isSecret: false
+      isReadOnly: false
+
+    # Database configuration
+    DB_HOST:
+      value: "db.example.com"
+      isSecret: false
+      isReadOnly: false
+    DB_PORT:
+      value: "5432"
+      isSecret: false
+      isReadOnly: false
+    DB_NAME:
+      value: "app_database"
+      isSecret: false
+      isReadOnly: false
+    DB_USER:
+      value: "app_user"
+      isSecret: false
+      isReadOnly: false
+    DB_PASSWORD:
+      value: "change-me-in-production"
+      isSecret: true  # Masked in UI
+      isReadOnly: false
+
+    # External service credentials
+    EXTERNAL_API_KEY:
+      value: "api-key-placeholder"
+      isSecret: true
+      isReadOnly: false
+    EXTERNAL_API_SECRET:
+      value: "api-secret-placeholder"
+      isSecret: true
+      isReadOnly: false
+
+    # Feature flags
+    FEATURE_NEW_UI:
+      value: "true"
+      isSecret: false
+      isReadOnly: false
+    FEATURE_ANALYTICS:
+      value: "true"
+      isSecret: false
+      isReadOnly: false
+
+  # Project references
+  variableGroupProjectReferences:
+    - name: "MyAdvancedVariableGroup"
+      projectReference:
+        id: "5e8a8687-5bb2-41ff-896f-3e6d45776fc9"
+        name: "test1"

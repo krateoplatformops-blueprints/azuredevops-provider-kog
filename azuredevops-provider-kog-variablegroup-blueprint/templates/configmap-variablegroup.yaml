@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-variablegroup
+data:
+  variablegroup.yaml: |
+{{ tpl (.Files.Get "assets/variablegroup.yaml") . | indent 4 }}

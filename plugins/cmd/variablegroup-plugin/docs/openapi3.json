@@ -1,0 +1,455 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Azure DevOps VariableGroup Plugin API for Krateo Operator Generator (KOG)",
+    "description": "Simple wrapper around Azure DevOps API to handle VariableGroup delete operation with projectIds extraction",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "name": "Krateo Support",
+      "url": "https://krateo.io",
+      "email": "contact@krateoplatformops.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/"
+    }
+  ],
+  "paths": {
+    "/plugin/{organization}/{project}/variablegroups": {
+      "post": {
+        "tags": [
+          "VariableGroup"
+        ],
+        "summary": "List variable groups (plugin)",
+        "description": "Retrieves all variable groups for a project from Azure DevOps.",
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "Organization name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "project",
+            "in": "path",
+            "description": "Project name or ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "API version",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "CR spec forwarded by RDC; used to patch the matching item",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/variablegroup.VariableGroupParameters"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "List response with normalised items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/variablegroup.VariableGroupListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/plugin/{organization}/{project}/variablegroups/{groupId}": {
+      "post": {
+        "tags": [
+          "VariableGroup"
+        ],
+        "summary": "Get a variable group (plugin)",
+        "description": "Retrieves a variable group by ID from Azure DevOps, then patches secret",
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "Organization name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "project",
+            "in": "path",
+            "description": "Project name or ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "Variable group ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "API version",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "CR spec forwarded by RDC; used to restore secret variable values",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/variablegroup.VariableGroupParameters"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Variable group with normalised booleans and patched secrets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/variablegroup.VariableGroup"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "delete": {
+        "tags": [
+          "VariableGroup"
+        ],
+        "summary": "Delete a variable group (plugin)",
+        "description": "Deletes a variable group from Azure DevOps by calling the organisation-level",
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "path",
+            "description": "Organization name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "project",
+            "in": "path",
+            "description": "Project ID (used as projectIds query param for the ADO delete endpoint)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "Variable group ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "API version",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content – variable group deleted",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "variablegroup.IdentityRef": {
+        "type": "object",
+        "properties": {
+          "descriptor": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "uniqueName": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "variablegroup.ProjectReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "variablegroup.VariableGroup": {
+        "type": "object",
+        "properties": {
+          "createdBy": {
+            "$ref": "#/components/schemas/variablegroup.IdentityRef"
+          },
+          "createdOn": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "integer"
+          },
+          "isShared": {
+            "type": "boolean"
+          },
+          "modifiedBy": {
+            "$ref": "#/components/schemas/variablegroup.IdentityRef"
+          },
+          "modifiedOn": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "providerData": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "type": {
+            "type": "string"
+          },
+          "variableGroupProjectReferences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/variablegroup.VariableGroupProjectReference"
+            }
+          },
+          "variables": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/variablegroup.VariableValue"
+            }
+          }
+        }
+      },
+      "variablegroup.VariableGroupListResponse": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/variablegroup.VariableGroup"
+            }
+          }
+        }
+      },
+      "variablegroup.VariableGroupParameters": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "providerData": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "type": {
+            "type": "string"
+          },
+          "variableGroupProjectReferences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/variablegroup.VariableGroupProjectReference"
+            }
+          },
+          "variables": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/variablegroup.VariableValue"
+            }
+          }
+        }
+      },
+      "variablegroup.VariableGroupProjectReference": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "projectReference": {
+            "$ref": "#/components/schemas/variablegroup.ProjectReference"
+          }
+        }
+      },
+      "variablegroup.VariableValue": {
+        "type": "object",
+        "properties": {
+          "isReadOnly": {
+            "type": "boolean"
+          },
+          "isSecret": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "x-original-swagger-version": "2.0"
+}
