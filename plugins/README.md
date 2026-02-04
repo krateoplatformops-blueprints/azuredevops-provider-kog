@@ -1622,6 +1622,7 @@ This endpoint retrieves a single variable group by ID from Azure DevOps, then pa
 - Azure DevOps **never** returns the plaintext value of secret variables, even when the variable was just written. The only source of truth for the secret value is the CR spec; the plugin copies it back into the response so the controller sees no diff.
 - The ADO list endpoint (`/variablegroups` without an ID) returns `variableGroupProjectReferences` as `null`, but the individual GET does populate it. This endpoint therefore sources `projectReference` directly from the ADO response rather than needing to patch it from the CR spec.
 - `projectReference` is lifted from `variableGroupProjectReferences[0].projectReference` into a dedicated top-level field. It is declared as an `additionalStatusFields` entry in the RestDefinition so the controller can track which project the variable group belongs to without parsing the nested array.
+- The endpoint also handle the case when a variable group is not found but Azure DevOps responds with HTTP 200 and a literal `null` body. In this case, the endpoint returns HTTP 404 to signal that the group does not exist.
 
 </details>
 

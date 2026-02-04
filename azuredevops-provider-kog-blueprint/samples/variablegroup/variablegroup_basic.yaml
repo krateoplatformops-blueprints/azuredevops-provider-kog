@@ -45,6 +45,15 @@ spec:
       value: "changed_value"
       isSecret: false
       isReadOnly: false
+    TEST_FALSE_WITHOUT_READONLY:
+      value: "changed_value"
+      isSecret: false
+    TEST_FALSE_WITHOUT_SECRET:
+      value: "changed_value"
+      isReadOnly: false
+    TEST_FALSE_WITHOUT_SECRET_2:
+      value: "changed_value"
+      isReadOnly: true
 
   # Project references: which project can use this variable group
   # Array shape but only one project reference is supported.

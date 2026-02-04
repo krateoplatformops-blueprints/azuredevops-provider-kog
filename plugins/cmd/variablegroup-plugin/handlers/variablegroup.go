@@ -153,7 +153,6 @@ func (h *getHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.Log.Printf("GET: no CR spec in body, secret patching will be skipped: %v", err)
 	}
-	h.Log.Printf("GET: parsed CR spec: %+v", crSpec)
 
 	// Call ADO individual GET endpoint.
 	// This endpoint correctly populates variableGroupProjectReferences.
@@ -182,11 +181,6 @@ func (h *getHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.writeErrorResponse(w, http.StatusInternalServerError, fmt.Sprintf("failed to read ADO response: %v", err))
 		return
 	}
-
-	h.Log.Printf("================== GET: ADO response received =========================")
-	h.Log.Printf("GET: ADO response status: %d", resp.StatusCode)
-	h.Log.Printf("GET: ADO response body: %s", string(adoBody))
-	h.Log.Printf("=======================================================================")
 
 	// Handle "null" body with 200 status as 404 Not Found
 	if isNullResponseBody(resp.StatusCode, adoBody) {
@@ -262,7 +256,6 @@ func (h *findByHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.Log.Printf("FINDBY: no CR spec in body, secret/ref patching will be skipped: %v", err)
 	}
-	h.Log.Printf("FINDBY: parsed CR spec: %+v", crSpec)
 
 	// Call ADO list endpoint
 	adoURL := fmt.Sprintf("https://dev.azure.com/%s/%s/_apis/distributedtask/variablegroups",
@@ -395,11 +388,6 @@ func (h *deleteHandler) deleteVariableGroupAndRespond(ctx context.Context, w htt
 		return fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	h.Log.Printf("================== FINBY: ADO response received =========================")
-	h.Log.Printf("FINDBY: ADO response status: %d", resp.StatusCode)
-	h.Log.Printf("FINDBY: ADO response body: %s", string(body))
-	h.Log.Printf("=======================================================================")
-
 	if resp.StatusCode == http.StatusNoContent || resp.StatusCode == http.StatusOK {
 		h.Log.Printf("Successfully deleted variable group: groupId=%s", params.GroupID)
 		w.WriteHeader(http.StatusNoContent)
@@ -458,18 +446,18 @@ func normalizeVariableGroup(vg *VariableGroup, crSpec *VariableGroupParameters) 
 	for name, v := range vg.Variables {
 		if v.IsReadOnly == nil {
 			v.IsReadOnly = boolPtr(false)
-			log.Println("Added isReadOnly=false for variable:", name)
+			//log.Println("Added isReadOnly=false for variable:", name)
 		}
 		if v.IsSecret == nil {
 			v.IsSecret = boolPtr(false)
-			log.Println("Added isSecret=false for variable:", name)
+			//log.Println("Added isSecret=false for variable:", name)
 		}
 
 		// Patch secret values from CR spec
 		if *v.IsSecret && crSpec != nil {
 			if specVar, ok := crSpec.Variables[name]; ok {
 				v.Value = specVar.Value
-				log.Printf("Patched secret value for variable: %s", name)
+				//log.Printf("Patched secret value for variable: %s", name)
 			}
 		}
 
@@ -488,7 +476,7 @@ func patchProjectReferences(vg *VariableGroup, crSpec *VariableGroupParameters) 
 
 	if vg.VariableGroupProjectReferences == nil {
 		vg.VariableGroupProjectReferences = crSpec.VariableGroupProjectReferences
-		log.Println("Patched variableGroupProjectReferences from CR spec")
+		//log.Println("Patched variableGroupProjectReferences from CR spec")
 	}
 }
 

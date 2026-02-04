@@ -18,21 +18,7 @@ servers:
 security:
 - accessToken: []
 tags:
-- name: Agentclouds
-- name: Agentcloudtypes
-- name: Agents
-  description: Agents run jobs in pipelines.
-- name: Deploymentgroups
-- name: Poolpermissions
-- name: Pools
-  description: Agent pools offer up agents at the organization level.
-- name: Queues
-  description: Queues (called "pools" in the UI) connect projects to agent pools.
-- name: Requests
-- name: Targets
-- name: Taskgroups
 - name: Variablegroups
-- name: Yamlschema
 paths:
   /{organization}/_apis/distributedtask/variablegroups:
     post:
