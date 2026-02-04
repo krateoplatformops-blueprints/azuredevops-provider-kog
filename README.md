@@ -31,6 +31,7 @@ The resources in Kubernetes are the **source of truth** for the corresponding Az
   - [GraphGroup](#graphgroup)
   - [User](#user)
   - [Membership](#membership)
+  - [VariableGroup](#variablegroup)
 - [Authentication](#authentication)
 - [Configuration](#configuration)
   - [Configuration resources](#configuration-resources)
@@ -183,6 +184,7 @@ As a matter of fact, currently, this chart allows you to manage the following re
 - `Project`
 - `User`
 - `Environment`
+- `VariableGroup`
 
 Other resources (`Queue`, `Feed`, etc.) can be managed using the [Azure DevOps Provider (classic)](https://github.com/krateoplatformops/azuredevops-provider) and referenced by the resources managed by this chart.
 You can still use the resources created by the Azure DevOps Provider (classic) in the resources created by this chart.
@@ -274,8 +276,9 @@ This chart supports the following resources and operations:
 | Project             | ✅   | ✅                  | ✅     | ✅     |
 | Membership          | ✅   | ✅                  | 🚫 Not supported     | ✅     |
 | Environment         | ✅   | ✅                  | ✅     | ✅     |
+| VariableGroup       | ✅   | ✅                  | ✅     | ✅     |
 
-> [!NOTE]  
+> [!NOTE]
 > 🚫 *"Not supported"* means that the operation is not supported by the resource (e.g., the underlying REST API does not support it and therefore the controller does not implement it), the operation is not applicable to the resource due to the nature of the resource or the operation is not implemented in this provider version.
 
 The resources listed above are Custom Resources (CRs) defined in the `azuredevops.ogen.krateo.io` API group. They are used to manage Azure DevOps resources in a Kubernetes-native way, allowing you to create, update, and delete Azure DevOps resources using Kubernetes manifests.
@@ -1038,6 +1041,94 @@ spec:
 
 ---
 
+### VariableGroup
+
+The `VariableGroup` resource is used to manage variable groups in Azure DevOps. Variable groups are collections of name-value pairs that can be shared across pipelines within a project. They support both plain-text and secret variables.
+
+#### VariableGroup operations
+
+- **Create**: You can create a new VariableGroup in Azure DevOps. You specify the group name, description and its variables (plain-text or secret).
+- **Get**: You can retrieve information about an existing VariableGroup, including its variables and project association. Secret variable values are restored from the CR spec because Azure DevOps always redacts them in API responses (otherwise infinite reconciliation loops would occur).
+- **Update**: You can update the variables, description, or other settings of an existing VariableGroup.
+- **Delete**: You can delete an existing VariableGroup. This will remove the variable group from Azure DevOps.
+
+> **Note**: The `get`, `findby`, and `delete` operations are handled by the VariableGroup plugin. The plugin is required because to restore secret variable values (otherwise infinite reconciliation loops would occur), and (2) the ADO delete endpoint is organisation-scoped and requires a `projectIds` query parameter. See the [VariableGroup plugin section](./plugins/README.md#variablegroup-plugin) in the plugins README for full details.
+
+#### VariableGroup schema
+
+The `VariableGroup` CRD reference can found [here](./azuredevops-provider-kog-blueprint/docs/crds-reference/variablegroup.md).
+
+The `VariableGroup` CRD file can found [here](./azuredevops-provider-kog-blueprint/docs/crds/variablegroup-crd.yaml).
+
+#### VariableGroup example CR
+
+An example of a `VariableGroup` resource is:
+<details>
+<summary><b> VariableGroup Example</b></summary>
+<br/>
+
+```yaml
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: VariableGroup
+metadata:
+  name: my-vargroup-basic
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+    krateo.io/deletion-policy: "orphan" # Can be "delete" or "orphan"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-variablegroup-config
+    namespace: default
+
+  # Organization name
+  organization: krateo-kog
+
+  # Project ID (project name is not supported in this field)
+  project: "99837031-4e4e-4753-9a47-73fcc4cba766" # Project ID
+
+  # Variable group name (identifier: must be unique within the project)
+  name: MyBasicVariableGroup
+
+  # Optional description
+  description: "A basic variable group created via Krateo KOG"
+
+  # Type of variable group
+  type: "Vsts"
+
+  # Variables defined in the group
+  variables:
+    API_URL:
+      value: "https://api.example.com"
+      isSecret: false
+      isReadOnly: false
+    DATABASE_NAME:
+      value: "production_db"
+      isSecret: false
+      isReadOnly: true
+    API_KEY:
+      value: "secret-key-placeholder"
+      isSecret: true  # This variable will be masked in UI
+      isReadOnly: false
+    TEST_FALSE_VAR:
+      value: "changed_value"
+      isSecret: false
+      isReadOnly: false
+
+  # Project references: which project can use this variable group
+  # Array shape but only one project reference is supported.
+  variableGroupProjectReferences:
+    - name: "MyBasicVariableGroup" # required, name shown in the UI, this should be the same as spec.name
+      description: "A basic variable group created via Krateo KOG"  # not required, description shown in the UI, if set, this should be the same as spec.description
+      projectReference:
+        id: "99837031-4e4e-4753-9a47-73fcc4cba766"  # Project ID
+```
+
+</details>
+
+---
+
 ## Authentication
 
 The authentication to the Azure DevOps REST API is managed using **2 resources** (both are required):
@@ -1141,6 +1232,7 @@ Currently, the supported configuration resources are:
 - `UserConfiguration`
 - `MembershipConfiguration`
 - `EnvironmentConfiguration`
+- `VariableGroupConfiguration`
 
 These configuration resources are used to store the **authentication information** (i.e., reference to the Kubernetes Secret containing the Azure DevOps PAT) and other **configuration options** for the resource type.
 

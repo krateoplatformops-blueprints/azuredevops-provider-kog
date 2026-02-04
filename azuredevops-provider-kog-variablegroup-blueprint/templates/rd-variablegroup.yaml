@@ -50,29 +50,3 @@ spec:
         in: query
       fromRestDefinition:
         actions: ["*"] # Common among all actions
-    
-    #- fromOpenAPI:
-    #    name: groupName
-    #    in: query
-    #  fromRestDefinition:
-    #    actions: ["findby"]
-    #- fromOpenAPI:
-    #    name: actionFilter
-    #    in: query
-    #  fromRestDefinition:
-    #    actions: ["findby"]
-    #- fromOpenAPI:
-    #    name: $top
-    #    in: query
-    #  fromRestDefinition:
-    #    actions: ["findby"]
-    #- fromOpenAPI:
-    #    name: continuationToken
-    #    in: query
-    #  fromRestDefinition:
-    #    actions: ["findby"]
-    #- fromOpenAPI:
-    #    name: queryOrder
-    #    in: query
-    #  fromRestDefinition:
-    #    actions: ["findby"]

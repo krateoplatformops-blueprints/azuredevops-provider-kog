@@ -3,11 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: "2026-02-04T13:32:07Z"
-  generation: 1
   name: variablegroups.azuredevops.ogen.krateo.io
-  resourceVersion: "3569333"
-  uid: 188776b1-b246-44f8-b76e-17394db24e08
 spec:
   conversion:
     strategy: None
@@ -77,7 +73,8 @@ spec:
                 description: 'PARAMETER: path - The name of the Azure DevOps organization.'
                 type: string
               project:
-                description: 'PARAMETER: path - Project name or ID'
+                description: 'PARAMETER: path - Project ID (project name is not supported
+                  in this field)'
                 type: string
               providerData:
                 description: Defines provider data of the variable group.
@@ -190,33 +187,19 @@ spec:
               name:
                 type: string
               projectReference:
-                type: string
+                description: |-
+                  ProjectReference is lifted from VariableGroupProjectReferences[0] by the
+                  plugin so that RDC can observe it as a top-level field.  It is not part
+                  of the ADO wire format; omitempty keeps it absent until populated.
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                type: object
             type: object
         type: object
     served: true
     storage: true
     subresources:
       status: {}
-status:
-  acceptedNames:
-    categories:
-    - variablegroup
-    - restresources
-    - rr
-    kind: VariableGroup
-    listKind: VariableGroupList
-    plural: variablegroups
-    singular: variablegroup
-  conditions:
-  - lastTransitionTime: "2026-02-04T13:32:07Z"
-    message: no conflicts found
-    reason: NoConflicts
-    status: "True"
-    type: NamesAccepted
-  - lastTransitionTime: "2026-02-04T13:32:07Z"
-    message: the initial names have been accepted
-    reason: InitialNamesAccepted
-    status: "True"
-    type: Established
-  storedVersions:
-  - v1alpha1
