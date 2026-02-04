@@ -129,7 +129,7 @@ type getHandler struct {
 // @Accept json
 // @Produce json
 // @Param organization path string true "Organization name"
-// @Param project path string true "Project name or ID"
+// @Param project path string true "Project ID (project name is not supported in this field)"
 // @Param groupId path string true "Variable group ID"
 // @Param api-version query string true "API version"
 // @Param body body VariableGroupParameters true "CR spec forwarded by RDC; used to restore secret variable values"
@@ -183,6 +183,17 @@ func (h *getHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.Log.Printf("================== GET: ADO response received =========================")
+	h.Log.Printf("GET: ADO response status: %d", resp.StatusCode)
+	h.Log.Printf("GET: ADO response body: %s", string(adoBody))
+	h.Log.Printf("=======================================================================")
+
+	// Handle "null" body with 200 status as 404 Not Found
+	if isNullResponseBody(resp.StatusCode, adoBody) {
+		h.writeErrorResponse(w, http.StatusNotFound, fmt.Sprintf("variable group %s not found", params.GroupID))
+		return
+	}
+
 	if resp.StatusCode == http.StatusNotFound {
 		h.writeErrorResponse(w, http.StatusNotFound, fmt.Sprintf("variable group %s not found", params.GroupID))
 		return
@@ -200,6 +211,9 @@ func (h *getHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Normalise booleans and patch secret values from CR spec
 	normalizeVariableGroup(&vg, crSpec)
+
+	// Extract project reference to top-level field for RDC
+	extractProjectReference(&vg)
 
 	result, err := json.Marshal(vg)
 	if err != nil {
@@ -226,7 +240,7 @@ type findByHandler struct {
 // @Accept json
 // @Produce json
 // @Param organization path string true "Organization name"
-// @Param project path string true "Project name or ID"
+// @Param project path string true "Project ID (project name is not supported in this field)"
 // @Param api-version query string true "API version"
 // @Param body body VariableGroupParameters true "CR spec forwarded by RDC; used to patch the matching item"
 // @Success 200 {object} VariableGroupListResponse "List response with normalised items"
@@ -301,6 +315,7 @@ func (h *findByHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		} else {
 			normalizeVariableGroup(&listResp.Value[i], nil)
 		}
+		extractProjectReference(&listResp.Value[i])
 	}
 
 	result, err := json.Marshal(listResp)
@@ -325,7 +340,7 @@ type deleteHandler struct {
 // @Tags VariableGroup
 // @Produce json
 // @Param organization path string true "Organization name"
-// @Param project path string true "Project ID (used as projectIds query param for the ADO delete endpoint)"
+// @Param project path string true "Project ID (project name is not supported in this field)"
 // @Param groupId path string true "Variable group ID"
 // @Param api-version query string true "API version"
 // @Success 204 "No Content – variable group deleted"
@@ -364,7 +379,7 @@ func (h *deleteHandler) deleteVariableGroupAndRespond(ctx context.Context, w htt
 
 	q := u.Query()
 	q.Set("api-version", params.APIVersion)
-	q.Set("projectIds", params.Project)
+	q.Set("projectIds", params.Project) // set just the one project ID we have; ADO expects a comma-separated list
 	u.RawQuery = q.Encode()
 
 	h.Log.Printf("Calling Azure DevOps DELETE API: %s", u.String())
@@ -379,6 +394,11 @@ func (h *deleteHandler) deleteVariableGroupAndRespond(ctx context.Context, w htt
 	if err != nil {
 		return fmt.Errorf("failed to read response body: %w", err)
 	}
+
+	h.Log.Printf("================== FINBY: ADO response received =========================")
+	h.Log.Printf("FINDBY: ADO response status: %d", resp.StatusCode)
+	h.Log.Printf("FINDBY: ADO response body: %s", string(body))
+	h.Log.Printf("=======================================================================")
 
 	if resp.StatusCode == http.StatusNoContent || resp.StatusCode == http.StatusOK {
 		h.Log.Printf("Successfully deleted variable group: groupId=%s", params.GroupID)
@@ -470,4 +490,33 @@ func patchProjectReferences(vg *VariableGroup, crSpec *VariableGroupParameters) 
 		vg.VariableGroupProjectReferences = crSpec.VariableGroupProjectReferences
 		log.Println("Patched variableGroupProjectReferences from CR spec")
 	}
+}
+
+// extractProjectReference lifts projectReference out of the
+// variableGroupProjectReferences array into a top-level field.
+// The array is assumed to have at most one entry (a variable group
+// belongs to one project in practice); if it has more, the first entry
+// is used and a warning is logged.
+func extractProjectReference(vg *VariableGroup) {
+	if vg == nil {
+		return
+	}
+	if len(vg.VariableGroupProjectReferences) == 0 {
+		log.Println("extractProjectReference: variableGroupProjectReferences is empty, projectReference will be absent")
+		return
+	}
+	if len(vg.VariableGroupProjectReferences) > 1 {
+		log.Printf("extractProjectReference: WARNING variableGroupProjectReferences has %d entries, using first one", len(vg.VariableGroupProjectReferences))
+	}
+	vg.ProjectReference = vg.VariableGroupProjectReferences[0].ProjectReference
+	if vg.ProjectReference != nil {
+		log.Printf("extractProjectReference: set projectReference id=%s name=%s", vg.ProjectReference.ID, vg.ProjectReference.Name)
+	} else {
+		log.Println("extractProjectReference: variableGroupProjectReferences[0].projectReference is nil")
+	}
+}
+
+// helper to check if 200 and null response body, this is in reality a 404
+func isNullResponseBody(statusCode int, body []byte) bool {
+	return statusCode == http.StatusOK && bytes.Equal(body, []byte("null"))
 }

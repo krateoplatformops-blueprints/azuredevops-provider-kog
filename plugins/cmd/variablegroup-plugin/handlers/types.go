@@ -66,7 +66,10 @@ type VariableGroup struct {
 	ModifiedOn                     string                          `json:"modifiedOn,omitempty"`
 	Variables                      map[string]VariableValue        `json:"variables"`
 	VariableGroupProjectReferences []VariableGroupProjectReference `json:"variableGroupProjectReferences"`
-	ProviderData                   map[string]interface{}                 `json:"providerData,omitempty"`
+	// ProjectReference is lifted from VariableGroupProjectReferences[0] by the plugin.
+	// It is not part of the ADO wire format; omitempty keeps it absent until populated.
+	ProjectReference *ProjectReference      `json:"projectReference,omitempty"`
+	ProviderData     map[string]interface{} `json:"providerData,omitempty"`
 }
 
 // VariableGroupListResponse is the {count, value} envelope returned by
@@ -86,7 +89,7 @@ type VariableGroupParameters struct {
 	Type                           string                          `json:"type,omitempty"`
 	Variables                      map[string]VariableValue        `json:"variables"`
 	VariableGroupProjectReferences []VariableGroupProjectReference `json:"variableGroupProjectReferences,omitempty"`
-	ProviderData                   map[string]interface{}                 `json:"providerData,omitempty"`
+	ProviderData                   map[string]interface{}          `json:"providerData,omitempty"`
 }
 
 // -------------------------------------------------------------------

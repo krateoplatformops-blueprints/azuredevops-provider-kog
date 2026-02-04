@@ -11,48 +11,39 @@ spec:
     - name # Within the same project, the name of a variable group must be unique, so we can use it as an identifier
     additionalStatusFields:
     - id
-    - createdBy.id
-    - createdBy.displayName
+    - createdBy
     - createdOn
-    - modifiedBy.id
-    - modifiedBy.displayName
+    - modifiedBy
     - modifiedOn
     - isShared
+    - projectReference
     excludedSpecFields:
     - groupId
-    - groupIds # indicated as required but actually not needed in findby
-
     verbsDescription:
     - action: create
       method: POST
       path: /{organization}/_apis/distributedtask/variablegroups
-
     - action: findby
       method: POST
       path: /plugin/{organization}/{project}/variablegroups
-
     - action: get
       method: POST
       path: /plugin/{organization}/{project}/variablegroups/{groupId}
       requestFieldMapping:
         - inPath: groupId
           inCustomResource: status.id
-    
-    #- action: update
-    #  method: PUT
-    #  path: /{organization}/_apis/distributedtask/variablegroups/{groupId}
-    #  requestFieldMapping:
-    #    - inPath: groupId
-    #      inCustomResource: status.id
-    
-    #- action: delete
-    #  method: DELETE
-    #  path: /plugin/{organization}/{project}/variablegroups/{groupId} # plugin endpoint
-    #  requestFieldMapping:
-    #    - inPath: groupId
-    #      inCustomResource: status.id
-    
-    
+    - action: update
+      method: PUT
+      path: /{organization}/_apis/distributedtask/variablegroups/{groupId}
+      requestFieldMapping:
+        - inPath: groupId
+          inCustomResource: status.id
+    - action: delete
+      method: DELETE
+      path: /plugin/{organization}/{project}/variablegroups/{groupId} # plugin endpoint
+      requestFieldMapping:
+        - inPath: groupId
+          inCustomResource: status.id
     configurationFields:
     - fromOpenAPI:
         name: api-version
@@ -85,9 +76,3 @@ spec:
     #    in: query
     #  fromRestDefinition:
     #    actions: ["findby"]
-    
-    - fromOpenAPI:
-        name: loadSecrets
-        in: query
-      fromRestDefinition:
-        actions: ["findby"]

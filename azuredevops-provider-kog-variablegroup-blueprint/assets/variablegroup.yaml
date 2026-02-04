@@ -77,6 +77,7 @@ paths:
       #  Add a variable group:
       #    $ref: ./httpExamples/variablegroups/POST_CreateVariableGroup.json
       #x-codegen-request-body-name: body
+    # Commented since patch endpoint is not used
     #patch:
     #  tags:
     #  - Variablegroups
@@ -168,41 +169,42 @@ paths:
       #x-ms-vss-method: UpdateVariableGroup
       #x-ms-preview: true
       #x-codegen-request-body-name: body
-    delete:
-      tags:
-      - Variablegroups
-      description: Delete a variable group
-      operationId: Variablegroups_Delete
-      parameters:
-      - name: organization
-        in: path
-        description: The name of the Azure DevOps organization.
-        required: true
-        schema:
-          type: string
-      - name: groupId
-        in: path
-        description: Id of the variable group.
-        required: true
-        schema:
-          type: integer
-          format: int32
-      - name: projectIds
-        in: query
-        required: true
-        schema:
-          type: string
-          format: array (string)
-      - name: api-version
-        in: query
-        description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          content: {}
+    # Commented since a plugin enpoint is used instead
+    #delete:
+    #  tags:
+    #  - Variablegroups
+    #  description: Delete a variable group
+    #  operationId: Variablegroups_Delete
+    #  parameters:
+    #  - name: organization
+    #    in: path
+    #    description: The name of the Azure DevOps organization.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  - name: groupId
+    #    in: path
+    #    description: Id of the variable group.
+    #    required: true
+    #    schema:
+    #      type: integer
+    #      format: int32
+    #  - name: projectIds
+    #    in: query
+    #    required: true
+    #    schema:
+    #      type: string
+    #      format: array (string)
+    #  - name: api-version
+    #    in: query
+    #    description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
+    #    required: true
+    #    schema:
+    #      type: string
+    #  responses:
+    #    '200':
+    #      description: successful operation
+    #      content: {}
       #security:
       #- oauth2:
       #  - vso.variablegroups_manage
@@ -210,117 +212,116 @@ paths:
       #x-ms-vss-resource: variablegroups
       #x-ms-vss-method: DeleteVariableGroup
       #x-ms-preview: true
-  /{organization}/{project}/_apis/distributedtask/variablegroups:
-    get:
-      tags:
-      - Variablegroups
-      description: Get variable groups by ids.
-      operationId: Variablegroups_Get Variable Groups By Id
-      parameters:
-      - name: organization
-        in: path
-        description: The name of the Azure DevOps organization.
-        required: true
-        schema:
-          type: string
-      - name: project
-        in: path
-        description: Project ID or project name
-        required: true
-        schema:
-          type: string
-      - name: groupIds
-        in: query
-        description: Comma separated list of Ids of variable groups.
-        # FIXED, removed required as it's not actually required
-        #required: true
-        schema:
-          type: string
-          format: array (int32)
-      - name: loadSecrets
-        in: query
-        description: Flag indicating if the secrets within variable groups should be loaded.
-        schema:
-          type: boolean
-      - name: api-version
-        in: query
-        description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/VariableGroup'
-      #security:
-      #- oauth2:
-      #  - vso.variablegroups_read
-      #x-ms-docs-override-version: 7.2-preview.2
-      #x-ms-vss-resource: variablegroups
-      #x-ms-vss-method: GetVariableGroupsById
-      #x-ms-preview: true
-      #x-ms-examples:
-      #  Get variable groups by ids:
-      #    $ref: ./httpExamples/variablegroups/GET_VariableGroupsByIds.json
-  /{organization}/{project}/_apis/distributedtask/variablegroups/{groupId}:
-    get:
-      tags:
-      - Variablegroups
-      description: Get a variable group.
-      operationId: Variablegroups_Get
-      parameters:
-      - name: organization
-        in: path
-        description: The name of the Azure DevOps organization.
-        required: true
-        schema:
-          type: string
-      - name: project
-        in: path
-        description: Project ID or project name
-        required: true
-        schema:
-          type: string
-      - name: groupId
-        in: path
-        description: Id of the variable group.
-        required: true
-        schema:
-          type: integer
-          format: int32
-      - name: api-version
-        in: query
-        description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VariableGroup'
-      #security:
-      #- oauth2:
-      #  - vso.variablegroups_read
-      #x-ms-docs-override-version: 7.2-preview.2
-      #x-ms-vss-resource: variablegroups
-      #x-ms-vss-method: GetVariableGroup
-      #x-ms-preview: true
-      #x-ms-examples:
-      #  Get a variable group:
-      #    $ref: ./httpExamples/variablegroups/GET_VariableGroup.json
+  # Commented since a plugin enpoint is used instead
+  #/{organization}/{project}/_apis/distributedtask/variablegroups:
+  #  get:
+  #    tags:
+  #    - Variablegroups
+  #    description: Get variable groups by ids.
+  #    operationId: Variablegroups_Get Variable Groups By Id
+  #    parameters:
+  #    - name: organization
+  #      in: path
+  #      description: The name of the Azure DevOps organization.
+  #      required: true
+  #      schema:
+  #        type: string
+  #    - name: project
+  #      in: path
+  #      description: Project ID or project name
+  #      required: true
+  #      schema:
+  #        type: string
+  #    - name: groupIds
+  #      in: query
+  #      description: Comma separated list of Ids of variable groups.
+  #      # FIXED, removed required as it's not actually required
+  #      #required: true
+  #      schema:
+  #        type: string
+  #        format: array (int32)
+  #    - name: loadSecrets
+  #      in: query
+  #      description: Flag indicating if the secrets within variable groups should be loaded.
+  #      schema:
+  #        type: boolean
+  #    - name: api-version
+  #      in: query
+  #      description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
+  #      required: true
+  #      schema:
+  #        type: string
+  #    responses:
+  #      '200':
+  #        description: successful operation
+  #        content:
+  #          application/json:
+  #            schema:
+  #              type: array
+  #              items:
+  #                $ref: '#/components/schemas/VariableGroup'
+  #    #security:
+  #    #- oauth2:
+  #    #  - vso.variablegroups_read
+  #    #x-ms-docs-override-version: 7.2-preview.2
+  #    #x-ms-vss-resource: variablegroups
+  #    #x-ms-vss-method: GetVariableGroupsById
+  #    #x-ms-preview: true
+  #    #x-ms-examples:
+  #    #  Get variable groups by ids:
+  #    #    $ref: ./httpExamples/variablegroups/GET_VariableGroupsByIds.json
+  # Commented since a plugin enpoint is used instead
+  #/{organization}/{project}/_apis/distributedtask/variablegroups/{groupId}:
+  #  get:
+  #    tags:
+  #    - Variablegroups
+  #    description: Get a variable group.
+  #    operationId: Variablegroups_Get
+  #    parameters:
+  #    - name: organization
+  #      in: path
+  #      description: The name of the Azure DevOps organization.
+  #      required: true
+  #      schema:
+  #        type: string
+  #    - name: project
+  #      in: path
+  #      description: Project ID or project name
+  #      required: true
+  #      schema:
+  #        type: string
+  #    - name: groupId
+  #      in: path
+  #      description: Id of the variable group.
+  #      required: true
+  #      schema:
+  #        type: integer
+  #        format: int32
+  #    - name: api-version
+  #      in: query
+  #      description: Version of the API to use.  This should be set to '7.2-preview.2' to use this version of the api.
+  #      required: true
+  #      schema:
+  #        type: string
+  #    responses:
+  #      '200':
+  #        description: successful operation
+  #        content:
+  #          application/json:
+  #            schema:
+  #              $ref: '#/components/schemas/VariableGroup'
+  #    #security:
+  #    #- oauth2:
+  #    #  - vso.variablegroups_read
+  #    #x-ms-docs-override-version: 7.2-preview.2
+  #    #x-ms-vss-resource: variablegroups
+  #    #x-ms-vss-method: GetVariableGroup
+  #    #x-ms-preview: true
+  #    #x-ms-examples:
+  #    #  Get a variable group:
+  #    #    $ref: ./httpExamples/variablegroups/GET_VariableGroup.json
   
-  
-  
-
-
+  # PLUGIN ENDPOINTS
   /plugin/{organization}/{project}/variablegroups:
     post:
       servers:
@@ -339,7 +340,7 @@ paths:
             type: string
         - name: project
           in: path
-          description: Project name or ID
+          description: Project ID (project name is not supported in this field)
           required: true
           schema:
             type: string
@@ -394,7 +395,7 @@ paths:
             type: string
         - name: project
           in: path
-          description: Project name or ID
+          description: Project ID (project name is not supported in this field)
           required: true
           schema:
             type: string
@@ -460,7 +461,7 @@ paths:
             type: string
         - name: project
           in: path
-          description: Project ID (used as projectIds query param for the ADO delete endpoint)
+          description: Project ID (project name is not supported in this field)
           required: true
           schema:
             type: string
@@ -504,12 +505,6 @@ paths:
             application/json:
               schema:
                 type: string
-
-
-
-
-
-
 components:
   schemas:
     GraphSubjectBase:
@@ -721,6 +716,14 @@ components:
           type: string
         name:
           type: string
+        projectReference:
+          type: object
+          description: |-
+            ProjectReference is lifted from VariableGroupProjectReferences[0] by the
+            plugin so that RDC can observe it as a top-level field.  It is not part
+            of the ADO wire format; omitempty keeps it absent until populated.
+          allOf:
+            - $ref: '#/components/schemas/variablegroup.ProjectReference'
         providerData:
           type: object
           additionalProperties: true

@@ -47,7 +47,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Project name or ID",
+                        "description": "Project ID (project name is not supported in this field)",
                         "name": "project",
                         "in": "path",
                         "required": true
@@ -114,7 +114,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Project name or ID",
+                        "description": "Project ID (project name is not supported in this field)",
                         "name": "project",
                         "in": "path",
                         "required": true
@@ -189,7 +189,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Project ID (used as projectIds query param for the ADO delete endpoint)",
+                        "description": "Project ID (project name is not supported in this field)",
                         "name": "project",
                         "in": "path",
                         "required": true
@@ -299,6 +299,14 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "projectReference": {
+                    "description": "ProjectReference is lifted from VariableGroupProjectReferences[0] by the plugin.\nIt is not part of the ADO wire format; omitempty keeps it absent until populated.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/variablegroup.ProjectReference"
+                        }
+                    ]
                 },
                 "providerData": {
                     "type": "object",

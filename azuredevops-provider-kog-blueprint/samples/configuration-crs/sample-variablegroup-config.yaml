@@ -18,11 +18,11 @@ spec:
     query:
       create:
         api-version: "7.2-preview.2"
-      #delete:
-      #  api-version: "7.2-preview.2"
+      delete:
+        api-version: "7.2-preview.2"
       findby:
         api-version: "7.2-preview.2"
       get:
         api-version: "7.2-preview.2"
-      #update:
-      #  api-version: "7.2-preview.2"
+      update:
+        api-version: "7.2-preview.2"

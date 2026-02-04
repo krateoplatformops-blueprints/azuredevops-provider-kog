@@ -29,7 +29,7 @@ paths:
             type: string
         - name: project
           in: path
-          description: Project name or ID
+          description: Project ID (project name is not supported in this field)
           required: true
           schema:
             type: string
@@ -81,7 +81,7 @@ paths:
             type: string
         - name: project
           in: path
-          description: Project name or ID
+          description: Project ID (project name is not supported in this field)
           required: true
           schema:
             type: string
@@ -144,7 +144,7 @@ paths:
             type: string
         - name: project
           in: path
-          description: Project ID (used as projectIds query param for the ADO delete endpoint)
+          description: Project ID (project name is not supported in this field)
           required: true
           schema:
             type: string
@@ -229,6 +229,13 @@ components:
           type: string
         name:
           type: string
+        projectReference:
+          type: object
+          description: |-
+            ProjectReference is lifted from VariableGroupProjectReferences[0] by the plugin.
+            It is not part of the ADO wire format; omitempty keeps it absent until populated.
+          allOf:
+            - $ref: '#/components/schemas/variablegroup.ProjectReference'
         providerData:
           type: object
           additionalProperties: true

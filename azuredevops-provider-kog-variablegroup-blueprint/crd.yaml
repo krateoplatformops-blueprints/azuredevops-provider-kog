@@ -3,11 +3,11 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.18.0
-  creationTimestamp: "2026-02-03T13:51:24Z"
+  creationTimestamp: "2026-02-04T13:32:07Z"
   generation: 1
   name: variablegroups.azuredevops.ogen.krateo.io
-  resourceVersion: "3396992"
-  uid: 124984db-bce0-442b-a90a-d51ce21cfa90
+  resourceVersion: "3569333"
+  uid: 188776b1-b246-44f8-b76e-17394db24e08
 spec:
   conversion:
     strategy: None
@@ -70,18 +70,6 @@ spec:
               description:
                 description: Sets description of the variable group.
                 type: string
-              groupId:
-                description: 'PARAMETER: path - Id of the variable group.'
-                format: int32
-                type: integer
-              groupIds:
-                description: 'PARAMETER: query - Comma separated list of Ids of variable
-                  groups.'
-                type: string
-              loadSecrets:
-                description: 'PARAMETER: query - Flag indicating if the secrets within
-                  variable groups should be loaded.'
-                type: boolean
               name:
                 description: Sets name of the variable group.
                 type: string
@@ -89,7 +77,7 @@ spec:
                 description: 'PARAMETER: path - The name of the Azure DevOps organization.'
                 type: string
               project:
-                description: 'PARAMETER: path - Project ID or project name'
+                description: 'PARAMETER: path - Project name or ID'
                 type: string
               providerData:
                 description: Defines provider data of the variable group.
@@ -123,8 +111,6 @@ spec:
                 x-kubernetes-preserve-unknown-fields: true
             required:
             - configurationRef
-            - groupId
-            - groupIds
             - organization
             - project
             type: object
@@ -168,42 +154,42 @@ spec:
                 type: array
               createdBy:
                 properties:
+                  descriptor:
+                    type: string
                   displayName:
-                    description: This is the non-unique display name of the graph
-                      subject. To change this field, you must alter its value in the
-                      source provider.
                     type: string
                   id:
+                    type: string
+                  uniqueName:
+                    type: string
+                  url:
                     type: string
                 type: object
               createdOn:
-                description: 'Gets or sets the time when variable group was created.
-                  (format: date-time)'
                 type: string
               id:
-                description: 'Gets or sets id of the variable group. (format: int32)'
                 format: int32
                 type: integer
               isShared:
-                description: Indicates whether variable group is shared with other
-                  projects or not.
                 type: boolean
               modifiedBy:
                 properties:
+                  descriptor:
+                    type: string
                   displayName:
-                    description: This is the non-unique display name of the graph
-                      subject. To change this field, you must alter its value in the
-                      source provider.
                     type: string
                   id:
                     type: string
+                  uniqueName:
+                    type: string
+                  url:
+                    type: string
                 type: object
               modifiedOn:
-                description: 'Gets or sets the time when variable group was modified
-                  (format: date-time)'
                 type: string
               name:
-                description: Gets or sets name of the variable group.
+                type: string
+              projectReference:
                 type: string
             type: object
         type: object
@@ -222,12 +208,12 @@ status:
     plural: variablegroups
     singular: variablegroup
   conditions:
-  - lastTransitionTime: "2026-02-03T13:51:24Z"
+  - lastTransitionTime: "2026-02-04T13:32:07Z"
     message: no conflicts found
     reason: NoConflicts
     status: "True"
     type: NamesAccepted
-  - lastTransitionTime: "2026-02-03T13:51:24Z"
+  - lastTransitionTime: "2026-02-04T13:32:07Z"
     message: the initial names have been accepted
     reason: InitialNamesAccepted
     status: "True"
