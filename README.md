@@ -100,7 +100,7 @@ graph TD
 
 ## Requirements
 
-[OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) (0.9.0+) should be installed in your Kubernetes cluster. 
+[OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) (0.10.0+) should be installed in your Kubernetes cluster. 
 Follow the related Helm Chart [README](https://github.com/krateoplatformops/oasgen-provider-chart) for installation instructions.
 Note that a standard installation of Krateo already has the OASGen Provider installed.
 
