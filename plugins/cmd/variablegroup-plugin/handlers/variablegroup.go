@@ -19,8 +19,6 @@ const (
 	contentTypeJSON = "application/json"
 )
 
-// --- Constructors ---
-
 // GetVariableGroup returns a handler for GET /plugin/{organization}/{project}/variablegroups/{groupId}.
 // Proxies to the ADO individual GET endpoint and patches the response:
 //   - normalises boolean fields (isReadOnly / isSecret) that ADO omits when false
@@ -51,8 +49,6 @@ var (
 	_ handlers.Handler = (*findByHandler)(nil)
 	_ handlers.Handler = (*deleteHandler)(nil)
 )
-
-// --- Base handler ---
 
 type baseHandler struct {
 	handlers.HandlerOptions
@@ -103,9 +99,6 @@ func (h *baseHandler) writeJSONResponse(w http.ResponseWriter, statusCode int, b
 	w.Write(body)
 }
 
-// extractParams populates a requestParams from the incoming request.
-// GroupID will be empty for routes that do not include {groupId} in the
-// path; callers choose validate() or validateBase() accordingly.
 func (h *baseHandler) extractParams(r *http.Request) *requestParams {
 	return &requestParams{
 		Organization: r.PathValue("organization"),
@@ -115,8 +108,6 @@ func (h *baseHandler) extractParams(r *http.Request) *requestParams {
 		AuthHeader:   r.Header.Get("Authorization"),
 	}
 }
-
-// --- GET handler ---
 
 type getHandler struct {
 	*baseHandler
@@ -219,8 +210,6 @@ func (h *getHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.writeJSONResponse(w, http.StatusOK, result)
 }
 
-// --- FINDBY handler ---
-
 type findByHandler struct {
 	*baseHandler
 }
@@ -321,8 +310,6 @@ func (h *findByHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.writeJSONResponse(w, http.StatusOK, result)
 }
 
-// --- DELETE handler ---
-
 type deleteHandler struct {
 	*baseHandler
 }
@@ -404,11 +391,9 @@ func (h *deleteHandler) deleteVariableGroupAndRespond(ctx context.Context, w htt
 	return fmt.Errorf("azure devops returned non-success status: %d - %s", resp.StatusCode, string(body))
 }
 
-// --- Shared helpers ---
-
 // parseCRSpec reads and unmarshals the request body as the CR spec
 // forwarded by RDC.  Returns nil, error when the body is absent or
-// unparseable – callers treat this as non-fatal and skip patching.
+// unparseable, callers treat this as non-fatal and skip patching.
 func parseCRSpec(r *http.Request) (*VariableGroupParameters, error) {
 	if r.Body == nil {
 		return nil, fmt.Errorf("no request body")
@@ -436,8 +421,8 @@ func parseCRSpec(r *http.Request) (*VariableGroupParameters, error) {
 //     ADO omits these fields entirely when the value is false, which
 //     causes a spurious diff against the CR spec.
 //   - When crSpec is non-nil, copies the value of every secret variable
-//     from crSpec.  ADO never returns secret values – even with
-//     loadSecrets=true – so the CR spec is the only source of truth.
+//     from crSpec.  ADO never returns secret values (even with
+//     loadSecrets=true) so the CR spec is the only source of truth.
 func normalizeVariableGroup(vg *VariableGroup, crSpec *VariableGroupParameters) {
 	if vg == nil {
 		return
@@ -446,22 +431,19 @@ func normalizeVariableGroup(vg *VariableGroup, crSpec *VariableGroupParameters) 
 	for name, v := range vg.Variables {
 		if v.IsReadOnly == nil {
 			v.IsReadOnly = boolPtr(false)
-			//log.Println("Added isReadOnly=false for variable:", name)
 		}
 		if v.IsSecret == nil {
 			v.IsSecret = boolPtr(false)
-			//log.Println("Added isSecret=false for variable:", name)
 		}
 
 		// Patch secret values from CR spec
 		if *v.IsSecret && crSpec != nil {
 			if specVar, ok := crSpec.Variables[name]; ok {
 				v.Value = specVar.Value
-				//log.Printf("Patched secret value for variable: %s", name)
 			}
 		}
 
-		vg.Variables[name] = v // map values are not addressable; write back
+		vg.Variables[name] = v
 	}
 }
 
@@ -476,7 +458,6 @@ func patchProjectReferences(vg *VariableGroup, crSpec *VariableGroupParameters) 
 
 	if vg.VariableGroupProjectReferences == nil {
 		vg.VariableGroupProjectReferences = crSpec.VariableGroupProjectReferences
-		//log.Println("Patched variableGroupProjectReferences from CR spec")
 	}
 }
 
