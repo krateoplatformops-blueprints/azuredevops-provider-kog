@@ -38,6 +38,10 @@ They are designed to work as a middleware between the [Rest Dynamic Controller](
   - [PATCH Project](#patch-project)
 - [GraphGroup plugin](#graphgroup-plugin)
   - [GET GraphGroups](#get-graphgroups)
+- [VariableGroup plugin](#variablegroup-plugin)
+  - [POST VariableGroup (Get)](#post-variablegroup-get)
+  - [POST VariableGroups (FindBy)](#post-variablegroups-findby)
+  - [DELETE VariableGroup](#delete-variablegroup)
 - [Azure DevOps API Reference](#azuredevops-api-reference)
 - [Authentication](#authentication)
 - [API documentation](#api-documentation)
@@ -1597,6 +1601,336 @@ GET /plugin/{organization}/graph/groups
 - `count`: The number of groups after filtering (equals `originalCount` when `scopeDescriptor` is provided)
 - `numberOfFilteredOut`: The number of project-level groups that were filtered out (0 when `scopeDescriptor` is provided)
 - `value`: Array of graph groups (project-level groups excluded when no `scopeDescriptor` is set)
+
+</details>
+
+---
+
+## VariableGroup plugin
+
+### POST VariableGroup (Get)
+
+**Description**:
+This endpoint retrieves a single variable group by ID from Azure DevOps, then patches the response so that Rest Dynamic Controller can reconcile it faithfully against the Custom Resource spec. Concretely, it normalises the boolean fields that ADO omits when false, restores secret variable values that ADO always redacts, and lifts the nested `projectReference` into a top-level field.
+
+<details>
+<summary><b>Why This Endpoint Exists</b></summary>
+<br/>
+
+- Rest Dynamic Controller only forwards the CR spec as a request body on `POST`, `PUT`, and `PATCH` requests but never on `GET`. The variable-group plugin needs the CR spec body to patch secret values back into the response, so the endpoint is declared as `POST` in the OAS even though it internally issues a `GET` to Azure DevOps.
+- Azure DevOps omits `isReadOnly` and `isSecret` from every variable entry when the value is `false`. This causes a permanent diff against the CR spec unless the plugin explicitly writes `false` for every missing boolean.
+- Azure DevOps **never** returns the plaintext value of secret variables, even when the variable was just written. The only source of truth for the secret value is the CR spec; the plugin copies it back into the response so the controller sees no diff.
+- The ADO list endpoint (`/variablegroups` without an ID) returns `variableGroupProjectReferences` as `null`, but the individual GET does populate it. This endpoint therefore sources `projectReference` directly from the ADO response rather than needing to patch it from the CR spec.
+- `projectReference` is lifted from `variableGroupProjectReferences[0].projectReference` into a dedicated top-level field. It is declared as an `additionalStatusFields` entry in the RestDefinition so the controller can track which project the variable group belongs to without parsing the nested array.
+- The endpoint also handle the case when a variable group is not found but Azure DevOps responds with HTTP 200 and a literal `null` body. In this case, the endpoint returns HTTP 404 to signal that the group does not exist.
+
+</details>
+
+<details>
+<summary><b>Request</b></summary>
+<br/>
+
+```http
+POST /plugin/{organization}/{project}/variablegroups/{groupId}
+```
+
+**Path parameters**:
+- `organization` (string, required): The name of the Azure DevOps organization.
+- `project` (string, required): The ID of the Azure DevOps project (project name is not supported in this field).
+- `groupId` (string, required): The ID of the variable group to retrieve.
+
+**Query parameters**:
+- `api-version` (string, required): The version of the Azure DevOps REST API to use. For example, `7.2-preview.2`.
+
+**Request body example**:
+```json
+{
+  "name": "my-variable-group",
+  "description": "Shared secrets for staging",
+  "type": "Vaults",
+  "variables": {
+    "DB_HOST": {
+      "value": "staging-db.example.com",
+      "isReadOnly": false,
+      "isSecret": false
+    },
+    "DB_PASSWORD": {
+      "value": "s3cr3t",
+      "isReadOnly": false,
+      "isSecret": true
+    }
+  },
+  "variableGroupProjectReferences": [
+    {
+      "name": "my-variable-group",
+      "description": "Shared secrets for staging",
+      "projectReference": {
+        "id": "99837031-4e4e-4753-9a47-73fcc4cba766",
+        "name": "project-1-classic"
+      }
+    }
+  ]
+}
+```
+
+> This body is the CR spec as forwarded by Rest Dynamic Controller. It is used solely by the plugin to restore secret variable values; it is **not** sent to Azure DevOps.
+
+</details>
+
+<details>
+<summary><b>Response</b></summary>
+<br/>
+
+**Response status codes**:
+- `200 OK`: The variable group was retrieved and patched successfully.
+- `400 Bad Request`: Missing or invalid path / query parameters, or missing `Authorization` header.
+- `404 Not Found`: The variable group with the given ID does not exist. Also returned when Azure DevOps responds with HTTP 200 but a literal `null` body (an ADO quirk for deleted groups).
+- `500 Internal Server Error`: An unexpected error occurred while calling the Azure DevOps API or processing the response.
+
+**Response body example**:
+```json
+{
+  "id": 13,
+  "name": "my-variable-group",
+  "description": "Shared secrets for staging",
+  "type": "Vaults",
+  "isShared": false,
+  "createdBy": {
+    "displayName": "<REDACTED>",
+    "id": "<REDACTED>",
+    "uniqueName": "<REDACTED>"
+  },
+  "createdOn": "2025-06-10T12:00:00.000Z",
+  "modifiedBy": {
+    "displayName": "<REDACTED>",
+    "id": "<REDACTED>",
+    "uniqueName": "<REDACTED>"
+  },
+  "modifiedOn": "2025-06-10T12:05:00.000Z",
+  "variables": {
+    "DB_HOST": {
+      "value": "staging-db.example.com",
+      "isReadOnly": false,
+      "isSecret": false
+    },
+    "DB_PASSWORD": {
+      "value": "s3cr3t",
+      "isReadOnly": false,
+      "isSecret": true
+    }
+  },
+  "variableGroupProjectReferences": [
+    {
+      "name": "my-variable-group",
+      "description": "Shared secrets for staging",
+      "projectReference": {
+        "id": "99837031-4e4e-4753-9a47-73fcc4cba766",
+        "name": "project-1-classic"
+      }
+    }
+  ],
+  "projectReference": {
+    "id": "99837031-4e4e-4753-9a47-73fcc4cba766",
+    "name": "project-1-classic"
+  }
+}
+```
+
+> `projectReference` at the root is **not** part of the native ADO wire format. It is synthesised by the plugin from `variableGroupProjectReferences[0].projectReference` so that Rest Dynamic Controller can surface it as a status field without parsing the nested array.
+> Secret variable `value` fields in the response are restored from the CR spec body; Azure DevOps never returns them in plaintext.
+
+</details>
+
+### POST VariableGroups (FindBy)
+
+**Description**:
+This endpoint retrieves the full list of variable groups for a project from Azure DevOps and returns it as a normalised `{count, value[]}` envelope. The item whose `name` matches the CR spec receives the same full treatment as the Get endpoint (boolean normalisation, secret patching, project-reference patching). All other items in the list still receive boolean normalisation and top-level `projectReference` extraction so that the list is self-consistent.
+
+<details>
+<summary><b>Why This Endpoint Exists</b></summary>
+<br/>
+
+- Same as the Get endpoint: Rest Dynamic Controller only sends the CR spec body on `POST`/`PUT`/`PATCH`, so the endpoint must be declared as `POST` despite proxying an internal `GET` to Azure DevOps.
+- The Azure DevOps **list** endpoint returns `variableGroupProjectReferences` as `null` for every item, unlike the individual GET. The plugin patches this field on the matching item using the `variableGroupProjectReferences` value from the CR spec body, restoring the information that ADO omitted.
+- Boolean normalisation and secret patching apply to the matching item for the same reasons as the Get endpoint.
+- `projectReference` is extracted to the top level for every item in the list, not just the match, so that the response shape is uniform.
+
+</details>
+
+<details>
+<summary><b>Request</b></summary>
+<br/>
+
+```http
+POST /plugin/{organization}/{project}/variablegroups
+```
+
+**Path parameters**:
+- `organization` (string, required): The name of the Azure DevOps organization.
+- `project` (string, required): The ID of the Azure DevOps project (project name is not supported in this field).
+
+**Query parameters**:
+- `api-version` (string, required): The version of the Azure DevOps REST API to use. For example, `7.2-preview.2`.
+
+**Request body example**:
+```json
+{
+  "name": "my-variable-group",
+  "description": "Shared secrets for staging",
+  "type": "Vaults",
+  "variables": {
+    "DB_HOST": {
+      "value": "staging-db.example.com",
+      "isReadOnly": false,
+      "isSecret": false
+    },
+    "DB_PASSWORD": {
+      "value": "s3cr3t",
+      "isReadOnly": false,
+      "isSecret": true
+    }
+  },
+  "variableGroupProjectReferences": [
+    {
+      "name": "my-variable-group",
+      "description": "Shared secrets for staging",
+      "projectReference": {
+        "id": "99837031-4e4e-4753-9a47-73fcc4cba766",
+        "name": "project-1-classic"
+      }
+    }
+  ]
+}
+```
+
+> This body is the CR spec as forwarded by Rest Dynamic Controller. The plugin uses `name` to identify the matching item in the list. `variables` and `variableGroupProjectReferences` are used to patch the matching item only.
+
+</details>
+
+<details>
+<summary><b>Response</b></summary>
+<br/>
+
+**Response status codes**:
+- `200 OK`: The list was retrieved and normalised successfully. An empty list (`count: 0`) is a valid 200 response.
+- `400 Bad Request`: Missing or invalid path / query parameters, or missing `Authorization` header.
+- `500 Internal Server Error`: An unexpected error occurred while calling the Azure DevOps API or processing the response.
+
+**Response body example**:
+```json
+{
+  "count": 2,
+  "value": [
+    {
+      "id": 13,
+      "name": "my-variable-group",
+      "description": "Shared secrets for staging",
+      "type": "Vaults",
+      "isShared": false,
+      "createdBy": {
+        "displayName": "<REDACTED>",
+        "id": "<REDACTED>",
+        "uniqueName": "<REDACTED>"
+      },
+      "createdOn": "2025-06-10T12:00:00.000Z",
+      "modifiedBy": {
+        "displayName": "<REDACTED>",
+        "id": "<REDACTED>",
+        "uniqueName": "<REDACTED>"
+      },
+      "modifiedOn": "2025-06-10T12:05:00.000Z",
+      "variables": {
+        "DB_HOST": {
+          "value": "staging-db.example.com",
+          "isReadOnly": false,
+          "isSecret": false
+        },
+        "DB_PASSWORD": {
+          "value": "s3cr3t",
+          "isReadOnly": false,
+          "isSecret": true
+        }
+      },
+      "variableGroupProjectReferences": [
+        {
+          "name": "my-variable-group",
+          "description": "Shared secrets for staging",
+          "projectReference": {
+            "id": "99837031-4e4e-4753-9a47-73fcc4cba766",
+            "name": "project-1-classic"
+          }
+        }
+      ],
+      "projectReference": {
+        "id": "99837031-4e4e-4753-9a47-73fcc4cba766",
+        "name": "project-1-classic"
+      }
+    },
+    {
+      "id": 7,
+      "name": "another-group",
+      "description": "",
+      "variables": {
+        "API_KEY": {
+          "value": "",
+          "isReadOnly": false,
+          "isSecret": true
+        }
+      },
+      "variableGroupProjectReferences": null,
+      "projectReference": null
+    }
+  ]
+}
+```
+
+> `variableGroupProjectReferences` is patched from the CR spec only on the item whose `name` matches. Other items retain the `null` value that Azure DevOps returned. `projectReference` extraction is attempted on every item; it will be `null` when the source array is empty or null.
+> Secret variable `value` fields are restored from the CR spec body only on the matching item.
+
+</details>
+
+### DELETE VariableGroup
+
+**Description**:
+This endpoint deletes a variable group from Azure DevOps by its ID. It translates the project-scoped plugin path into the organisation-scoped ADO delete call that the Azure DevOps API actually requires.
+
+<details>
+<summary><b>Why This Endpoint Exists</b></summary>
+<br/>
+
+- The Azure DevOps delete endpoint for variable groups is **organisation-scoped** (`/{organization}/_apis/distributedtask/variablegroups/{groupId}`) and requires a `projectIds` query parameter to identify which project the group belongs to.
+- The plugin URL exposes the project as a path parameter (`{project}`) for consistency with the other plugin endpoints and with how Rest Dynamic Controller constructs requests. Internally the plugin moves it to the `projectIds` query parameter before calling ADO.
+
+</details>
+
+<details>
+<summary><b>Request</b></summary>
+<br/>
+
+```http
+DELETE /plugin/{organization}/{project}/variablegroups/{groupId}
+```
+
+**Path parameters**:
+- `organization` (string, required): The name of the Azure DevOps organization.
+- `project` (string, required): The ID of the Azure DevOps project (project name is not supported in this field).
+- `groupId` (string, required): The ID of the variable group to delete.
+
+**Query parameters**:
+- `api-version` (string, required): The version of the Azure DevOps REST API to use. For example, `7.2-preview.2`.
+
+</details>
+
+<details>
+<summary><b>Response</b></summary>
+<br/>
+
+**Response status codes**:
+- `204 No Content`: The variable group was deleted successfully.
+- `400 Bad Request`: Missing or invalid path / query parameters, or missing `Authorization` header.
+- `401 Unauthorized`: The request is not authorized. Ensure that the `Authorization` header is set correctly.
+- `404 Not Found`: The variable group with the given ID does not exist.
+- `500 Internal Server Error`: An unexpected error occurred while calling the Azure DevOps API.
 
 </details>
 

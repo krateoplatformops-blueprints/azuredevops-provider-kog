@@ -141,3 +141,14 @@ azuredevops-provider-kog-user-blueprint:
   # default: true
   # @schema
   enabled: true
+# @schema
+# type: object
+# description: Configuration for the VariableGroup Blueprint dependency.
+# @schema
+azuredevops-provider-kog-variablegroup-blueprint:
+  # @schema
+  # type: boolean
+  # description: Enable the VariableGroup Blueprint dependency.
+  # default: true
+  # @schema
+  enabled: true

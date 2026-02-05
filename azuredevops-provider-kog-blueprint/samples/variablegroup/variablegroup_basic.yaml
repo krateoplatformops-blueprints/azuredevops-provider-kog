@@ -1,0 +1,64 @@
+apiVersion: azuredevops.ogen.krateo.io/v1alpha1
+kind: VariableGroup
+metadata:
+  name: my-vargroup-basic
+  namespace: default
+  annotations:
+    krateo.io/connector-verbose: "true"
+    krateo.io/deletion-policy: "orphan" # Can be "delete" or "orphan"
+spec:
+  # required: reference to a Configuration CR in the cluster
+  configurationRef:
+    name: my-variablegroup-config
+    namespace: default
+
+  # Organization name
+  organization: krateo-kog
+
+  # Project ID (project name is not supported in this field)
+  project: "99837031-4e4e-4753-9a47-73fcc4cba766" # Project ID
+
+  # Variable group name (identifier: must be unique within the project)
+  name: MyBasicVariableGroup
+
+  # Optional description
+  description: "A basic variable group created via Krateo KOG"
+
+  # Type of variable group
+  type: "Vsts"
+
+  # Variables defined in the group
+  variables:
+    API_URL:
+      value: "https://api.example.com"
+      isSecret: false
+      isReadOnly: false
+    DATABASE_NAME:
+      value: "production_db"
+      isSecret: false
+      isReadOnly: true
+    API_KEY:
+      value: "secret-key-placeholder"
+      isSecret: true  # This variable will be masked in UI
+      isReadOnly: false
+    TEST_FALSE_VAR:
+      value: "changed_value"
+      isSecret: false
+      isReadOnly: false
+    TEST_FALSE_WITHOUT_READONLY:
+      value: "changed_value"
+      isSecret: false
+    TEST_FALSE_WITHOUT_SECRET:
+      value: "changed_value"
+      isReadOnly: false
+    TEST_FALSE_WITHOUT_SECRET_2:
+      value: "changed_value"
+      isReadOnly: true
+
+  # Project references: which project can use this variable group
+  # Array shape but only one project reference is supported.
+  variableGroupProjectReferences:
+    - name: "MyBasicVariableGroup" # required, name shown in the UI, this should be the same as spec.name
+      description: "A basic variable group created via Krateo KOG"  # not required, description shown in the UI, if set, this should be the same as spec.description
+      projectReference:
+        id: "99837031-4e4e-4753-9a47-73fcc4cba766"  # Project ID

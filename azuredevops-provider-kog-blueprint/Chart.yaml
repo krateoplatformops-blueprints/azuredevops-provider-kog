@@ -91,3 +91,8 @@ dependencies:
     version: AZUREDEVOPS_PROVIDER_KOG_USER_BLUEPRINT_VERSION
     repository: https://marketplace.krateo.io
     condition: azuredevops-provider-kog-user-blueprint.enabled
+
+  - name: azuredevops-provider-kog-variablegroup
+    version: AZUREDEVOPS_PROVIDER_KOG_VARIABLEGROUP_BLUEPRINT_VERSION
+    repository: https://marketplace.krateo.io
+    condition: azuredevops-provider-kog-variablegroup-blueprint.enabled

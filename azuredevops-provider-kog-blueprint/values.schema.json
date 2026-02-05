@@ -183,6 +183,20 @@
       },
       "title": "azuredevops-provider-kog-user-blueprint",
       "type": "object"
+    },
+    "azuredevops-provider-kog-variablegroup-blueprint": {
+      "additionalProperties": false,
+      "description": "Configuration for the VariableGroup Blueprint dependency.",
+      "properties": {
+        "enabled": {
+          "default": true,
+          "description": "Enable the VariableGroup Blueprint dependency.",
+          "title": "enabled",
+          "type": "boolean"
+        }
+      },
+      "title": "azuredevops-provider-kog-variablegroup-blueprint",
+      "type": "object"
     }
   },
   "type": "object"

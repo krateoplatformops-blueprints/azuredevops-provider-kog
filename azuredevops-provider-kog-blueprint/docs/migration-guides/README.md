@@ -15,6 +15,7 @@ Currently, the Azure DevOps Provider KOG supports the following resources:
 - `Project`
 - `User`
 - `Environment`
+- `VariableGroup`
 
 Therefore, currently, Azure DevOps Provider KOG **is not a drop-in replacement** for the Azure DevOps Provider (classic), but it is a new provider that supports another set of resources.
 
@@ -42,3 +43,4 @@ Therefore, currently, Azure DevOps Provider KOG **is not a drop-in replacement**
 - [Project migration example](project-migration.md)
 - [User migration example](user-migration.md)
 - [Environment migration example](environment-migration.md)
+- [VariableGroup migration example](variablegroup-migration.md)
